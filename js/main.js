@@ -55,6 +55,7 @@ document.querySelectorAll('.wtab').forEach(btn => {
     document.querySelectorAll('.wtab').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.worship-panel').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+    const panel = document.getElementById(`tab-${btn.dataset.tab}`);
+    if (panel) panel.classList.add('active');
   });
 });
