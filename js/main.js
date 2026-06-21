@@ -1,47 +1,52 @@
-// Nav: transparent → solid on scroll
+// Nav solid on scroll
 const nav = document.getElementById('nav');
-const onScroll = () => nav.classList.toggle('solid', window.scrollY > 10);
-window.addEventListener('scroll', onScroll, { passive: true });
-onScroll();
+const setNav = () => nav.classList.toggle('solid', window.scrollY > 20);
+window.addEventListener('scroll', setNav, { passive: true });
+setNav();
 
-// Mobile nav toggle
+// Mobile nav
 const toggle = document.getElementById('nav-toggle');
 const links  = document.getElementById('nav-links');
 toggle.addEventListener('click', () => {
   toggle.classList.toggle('open');
   links.classList.toggle('open');
 });
-links.querySelectorAll('a').forEach(a =>
-  a.addEventListener('click', () => {
-    toggle.classList.remove('open');
-    links.classList.remove('open');
-  })
-);
+links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  toggle.classList.remove('open');
+  links.classList.remove('open');
+}));
 
-// Smooth scroll (offset for fixed nav)
+// Smooth scroll with nav offset
 document.querySelectorAll('a[href^="#"]').forEach(a =>
   a.addEventListener('click', e => {
     const t = document.querySelector(a.getAttribute('href'));
     if (!t) return;
     e.preventDefault();
-    window.scrollTo({ top: t.offsetTop - 52, behavior: 'smooth' });
+    window.scrollTo({ top: t.offsetTop - 56, behavior: 'smooth' });
   })
 );
 
-// Reveal on scroll
-const observer = new IntersectionObserver(
-  entries => entries.forEach(el => {
-    if (el.isIntersecting) {
-      el.target.classList.add('visible');
-      observer.unobserve(el.target);
+// Hero reveals on load
+window.addEventListener('load', () => {
+  document.querySelectorAll('.reveal-hero').forEach(el =>
+    el.classList.add('visible')
+  );
+});
+
+// Section reveals on scroll
+const obs = new IntersectionObserver(
+  entries => entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      obs.unobserve(entry.target);
     }
   }),
-  { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+  { threshold: 0.08, rootMargin: '0px 0px -32px 0px' }
 );
 
 document.querySelectorAll('.reveal').forEach((el, i) => {
-  el.style.transitionDelay = `${(i % 5) * 80}ms`;
-  observer.observe(el);
+  el.style.transitionDelay = `${(i % 6) * 90}ms`;
+  obs.observe(el);
 });
 
 // Worship tabs
