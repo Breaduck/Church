@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="정다운교회 - 사람을 키우고 선교하는 교회. 경기도 안양시 만안구 경수대로 1236" />
+  <title>정다운교회</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header" id="site-header">
+    <div class="container header-inner">
+      <a href="#hero" class="logo">
+        <span class="logo-cross">✝</span>
+        <span class="logo-text">정다운교회</span>
+      </a>
+      <nav class="main-nav" id="main-nav">
+        <a href="#about" class="nav-link">교회소개</a>
+        <a href="#worship" class="nav-link">예배안내</a>
+        <a href="#contact" class="nav-link">찾아오시는 길</a>
+      </nav>
+      <button class="hamburger" id="hamburger" aria-label="메뉴 열기">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero" id="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-year-motto">2026 표어</p>
+      <h2 class="hero-motto">"사랑하였음으로 충성하였네라"</h2>
+      <div class="hero-divider"></div>
+      <h1 class="hero-slogan">사람을 키우고 선교하는 교회</h1>
+      <p class="hero-name">정다운교회</p>
+      <a href="#worship" class="btn btn-primary">예배 안내 보기</a>
+    </div>
+    <a href="#about" class="hero-scroll-hint" aria-label="아래로 스크롤">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M6 9l6 6 6-6"/>
+      </svg>
+    </a>
+  </section>
+
+  <!-- ===== ABOUT ===== -->
+  <section class="section" id="about">
+    <div class="container">
+      <div class="section-header fade-in">
+        <span class="section-tag">교회소개</span>
+        <h2 class="section-title">정다운교회를 소개합니다</h2>
+      </div>
+
+      <div class="stats-grid fade-in">
+        <div class="stat-card">
+          <span class="stat-icon">✝</span>
+          <span class="stat-number">1971</span>
+          <span class="stat-label">교회 설립</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">🏛</span>
+          <span class="stat-label-main">대한예수교장로회</span>
+          <span class="stat-label">(통합) 교단</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">✦</span>
+          <span class="stat-label-main">사람을 키우고</span>
+          <span class="stat-label">선교하는 교회</span>
+        </div>
+      </div>
+
+      <div class="about-content fade-in">
+        <div class="about-text">
+          <h3 class="about-subtitle">교회 역사</h3>
+          <p>
+            정다운교회는 <strong>1971년 9월 19일</strong>, 서울대 앞 신림동(일명 고시촌)에서 개척 설립되어
+            지역사회를 섬기며 특히 고시 청년 선교에 힘썼습니다.
+          </p>
+          <p>
+            <strong>2011년 11월</strong>, 안양시 석수동에 교회를 신축·이전한 후 교육, 복지, 문화사역을 중심으로
+            지역과 함께하며 예수 그리스도의 사랑과 섬김을 실천하고 있습니다.
+          </p>
+          <div class="timeline">
+            <div class="timeline-item">
+              <span class="timeline-year">1971</span>
+              <span class="timeline-desc">신림동(고시촌) 개척 설립 — 고시 청년 선교</span>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-year">2011</span>
+              <span class="timeline-desc">안양시 석수동 신축 이전 — 교육·복지·문화사역</span>
+            </div>
+          </div>
+        </div>
+        <div class="about-pastor fade-in">
+          <div class="pastor-card">
+            <div class="pastor-photo-placeholder">
+              <span class="pastor-icon">✝</span>
+            </div>
+            <div class="pastor-info">
+              <span class="pastor-title">담임목사</span>
+              <h3 class="pastor-name">이종운 목사</h3>
+              <p class="pastor-verse">"사람을 키우고 선교하는 교회"</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== WORSHIP ===== -->
+  <section class="section section-alt" id="worship">
+    <div class="container">
+      <div class="section-header fade-in">
+        <span class="section-tag">예배안내</span>
+        <h2 class="section-title">함께 드리는 예배</h2>
+      </div>
+
+      <div class="worship-tabs fade-in">
+        <button class="tab-btn active" data-tab="sunday">주일예배</button>
+        <button class="tab-btn" data-tab="weekday">주중예배</button>
+        <button class="tab-btn" data-tab="ministry">교육부서</button>
+      </div>
+
+      <div class="tab-content active" id="tab-sunday">
+        <div class="worship-grid">
+          <div class="worship-card">
+            <div class="worship-icon">☀</div>
+            <h3 class="worship-name">주일 1부예배</h3>
+            <p class="worship-time">주일 오전 9:00</p>
+          </div>
+          <div class="worship-card featured">
+            <div class="worship-icon">☀</div>
+            <h3 class="worship-name">주일 2부예배</h3>
+            <p class="worship-time">주일 오전 10:50</p>
+          </div>
+          <div class="worship-card">
+            <div class="worship-icon">🌤</div>
+            <h3 class="worship-name">주일 오후예배</h3>
+            <p class="worship-time">주일 오후 1:20</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-weekday">
+        <div class="worship-grid">
+          <div class="worship-card">
+            <div class="worship-icon">✦</div>
+            <h3 class="worship-name">수요예배</h3>
+            <p class="worship-time">수요일 오후 7:30</p>
+          </div>
+          <div class="worship-card">
+            <div class="worship-icon">🕯</div>
+            <h3 class="worship-name">금요기도회</h3>
+            <p class="worship-time">금요일 오후 8:00</p>
+          </div>
+          <div class="worship-card">
+            <div class="worship-icon">🌅</div>
+            <h3 class="worship-name">새벽기도회</h3>
+            <p class="worship-time">월–금 오전 5:30</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-ministry">
+        <div class="worship-grid worship-grid-4">
+          <div class="worship-card">
+            <div class="worship-icon">🌱</div>
+            <h3 class="worship-name">유아유치부</h3>
+            <p class="worship-time">주일 오전 11:00</p>
+          </div>
+          <div class="worship-card">
+            <div class="worship-icon">🌿</div>
+            <h3 class="worship-name">어린이부</h3>
+            <p class="worship-time">주일 오전 11:00</p>
+          </div>
+          <div class="worship-card">
+            <div class="worship-icon">⚡</div>
+            <h3 class="worship-name">청소년부</h3>
+            <p class="worship-time">주일 오전 9:30</p>
+          </div>
+          <div class="worship-card">
+            <div class="worship-icon">🔥</div>
+            <h3 class="worship-name">청년텐트모임</h3>
+            <p class="worship-time">주일 오전 10:00</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section class="section" id="contact">
+    <div class="container">
+      <div class="section-header fade-in">
+        <span class="section-tag">찾아오시는 길</span>
+        <h2 class="section-title">정다운교회로 오세요</h2>
+      </div>
+
+      <div class="contact-layout fade-in">
+        <div class="contact-info">
+          <div class="contact-item">
+            <div class="contact-icon">📍</div>
+            <div>
+              <strong>주소</strong>
+              <p>경기도 안양시 만안구 경수대로 1236<br />(우) 13913</p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">📞</div>
+            <div>
+              <strong>전화</strong>
+              <p><a href="tel:031-472-7377">031-472-7377</a></p>
+            </div>
+          </div>
+          <div class="contact-item">
+            <div class="contact-icon">🚌</div>
+            <div>
+              <strong>교통편</strong>
+              <p>
+                지하철 1호선 석수역 2번 출구<br />
+                도보 약 10분 / 버스 환승 가능
+              </p>
+            </div>
+          </div>
+          <a
+            href="https://map.kakao.com/link/search/경기도+안양시+만안구+경수대로+1236"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-secondary"
+          >카카오맵에서 보기</a>
+        </div>
+
+        <div class="map-wrap">
+          <iframe
+            src="https://maps.google.com/maps?q=경기도+안양시+만안구+경수대로+1236&output=embed&hl=ko&z=16"
+            width="100%"
+            height="100%"
+            style="border:0;"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="정다운교회 지도"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="logo-cross">✝</span>
+        <span class="footer-church-name">정다운교회</span>
+      </div>
+      <div class="footer-info">
+        <p>경기도 안양시 만안구 경수대로 1236 &nbsp;|&nbsp; Tel. 031-472-7377</p>
+        <p>대한예수교장로회(통합) &nbsp;|&nbsp; 담임목사 이종운</p>
+      </div>
+      <p class="footer-copy">&copy; 2025 정다운교회. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
