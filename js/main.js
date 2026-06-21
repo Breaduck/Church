@@ -1,62 +1,54 @@
-// Sticky header
-const header = document.getElementById('site-header');
-window.addEventListener('scroll', () => {
-  header.classList.toggle('scrolled', window.scrollY > 40);
-}, { passive: true });
+// Nav: transparent → solid on scroll
+const nav = document.getElementById('nav');
+const onScroll = () => nav.classList.toggle('solid', window.scrollY > 10);
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
 
-// Hamburger menu
-const hamburger = document.getElementById('hamburger');
-const nav = document.getElementById('main-nav');
-
-hamburger.addEventListener('click', () => {
-  hamburger.classList.toggle('open');
-  nav.classList.toggle('open');
-  hamburger.setAttribute('aria-label', nav.classList.contains('open') ? '메뉴 닫기' : '메뉴 열기');
+// Mobile nav toggle
+const toggle = document.getElementById('nav-toggle');
+const links  = document.getElementById('nav-links');
+toggle.addEventListener('click', () => {
+  toggle.classList.toggle('open');
+  links.classList.toggle('open');
 });
-
-// Close nav on link click
-nav.querySelectorAll('.nav-link').forEach(link => {
-  link.addEventListener('click', () => {
-    hamburger.classList.remove('open');
-    nav.classList.remove('open');
-  });
-});
-
-// Smooth scroll offset for fixed header
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', e => {
-    const target = document.querySelector(anchor.getAttribute('href'));
-    if (!target) return;
-    e.preventDefault();
-    const offset = header.offsetHeight + 16;
-    window.scrollTo({ top: target.offsetTop - offset, behavior: 'smooth' });
-  });
-});
-
-// Fade-in on scroll
-const observer = new IntersectionObserver(
-  entries => entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      observer.unobserve(entry.target);
-    }
-  }),
-  { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+links.querySelectorAll('a').forEach(a =>
+  a.addEventListener('click', () => {
+    toggle.classList.remove('open');
+    links.classList.remove('open');
+  })
 );
 
-document.querySelectorAll('.fade-in').forEach((el, i) => {
-  el.style.transitionDelay = `${(i % 4) * 0.1}s`;
+// Smooth scroll (offset for fixed nav)
+document.querySelectorAll('a[href^="#"]').forEach(a =>
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (!t) return;
+    e.preventDefault();
+    window.scrollTo({ top: t.offsetTop - 52, behavior: 'smooth' });
+  })
+);
+
+// Reveal on scroll
+const observer = new IntersectionObserver(
+  entries => entries.forEach(el => {
+    if (el.isIntersecting) {
+      el.target.classList.add('visible');
+      observer.unobserve(el.target);
+    }
+  }),
+  { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+);
+
+document.querySelectorAll('.reveal').forEach((el, i) => {
+  el.style.transitionDelay = `${(i % 5) * 80}ms`;
   observer.observe(el);
 });
 
 // Worship tabs
-const tabBtns = document.querySelectorAll('.tab-btn');
-const tabContents = document.querySelectorAll('.tab-content');
-
-tabBtns.forEach(btn => {
+document.querySelectorAll('.wtab').forEach(btn => {
   btn.addEventListener('click', () => {
-    tabBtns.forEach(b => b.classList.remove('active'));
-    tabContents.forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.wtab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.worship-panel').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
   });
