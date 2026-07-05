@@ -331,9 +331,9 @@ body { font-size: 17px; }
 }
 
 .stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  margin-top: 12px;
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 16px;
   border-top: 1px solid var(--line);
 }
 .stat {
@@ -342,7 +342,7 @@ body { font-size: 17px; }
   gap: 6px;
   align-items: center;
   text-align: center;
-  padding: 28px 16px;
+  padding: 24px 16px;
 }
 .stat-n { font-size: 2.4rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1; color: var(--ink); }
 .stat-n sup { font-size: 0.6em; color: var(--accent); }
