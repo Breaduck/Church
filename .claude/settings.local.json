@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\hiyoo\\\\코딩\\\\church\" -Recurse -Force)",
+      "Bash(Select-Object FullName)",
+      "WebFetch(domain:pckworld.com)",
+      "WebSearch",
+      "PowerShell(Out-Null *)",
+      "Bash(wrangler --version)",
+      "Bash(wrangler pages *)",
+      "WebFetch(domain:8892cd19.church-ira.pages.dev)",
+      "Bash(wrangler whoami *)",
+      "Bash(git init *)"
+    ]
+  }
+}
