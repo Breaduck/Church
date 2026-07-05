@@ -131,6 +131,7 @@ body { font-size: 17px; }
   padding-bottom: 96px;
 }
 .hero-text { display: flex; flex-direction: column; gap: 24px; }
+.hero-text .label { margin-bottom: -8px; }
 .hero-title {
   font-size: clamp(2.8rem, 4.6vw, 4.2rem);
   font-weight: 800;
@@ -400,7 +401,7 @@ body { font-size: 17px; }
   transition: box-shadow 0.2s, transform 0.2s;
 }
 .svc-row:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.10); transform: translateY(-1px); }
-.svc-row.hi { background: rgba(61,122,86,0.06); box-shadow: 0 2px 10px rgba(61,122,86,0.12); }
+.svc-row.hi { background: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
 .svc-name { flex: 1; font-size: 1.3rem; font-weight: 600; }
 .svc-day { font-size: 1.08rem; color: var(--muted); width: 80px; text-align: center; }
 .svc-time { font-size: 1.3rem; font-weight: 700; color: var(--accent); min-width: 110px; text-align: right; }
@@ -808,59 +809,103 @@ body { font-size: 17px; }
 .reveal.visible { opacity: 1; transform: none; }
 
 /* ============================================================
-   RESPONSIVE
+   RESPONSIVE — TABLET (max 960px)
    ============================================================ */
 @media (max-width: 960px) {
   .wrap { padding: 0 28px; }
 
-  .hero-inner { grid-template-columns: 1fr; gap: 48px; }
-  .hero-photo { max-height: 360px; }
+  .about-section, .pastor-section, .vision, .week,
+  .new-section, .news, .contact-section { padding: 96px 0; }
 
-  .about-inner { grid-template-columns: 1fr; gap: 48px; }
-  .pastor-inner { grid-template-columns: 1fr; gap: 48px; }
-  .pastor-photo { max-width: 220px; }
-  .vision-grid { grid-template-columns: 1fr; gap: 16px; }
-  .new-inner { grid-template-columns: 1fr; gap: 48px; }
-  .contact-inner { grid-template-columns: 1fr; gap: 48px; }
+  /* Hero */
+  .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+  .hero-photo { max-height: 340px; aspect-ratio: 16/9; }
 
-  .week-grid { grid-template-columns: 1fr; gap: 56px; }
-  .contact-inner { grid-template-columns: 1fr; gap: 48px; }
+  /* Layouts → stack */
+  .about-inner    { grid-template-columns: 1fr; gap: 40px; }
+  .pastor-inner   { grid-template-columns: 1fr; gap: 40px; }
+  .pastor-photo   { max-width: 200px; }
+  .vision-grid    { grid-template-columns: 1fr; gap: 14px; }
+  .new-inner      { grid-template-columns: 1fr; gap: 48px; }
+  .contact-inner  { grid-template-columns: 1fr; gap: 40px; }
+  .week-grid      { grid-template-columns: 1fr; gap: 48px; }
 
-  .vision-grid { grid-template-columns: 1fr; }
-  .vision-card {
-    border-radius: var(--r) !important;
-    border-left: 1px solid rgba(255, 255, 255, 0.09) !important;
-  }
+  .ministry-grid  { grid-template-columns: repeat(2, 1fr); }
+  .news-grid      { grid-template-columns: 1fr; max-width: 520px; }
 
-  .ministry-grid { grid-template-columns: repeat(2, 1fr); }
-  .news-grid { grid-template-columns: 1fr; max-width: 520px; }
-
-  .bottom-grid { grid-template-columns: 1fr; gap: 48px; }
-
-  .section-head { flex-direction: column; align-items: flex-start; }
-  .section-quote { text-align: left; max-width: 100%; }
+  .vision-card    { border-radius: var(--r) !important; }
+  .section-head   { flex-direction: column; align-items: flex-start; }
+  .section-quote  { text-align: left; max-width: 100%; }
 }
 
+/* ============================================================
+   RESPONSIVE — PHONE (max 640px)
+   ============================================================ */
 @media (max-width: 640px) {
-  .qnav-grid { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .qnav-item { min-width: 88px; padding: 18px 12px; }
+  :root { --nav-h: 56px; }
+  .wrap { padding: 0 20px; }
 
+  /* Section padding */
+  .about-section, .pastor-section, .vision, .week,
+  .new-section, .news, .contact-section { padding: 72px 0; }
+
+  /* Quick nav */
+  .qnav-grid { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .qnav-item { min-width: 76px; padding: 16px 8px; font-size: 0.82rem; gap: 8px; }
+  .qnav-item svg { width: 22px; height: 22px; }
+
+  /* Hero */
+  .hero { padding-top: var(--nav-h); min-height: 100svh; }
+  .hero-inner { padding-top: 24px; padding-bottom: 48px; gap: 28px; }
+  .hero-text { gap: 16px; }
+  .hero-text .label { margin-bottom: -4px; }
+  .hero-title { font-size: clamp(2.2rem, 9vw, 2.8rem); }
+  .hero-sub { font-size: 1rem; }
+  .hero-btns { gap: 10px; }
+  .hero-photo { aspect-ratio: 16/9; max-height: 210px; }
+
+  /* About */
+  .stat { padding: 18px 10px; }
+  .stat-n { font-size: 1.9rem; }
+  .stat-l { font-size: 0.88rem; }
+
+  /* Pastor */
+  .pastor-left { flex-direction: row; gap: 18px; align-items: flex-start; }
+  .pastor-photo { max-width: 100px; width: 100px; flex-shrink: 0; }
+  .pastor-identity { flex: 1; }
+  .pastor-identity .label { font-size: 0.85rem; padding: 5px 14px; }
+  .pastor-name { font-size: 1.4rem; }
+  .pastor-denom { font-size: 0.85rem; }
+  .pastor-greeting-welcome { font-size: 1.25rem; }
+  .pastor-greeting-body { font-size: 1.05rem; }
+  .pastor-greeting-sig { font-size: 1rem; }
+
+  /* Vision */
+  .vision-card { padding: 32px 24px; }
+  .v-title { font-size: 1.3rem; }
+  .v-body { font-size: 1rem; }
+
+  /* Week / Worship */
+  .week-grid { gap: 40px; }
+  .wtab { font-size: 0.88rem; padding: 10px 0; }
+  .svc-row { padding: 18px 16px; }
+  .svc-name { font-size: 1.1rem; }
+  .svc-time { font-size: 1.1rem; min-width: 88px; }
+  .svc-day { font-size: 0.85rem; width: 56px; }
+
+  /* Sermon */
+  .sermon-head { flex-wrap: wrap; gap: 6px; }
+  .more-link { padding-top: 0; }
+  .sermon-title { font-size: 1.1rem; }
+
+  /* News / New */
   .ministry-grid { grid-template-columns: 1fr; }
   .news-grid { max-width: 100%; }
+  .step strong { font-size: 1.05rem; }
+  .step p { font-size: 0.95rem; }
 
-  .hero { padding-top: calc(var(--nav-h) + 8px); }
-  .hero-inner { padding-top: 32px; padding-bottom: 72px; }
-
-  .intro    { padding: 80px 0; }
-  .week     { padding: 80px 0; }
-  .vision   { padding: 80px 0; }
-  .ministry { padding: 80px 0; }
-  .news     { padding: 80px 0; }
-  .bottom   { padding: 80px 0; }
-
-  .vision-card { padding: 40px 30px; }
-  .stats { gap: 28px; }
-  .stat-n { font-size: 2rem; }
+  /* Notice panel → full width on phone */
+  .notice-panel { left: 12px; right: 12px; width: auto; }
 
   /* Mobile nav */
   .nav-links {
@@ -874,8 +919,9 @@ body { font-size: 17px; }
     flex-direction: column;
     gap: 0;
     padding: 8px 0;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.10);
     border-bottom: 1px solid var(--line);
+    z-index: 99;
   }
   .nav-links.open { display: flex; }
   .nav-links a {
@@ -884,14 +930,12 @@ body { font-size: 17px; }
     border-bottom: 1px solid var(--line);
   }
   .nav-links a:last-child { border-bottom: none; }
-
   .nav-toggle {
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 5px;
-    width: 32px;
-    height: 32px;
+    width: 32px; height: 32px;
     background: none;
     border: none;
     cursor: pointer;
@@ -899,8 +943,7 @@ body { font-size: 17px; }
   }
   .nav-toggle span {
     display: block;
-    height: 2px;
-    width: 22px;
+    height: 2px; width: 22px;
     background: var(--ink);
     border-radius: 2px;
     transition: transform 0.3s;
@@ -908,6 +951,7 @@ body { font-size: 17px; }
   .nav-toggle.open span:nth-child(1) { transform: translateY(3.5px) rotate(45deg); }
   .nav-toggle.open span:nth-child(2) { transform: translateY(-3.5px) rotate(-45deg); }
 
+  /* Footer */
   .footer-inner { flex-direction: column; align-items: flex-start; gap: 20px; }
   .footer-right { align-items: flex-start; }
 }
