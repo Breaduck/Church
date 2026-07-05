@@ -176,29 +176,46 @@ body { font-size: 17px; }
 /* ============================================================
    INTRO  —  Pastor + About
    ============================================================ */
-.intro { padding: 120px 0; background: var(--white); }
-.intro-grid {
+/* ============================================================
+   ABOUT SECTION — 교회소개 (상단)
+   ============================================================ */
+.about-section { padding: 120px 0; background: var(--white); }
+.about-inner {
   display: grid;
-  grid-template-columns: 1fr 1px 1.15fr;
-  gap: 0 72px;
-  align-items: stretch;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
 }
-.intro-divider { background: var(--line); align-self: stretch; }
+.about-photo {
+  border-radius: var(--r);
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: var(--surf);
+}
+.about-photo img { width: 100%; height: 100%; object-fit: cover; }
+.about-text { display: flex; flex-direction: column; gap: 20px; }
 
-.pastor-block { display: flex; flex-direction: column; gap: 36px; }
-
-.pastor-photo-row {
+/* ============================================================
+   PASTOR SECTION — 목사님 인사말 (하단)
+   ============================================================ */
+.pastor-section { padding: 120px 0; background: var(--surf); }
+.pastor-inner {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 72px;
+  align-items: start;
+}
+.pastor-left {
   display: flex;
-  gap: 28px;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 24px;
 }
 .pastor-photo {
   border-radius: var(--r);
   overflow: hidden;
-  background: var(--surf);
+  background: var(--white);
   aspect-ratio: 3 / 4;
-  width: 160px;
-  flex-shrink: 0;
+  width: 100%;
 }
 .pastor-photo img {
   width: 100%;
@@ -209,18 +226,16 @@ body { font-size: 17px; }
 .pastor-identity {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding-top: 8px;
+  gap: 8px;
 }
-.pastor-name { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; margin-top: 6px; line-height: 1.2; }
-.pastor-denom { font-size: 0.95rem; color: var(--muted); margin-top: 4px; }
+.pastor-name { font-size: 1.8rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+.pastor-denom { font-size: 0.95rem; color: var(--muted); }
 
 .pastor-greeting {
-  border-top: 1px solid var(--line);
-  padding-top: 32px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
+  padding-top: 8px;
 }
 .pastor-greeting-title {
   font-size: 0.82rem;
@@ -230,7 +245,7 @@ body { font-size: 17px; }
   color: var(--accent);
 }
 .pastor-greeting-welcome {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   font-weight: 700;
   color: var(--ink);
   letter-spacing: -0.015em;
@@ -238,28 +253,19 @@ body { font-size: 17px; }
 }
 .pastor-greeting-body {
   font-size: 1.05rem;
-  line-height: 1.85;
+  line-height: 1.9;
   color: var(--body);
   word-break: keep-all;
 }
 .pastor-greeting-sig {
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 600;
   color: var(--ink);
   border-top: 1px solid var(--line);
-  padding-top: 20px;
-  margin-top: 8px;
+  padding-top: 24px;
+  margin-top: 4px;
   letter-spacing: -0.01em;
 }
-
-.about-block { display: flex; flex-direction: column; gap: 24px; }
-.about-photo {
-  border-radius: var(--r);
-  overflow: hidden;
-  aspect-ratio: 16 / 10;
-  background: var(--surf);
-}
-.about-text { display: flex; flex-direction: column; gap: 16px; }
 
 .block-title {
   font-size: clamp(1.7rem, 2.8vw, 2.4rem);
@@ -643,10 +649,9 @@ body { font-size: 17px; }
   .hero-inner { grid-template-columns: 1fr; gap: 48px; }
   .hero-photo { max-height: 360px; }
 
-  .intro-grid { grid-template-columns: 1fr; gap: 56px; }
-  .intro-divider { display: none; }
-  .pastor-photo-row { flex-direction: column; }
-  .pastor-photo { width: 100%; max-width: 240px; }
+  .about-inner { grid-template-columns: 1fr; gap: 48px; }
+  .pastor-inner { grid-template-columns: 1fr; gap: 48px; }
+  .pastor-photo { max-width: 220px; }
 
   .week-grid { grid-template-columns: 1fr; gap: 56px; }
 
