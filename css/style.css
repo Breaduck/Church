@@ -603,7 +603,7 @@ body { font-size: 17px; }
    ============================================================ */
 .ministry-section {
   padding: 120px 0;
-  background: var(--white);
+  background: var(--surf);
   position: relative;
 }
 
@@ -614,14 +614,15 @@ body { font-size: 17px; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 22px;
 }
 .ministry-head .label { margin-bottom: 0; }
 .ministry-head .block-title { text-align: center; }
 .ministry-head .block-body {
   text-align: center;
   color: var(--body);
-  max-width: 640px;
+  max-width: 660px;
+  font-size: 1.15rem;
 }
 
 /* 작은 인용문 (인트로 아래) */
@@ -662,26 +663,35 @@ body { font-size: 17px; }
 /* Ministry layout — 좌: 건물 다이어그램 / 우: 층별 상세 */
 .ministry-layout {
   display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 64px;
+  grid-template-columns: 240px 1fr;
+  gap: 56px;
   align-items: start;
-  max-width: 1040px;
+  max-width: 1080px;
   margin: 0 auto;
 }
 
-/* Building diagram */
+/* Building diagram — 하나의 큰 사각형 카드 */
 .building-diagram {
   position: sticky;
   top: calc(var(--nav-h) + 24px);
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  background: var(--white);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
 }
-.bd-roof {
-  height: 20px;
+.bd-header {
   background: var(--accent);
-  clip-path: polygon(0 100%, 50% 0, 100% 100%);
-  margin-bottom: -1px;
+  color: #fff;
+  padding: 20px 16px;
+  text-align: center;
+}
+.bd-header-label {
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
 .bd-floor {
   position: relative;
@@ -689,105 +699,110 @@ body { font-size: 17px; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 22px 16px;
+  gap: 6px;
+  padding: 28px 14px;
   background: var(--white);
-  border: 2px solid var(--accent);
-  border-bottom-width: 0;
   color: var(--ink);
-  transition: background 0.2s, color 0.2s;
+  border-top: 1px solid var(--line);
   text-align: center;
+  cursor: pointer;
+  transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+              background 0.22s,
+              color 0.22s,
+              box-shadow 0.22s;
+  transform-origin: center;
+  will-change: transform;
 }
-.bd-floor:first-of-type { border-radius: 0; }
 .bd-floor:hover,
 .bd-floor:focus-visible {
   background: var(--accent);
   color: #fff;
+  transform: scale(1.04);
+  z-index: 2;
+  box-shadow: 0 10px 26px rgba(61,122,86,0.28);
   outline: none;
 }
+.bd-floor:active { transform: scale(0.98); }
 .bd-floor:hover .bd-hint,
-.bd-floor:focus-visible .bd-hint { color: rgba(255,255,255,0.85); }
+.bd-floor:focus-visible .bd-hint { color: rgba(255,255,255,0.9); }
 .bd-num {
-  font-size: 1.35rem;
+  font-size: 1.55rem;
   font-weight: 800;
   letter-spacing: -0.01em;
   line-height: 1;
 }
 .bd-hint {
-  font-size: 0.78rem;
+  font-size: 0.88rem;
   color: var(--muted);
   font-weight: 500;
-  line-height: 1.3;
-  transition: color 0.2s;
-}
-.bd-base {
-  background: var(--accent);
-  color: #fff;
-  padding: 14px;
-  border: 2px solid var(--accent);
-  text-align: center;
-}
-.bd-base-label {
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  line-height: 1.35;
+  transition: color 0.22s;
 }
 
-/* Floor list — 1 컬럼 리스트 */
+/* Floor list — 흰 카드 (svc-row 스타일) */
 .floor-list {
   padding: 0;
   list-style: none;
-  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 .floor {
   display: grid;
-  grid-template-columns: 90px 1fr;
+  grid-template-columns: 100px 1fr;
   gap: 32px;
   align-items: start;
-  padding: 32px 4px;
-  border-bottom: 1px solid var(--line);
+  padding: 32px 34px;
+  background: var(--white);
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
   scroll-margin-top: calc(var(--nav-h) + 20px);
-  transition: background 0.2s;
+  transition: box-shadow 0.22s, transform 0.22s, background 0.3s;
 }
-.floor:target { background: var(--accent-dim); }
-.floor-tag {
-  padding-top: 4px;
+.floor:hover {
+  box-shadow: 0 10px 28px rgba(0,0,0,0.10);
+  transform: translateY(-2px);
 }
+.floor:target {
+  background: linear-gradient(180deg, var(--accent-dim), var(--white) 60%);
+  box-shadow: 0 6px 22px rgba(61,122,86,0.18);
+}
+.floor-tag { padding-top: 4px; }
 .floor-num {
   display: inline-block;
-  font-size: 1.35rem;
+  font-size: 1.55rem;
   font-weight: 800;
   letter-spacing: -0.01em;
   color: var(--accent);
   line-height: 1;
-  padding-bottom: 8px;
+  padding-bottom: 10px;
   border-bottom: 2px solid var(--accent);
 }
-.floor-num--wide { font-size: 1.1rem; padding-bottom: 6px; }
+.floor-num--wide { font-size: 1.25rem; padding-bottom: 8px; }
 .floor-body {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   min-width: 0;
 }
 .floor-name {
-  font-size: 1.4rem;
+  font-size: 1.7rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.3;
   color: var(--ink);
 }
 .floor-name--sub {
-  margin-top: 16px;
-  padding-top: 16px;
+  margin-top: 18px;
+  padding-top: 18px;
   border-top: 1px dashed var(--line);
 }
 .floor-desc {
-  font-size: 1.02rem;
-  line-height: 1.85;
+  font-size: 1.15rem;
+  line-height: 1.9;
   color: var(--body);
   word-break: keep-all;
-  max-width: 62ch;
+  max-width: 60ch;
 }
 .floor-desc strong {
   font-weight: 700;
@@ -1127,27 +1142,22 @@ body { font-size: 17px; }
   .building-diagram {
     position: relative;
     top: auto;
-    flex-direction: row;
-    max-width: 640px;
+    max-width: 720px;
     margin: 0 auto;
   }
-  .bd-roof { display: none; }
-  .bd-base { display: none; }
+  .bd-header { padding: 16px 12px; }
   .bd-floor {
-    flex: 1;
-    padding: 16px 8px;
-    border-bottom-width: 2px;
-    border-right-width: 0;
+    flex-direction: row;
+    justify-content: center;
+    padding: 18px 14px;
+    gap: 12px;
   }
-  .bd-floor + .bd-floor { border-left-width: 0; }
-  .bd-floor:first-of-type { border-left-width: 2px; border-radius: 8px 0 0 8px; }
-  .bd-floor:last-of-type { border-right-width: 2px; border-radius: 0 8px 8px 0; }
-  .bd-num { font-size: 1.15rem; }
-  .bd-hint { font-size: 0.72rem; }
+  .bd-floor:hover, .bd-floor:focus-visible { transform: scale(1.02); }
 
-  .floor { grid-template-columns: 80px 1fr; gap: 20px; padding: 28px 4px; }
-  .floor-num { font-size: 1.2rem; }
-  .floor-name { font-size: 1.3rem; }
+  .floor { grid-template-columns: 90px 1fr; gap: 24px; padding: 28px 26px; }
+  .floor-num { font-size: 1.4rem; }
+  .floor-name { font-size: 1.45rem; }
+  .floor-desc { font-size: 1.08rem; }
 
   /* Pastor card */
   .pastor-greeting { padding: 32px 28px; gap: 22px; }
@@ -1180,21 +1190,22 @@ body { font-size: 17px; }
 
   /* Ministry — phone */
   .building-diagram { max-width: 100%; }
-  .bd-floor { padding: 12px 4px; }
-  .bd-num { font-size: 1rem; }
-  .bd-hint { display: none; }
+  .bd-header-label { font-size: 1rem; }
+  .bd-floor { padding: 14px 8px; gap: 8px; }
+  .bd-num { font-size: 1.15rem; }
+  .bd-hint { font-size: 0.8rem; }
 
   .floor {
     grid-template-columns: 1fr;
-    gap: 10px;
-    padding: 24px 0;
+    gap: 12px;
+    padding: 24px 22px;
   }
   .floor-tag { padding-top: 0; }
-  .floor-num { font-size: 1.15rem; }
-  .floor-num--wide { font-size: 1rem; }
-  .floor-name { font-size: 1.2rem; }
-  .floor-name--sub { margin-top: 14px; padding-top: 14px; }
-  .floor-desc { font-size: 0.98rem; line-height: 1.75; }
+  .floor-num { font-size: 1.25rem; }
+  .floor-num--wide { font-size: 1.1rem; }
+  .floor-name { font-size: 1.3rem; }
+  .floor-name--sub { margin-top: 16px; padding-top: 16px; }
+  .floor-desc { font-size: 1.02rem; line-height: 1.8; }
   .ministry-quote {
     font-size: 0.9rem;
     padding: 14px 16px;
