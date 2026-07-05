@@ -109,6 +109,23 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     });
 })();
 
+// Notice panel
+const noticeBtn   = document.getElementById('notice-btn');
+const noticePanel = document.getElementById('notice-panel');
+const noticeClose = document.getElementById('notice-close');
+if (noticeBtn && noticePanel && noticeClose) {
+  noticeBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    noticePanel.classList.toggle('open');
+  });
+  noticeClose.addEventListener('click', () => noticePanel.classList.remove('open'));
+  document.addEventListener('click', e => {
+    if (!noticePanel.contains(e.target) && e.target !== noticeBtn) {
+      noticePanel.classList.remove('open');
+    }
+  });
+}
+
 // Worship tabs
 document.querySelectorAll('.wtab').forEach(btn => {
   btn.addEventListener('click', () => {
