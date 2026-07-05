@@ -421,25 +421,35 @@ body { font-size: 17px; }
 /* ============================================================
    VISION
    ============================================================ */
-.vision { padding: 120px 0; background: var(--ink); }
-.vision .label { color: rgba(255, 255, 255, 0.5); margin-bottom: 48px; }
+.vision { padding: 120px 0; background: var(--white); }
+.vision .label { margin-bottom: 16px; }
+.vision-heading {
+  font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin-bottom: 56px;
+  line-height: 1.3;
+}
 .vision-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
 }
 .vision-card {
-  padding: 56px 40px;
-  border: 1px solid rgba(255, 255, 255, 0.09);
+  padding: 56px 44px;
+  background: var(--surf);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
   display: flex;
   flex-direction: column;
   gap: 20px;
+  transition: box-shadow 0.2s, transform 0.2s;
 }
-.vision-card + .vision-card { border-left: none; }
-.vision-card:first-child { border-radius: var(--r) 0 0 var(--r); }
-.vision-card:last-child  { border-radius: 0 var(--r) var(--r) 0; }
-.v-num { font-size: 0.9rem; font-weight: 700; letter-spacing: 0.14em; color: var(--accent-soft, #6bb287); }
-.v-title { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; color: var(--white); }
-.v-body { font-size: 1.02rem; line-height: 1.75; color: rgba(255, 255, 255, 0.62); word-break: keep-all; }
+.vision-card:hover { box-shadow: 0 10px 32px rgba(0,0,0,0.08); transform: translateY(-3px); }
+.v-num { font-size: 1rem; font-weight: 700; letter-spacing: 0.14em; color: var(--accent); }
+.v-title { font-size: 1.55rem; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); line-height: 1.3; }
+.v-body { font-size: 1.08rem; line-height: 1.8; color: var(--body); word-break: keep-all; }
 
 /* ============================================================
    MINISTRY
@@ -502,7 +512,15 @@ body { font-size: 17px; }
    NEWS
    ============================================================ */
 .news { padding: 120px 0; background: var(--surf); }
-.news .label { margin-bottom: 40px; }
+.news .label { margin-bottom: 16px; }
+.news-heading {
+  font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin-bottom: 48px;
+  line-height: 1.3;
+}
 .news-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -539,48 +557,55 @@ body { font-size: 17px; }
 /* ============================================================
    BOTTOM  —  New Visitor + Contact
    ============================================================ */
-.bottom { padding: 120px 0; background: var(--white); }
-.bottom-grid {
+/* 처음 오시나요? */
+.new-section { padding: 120px 0; background: var(--white); }
+.new-inner {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 72px;
-  align-items: stretch;
+  gap: 80px;
+  align-items: center;
 }
-
-.new-block { display: flex; flex-direction: column; gap: 24px; }
-.steps { display: flex; flex-direction: column; gap: 20px; margin-top: 8px; }
-.step { display: flex; align-items: flex-start; gap: 18px; }
+.new-text { display: flex; flex-direction: column; gap: 24px; }
+.steps-block { display: flex; flex-direction: column; gap: 28px; }
+.step { display: flex; align-items: flex-start; gap: 20px; }
 .step-n {
-  width: 36px; height: 36px;
+  width: 40px; height: 40px;
   border-radius: 50%;
   background: var(--accent);
   color: var(--white);
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  margin-top: 1px;
 }
-.step strong { display: block; font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
-.step p { font-size: 0.98rem; color: var(--body); line-height: 1.6; }
+.step strong { display: block; font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+.step p { font-size: 1.05rem; color: var(--body); line-height: 1.6; }
 
-.contact-block { display: flex; flex-direction: column; gap: 24px; }
+/* 찾아오시는 길 */
+.contact-section { padding: 120px 0; background: var(--surf); }
+.contact-inner {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 72px;
+  align-items: start;
+}
+.contact-text { display: flex; flex-direction: column; gap: 24px; }
 .contact-rows { display: flex; flex-direction: column; }
 .crow {
   display: flex;
   align-items: flex-start;
-  gap: 24px;
-  font-size: 1.05rem;
-  padding: 18px 0;
+  gap: 28px;
+  font-size: 1.1rem;
+  padding: 20px 0;
   border-bottom: 1px solid var(--line);
-  line-height: 1.6;
+  line-height: 1.65;
 }
-.ckey { font-size: 0.9rem; font-weight: 700; color: var(--muted); width: 44px; flex-shrink: 0; padding-top: 3px; }
+.ckey { font-size: 0.95rem; font-weight: 700; color: var(--muted); width: 48px; flex-shrink: 0; padding-top: 3px; }
 .crow a { color: var(--accent); font-weight: 600; }
 .map-link {
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 600;
   color: var(--accent);
   transition: opacity 0.2s;
@@ -652,6 +677,9 @@ body { font-size: 17px; }
   .about-inner { grid-template-columns: 1fr; gap: 48px; }
   .pastor-inner { grid-template-columns: 1fr; gap: 48px; }
   .pastor-photo { max-width: 220px; }
+  .vision-grid { grid-template-columns: 1fr; gap: 16px; }
+  .new-inner { grid-template-columns: 1fr; gap: 48px; }
+  .contact-inner { grid-template-columns: 1fr; gap: 48px; }
 
   .week-grid { grid-template-columns: 1fr; gap: 56px; }
 
@@ -687,8 +715,7 @@ body { font-size: 17px; }
   .news     { padding: 80px 0; }
   .bottom   { padding: 80px 0; }
 
-  .vision-grid { gap: 10px; }
-  .vision-card { padding: 40px 28px; }
+  .vision-card { padding: 40px 30px; }
   .stats { gap: 28px; }
   .stat-n { font-size: 2rem; }
 
