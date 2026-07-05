@@ -41,7 +41,7 @@ body { font-size: 17px; }
 .floor-desc,
 .step p {
   text-align: justify;
-  text-justify: auto;
+  text-justify: inter-word;   /* 단어 간격만 조정, 자간은 유지 */
   word-break: keep-all;
   overflow-wrap: break-word;
   word-spacing: normal;
