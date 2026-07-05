@@ -2,336 +2,334 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>정다운교회 — 사람을 키우고 선교하는 교회</title>
-  <meta name="description" content="대한예수교장로회(통합) 정다운교회. 1971년 신림동에서 개척, 2011년 안양시 석수동으로 신축 이전한 후 교육·복지·문화사역으로 지역과 동행합니다." />
-  <meta name="theme-color" content="#ffffff" />
-  <meta property="og:title" content="정다운교회" />
-  <meta property="og:description" content="사람을 키우고 선교하는 교회 · 안양시 석수동" />
-  <meta property="og:type" content="website" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="정다운교회 — 사람을 키우고 선교하는 교회. 경기도 안양시 만안구 경수대로 1236" />
+  <title>정다운교회</title>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600&display=swap" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
-<body class="page-home">
+<body>
 
-  <!-- ============ NAV (KEEP SYNC ACROSS ALL 6 PAGES) ============ -->
+  <!-- NAV -->
   <header class="nav" id="nav">
     <div class="nav-inner wrap">
-      <a href="index.html" class="nav-logo" aria-label="정다운교회 홈">정다운교회</a>
-      <nav class="nav-links" aria-label="주 메뉴">
-        <a href="about.html" class="nav-link">교회소개</a>
-        <a href="worship.html" class="nav-link">예배안내</a>
-        <a href="sermons.html" class="nav-link">설교·소식</a>
-        <a href="ministry.html" class="nav-link">지역사역</a>
-        <a href="visit.html" class="nav-link">찾아오기</a>
+      <a href="#" class="nav-logo">정다운교회</a>
+      <nav class="nav-links" id="nav-links">
+        <a href="#intro">교회소개</a>
+        <a href="#week">예배안내</a>
+        <a href="#week">설교영상</a>
+        <a href="#new">새가족</a>
+        <a href="#contact">찾아오시는 길</a>
       </nav>
-      <a href="https://www.youtube.com/@JungDownChurch_AnYang/videos" target="_blank" rel="noopener" class="nav-yt" aria-label="YouTube 채널">
-        YouTube
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg>
-      </a>
-      <button class="nav-toggle" id="nav-toggle" aria-label="메뉴 열기" aria-expanded="false" aria-controls="nav-menu"><span></span></button>
-      <div class="nav-menu" id="nav-menu" aria-label="모바일 메뉴">
-        <a href="about.html" class="nav-menu-link">교회소개</a>
-        <a href="worship.html" class="nav-menu-link">예배안내</a>
-        <a href="sermons.html" class="nav-menu-link">설교·소식</a>
-        <a href="ministry.html" class="nav-menu-link">지역사역</a>
-        <a href="visit.html" class="nav-menu-link">찾아오기</a>
-        <div class="nav-menu-foot">
-          031-472-7377 · 경기도 안양시 만안구 경수대로 1236<br>
-          <a href="https://www.youtube.com/@JungDownChurch_AnYang/videos" target="_blank" rel="noopener">YouTube에서 설교 보기 ↗</a>
-        </div>
-      </div>
+      <button class="nav-toggle" id="nav-toggle" aria-label="메뉴">
+        <span></span><span></span>
+      </button>
     </div>
   </header>
 
-  <!-- ============ HERO ============ -->
-  <section class="hero hero--split">
-    <div class="wrap hero-inner">
-      <div>
-        <p class="label reveal">2026 표어</p>
-        <h1 class="hero-title reveal">사랑하였음으로<br>충성하였네라</h1>
-        <p class="hero-sub reveal">사람을 키우고 선교하는 교회<br>경기도 안양시 석수동에 있습니다.</p>
-        <div class="cta-row reveal">
-          <a href="worship.html" class="btn btn--solid">예배 시간 보기
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-          </a>
-          <a href="visit.html" class="btn btn--ghost">처음 오시나요?</a>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-inner wrap">
+      <div class="hero-text">
+        <p class="label reveal-hero">2026 표어</p>
+        <h1 class="hero-title reveal-hero">사랑하였음으로<br>충성하였네라</h1>
+        <p class="hero-sub reveal-hero">사람을 키우고 선교하는 교회</p>
+        <div class="hero-btns reveal-hero">
+          <a href="#intro" class="btn-line">교회 알아보기</a>
+          <a href="#new" class="btn-fill">처음 오시나요?</a>
         </div>
       </div>
-      <div class="hero-photo reveal">
-        <img src="img/church-hero.jpg" alt="안양 석수동에 위치한 정다운교회 외관" />
+      <div class="hero-photo reveal-hero">
+        <img src="img/church-hero.jpg" alt="정다운교회" />
       </div>
     </div>
   </section>
 
-  <!-- ============ 담임목사 ============ -->
-  <section class="section section--surface-2">
+  <!-- QUICK NAV -->
+  <nav class="qnav">
     <div class="wrap">
-      <div class="pastor-grid">
-        <div class="pastor-photo reveal">
-          <img src="img/pastor.jpg" alt="정다운교회 이종운 담임목사" />
-        </div>
-        <div>
-          <p class="label reveal">담임목사</p>
-          <h2 class="reveal">이종운 목사</h2>
-          <p class="pastor-quote reveal">사람을 키우고 선교하는 교회로서<br>우리는 사랑으로 충성합니다.</p>
-          <p class="pastor-meta reveal">대한예수교장로회(통합) · 정다운교회 담임</p>
-          <a href="about.html" class="link-arrow reveal">교회 이야기 더 보기
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ 예배 안내 ============ -->
-  <section class="section">
-    <div class="wrap">
-      <div class="feature-split">
-        <div class="feature-text">
-          <p class="label reveal">예배안내</p>
-          <h2 class="reveal">주일, 함께<br>예배드립니다</h2>
-          <ul class="row-list reveal" style="margin: 24px 0 32px;">
-            <li class="row-item">
-              <span class="row-key">1부</span>
-              <div><div class="row-title">주일 1부예배</div></div>
-              <span class="row-end-time">오전 9:00</span>
-            </li>
-            <li class="row-item">
-              <span class="row-key">2부</span>
-              <div><div class="row-title">주일 2부예배 <span style="font-size:12px;color:var(--accent);font-weight:500;">새가족 추천</span></div></div>
-              <span class="row-end-time">오전 10:50</span>
-            </li>
-            <li class="row-item">
-              <span class="row-key">오후</span>
-              <div><div class="row-title">주일 오후예배</div></div>
-              <span class="row-end-time">오후 1:20</span>
-            </li>
-            <li class="row-item">
-              <span class="row-key">수</span>
-              <div><div class="row-title">수요예배</div></div>
-              <span class="row-end-time">오후 7:30</span>
-            </li>
-          </ul>
-          <a href="worship.html" class="link-arrow reveal">예배 시간 전체 보기
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-          </a>
-        </div>
-        <div class="feature-img reveal">
-          <img src="img/worship.jpg" alt="예배 드리는 모습" />
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ 최근 설교 ============ -->
-  <section class="section section--surface-2">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <p class="label">설교·소식</p>
-        <h2>이번 주 말씀</h2>
-      </div>
-      <article class="featured-news reveal">
-        <div class="featured-news-img">
-          <img src="img/bible.jpg" alt="성경과 설교" />
-        </div>
-        <div>
-          <span class="featured-news-tag">주일 2부예배 · 2026. 06. 21</span>
-          <h3 class="featured-news-title">사랑하였음으로<br>충성하였네라</h3>
-          <p class="featured-news-date">이종운 담임목사</p>
-          <div class="cta-row" style="margin-top: 24px;">
-            <a href="https://www.youtube.com/@JungDownChurch_AnYang/videos" target="_blank" rel="noopener" class="btn btn--solid" style="font-size:14px; padding: 10px 20px;">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-              YouTube에서 보기
-            </a>
-          </div>
-        </div>
-      </article>
-
-      <ul class="row-list" style="margin-top: 48px;">
-        <li><a href="https://www.youtube.com/@JungDownChurch_AnYang/videos" target="_blank" rel="noopener" class="row-item row-item--link reveal">
-          <span class="row-key">06. 14</span>
-          <div><div class="row-title">믿음으로 나아가라</div><div class="row-desc">이종운 목사 · 주일 2부예배</div></div>
-          <span class="row-end"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
-        </a></li>
-        <li><a href="https://www.youtube.com/@JungDownChurch_AnYang/videos" target="_blank" rel="noopener" class="row-item row-item--link reveal">
-          <span class="row-key">06. 07</span>
-          <div><div class="row-title">성령으로 충만하라</div><div class="row-desc">이종운 목사 · 주일 2부예배</div></div>
-          <span class="row-end"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
-        </a></li>
-        <li><a href="https://www.youtube.com/@JungDownChurch_AnYang/videos" target="_blank" rel="noopener" class="row-item row-item--link reveal">
-          <span class="row-key">05. 31</span>
-          <div><div class="row-title">주의 이름을 부르는 자</div><div class="row-desc">이종운 목사 · 주일 2부예배</div></div>
-          <span class="row-end"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
-        </a></li>
-      </ul>
-      <div class="text-center reveal" style="margin-top: 40px;">
-        <a href="sermons.html" class="link-arrow">설교·소식 더 보기
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      <div class="qnav-grid">
+        <a href="#week" class="qnav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>예배안내</span>
+        </a>
+        <a href="#week" class="qnav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          <span>설교영상</span>
+        </a>
+        <a href="#ministry" class="qnav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>지역사역</span>
+        </a>
+        <a href="#new" class="qnav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>새가족</span>
+        </a>
+        <a href="#contact" class="qnav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>찾아오기</span>
         </a>
       </div>
     </div>
-  </section>
+  </nav>
 
-  <!-- ============ 핵심가치 ============ -->
-  <section class="section section--ink">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <p class="label">핵심가치</p>
-        <h2>우리가 가는 길</h2>
+  <!-- 목사님 + 교회소개 -->
+  <section class="intro" id="intro">
+    <div class="wrap intro-grid">
+
+      <!-- 목사님 -->
+      <div class="pastor-block">
+        <div class="pastor-photo">
+          <img src="img/pastor.jpg" alt="이종운 목사" />
+        </div>
+        <div class="pastor-info">
+          <p class="label reveal">담임목사</p>
+          <h2 class="pastor-name reveal">이종운 목사</h2>
+          <blockquote class="pastor-quote reveal">
+            "사람을 키우고 선교하는 교회로서<br>우리는 사랑으로 충성합니다."
+          </blockquote>
+          <p class="pastor-denom reveal">대한예수교장로회 (통합)</p>
+        </div>
       </div>
-      <ul class="vision-list">
-        <li class="vision-row reveal">
-          <span class="vision-num">01</span>
-          <div>
-            <h3 class="vision-title">사람을 세웁니다</h3>
-            <p class="vision-body">모든 세대가 말씀 위에 세워져 하나님의 사람으로 자라가도록 돕습니다.</p>
+
+      <div class="intro-divider"></div>
+
+      <!-- 교회소개 -->
+      <div class="about-block">
+        <div class="about-photo reveal">
+          <img src="img/church-service.jpg" alt="정다운교회 예배" />
+        </div>
+        <div class="about-text">
+          <p class="label reveal">교회소개</p>
+          <h2 class="block-title reveal">1971년부터<br>지역과 함께합니다</h2>
+          <p class="block-body reveal">
+            정다운교회는 대한예수교장로회(통합)교단에 속해 있으며 1971년 9월 서울대 앞 신림동(일명 고시촌)에서 개척 설립되어 지역사회를 섬기며 특히 고시 청년선교에 힘쓰다가 2011년 11월 안양시 석수동에 교회를 신축 이전 한 후 교육, 복지, 문화사역을 중심으로 지역과 함께 하며 예수 그리스도의 사랑과 섬김을 실천하고 있습니다.
+          </p>
+          <div class="stats reveal">
+            <div class="stat">
+              <span class="stat-n">1971</span>
+              <span class="stat-l">교회 설립</span>
+            </div>
+            <div class="stat">
+              <span class="stat-n">50<sup>+</sup></span>
+              <span class="stat-l">년의 역사</span>
+            </div>
+            <div class="stat">
+              <span class="stat-n">2011</span>
+              <span class="stat-l">안양 이전</span>
+            </div>
           </div>
-        </li>
-        <li class="vision-row reveal">
-          <span class="vision-num">02</span>
-          <div>
-            <h3 class="vision-title">지역을 섬깁니다</h3>
-            <p class="vision-body">교육·복지·문화사역을 통해 교회가 속한 지역과 함께 성장합니다.</p>
-          </div>
-        </li>
-        <li class="vision-row reveal">
-          <span class="vision-num">03</span>
-          <div>
-            <h3 class="vision-title">세계를 선교합니다</h3>
-            <p class="vision-body">복음이 필요한 곳이라면 어디든, 지역과 열방을 향한 선교에 헌신합니다.</p>
-          </div>
-        </li>
-      </ul>
+        </div>
+      </div>
+
     </div>
   </section>
 
-  <!-- ============ 지역사역 ============ -->
-  <section class="section">
-    <div class="wrap">
-      <div class="feature-split feature-split--rev">
-        <div class="feature-text">
-          <p class="label reveal">지역사역</p>
-          <h2 class="reveal">건물 전체가<br>지역을 위한 공간</h2>
-          <p class="reveal">장애인협동조합 카페, 방과후 돌봄, 어르신 낮 보호, 문화교실까지— 4층 건물이 이웃을 위해 열려 있습니다.</p>
-          <a href="ministry.html" class="link-arrow reveal">사역 자세히 보기
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+  <!-- 이번 주 예배 + 최신 설교 -->
+  <section class="week" id="week">
+    <div class="wrap week-grid">
+
+      <!-- 예배 시간표 -->
+      <div class="worship-block">
+        <p class="label reveal">예배안내</p>
+        <h2 class="block-title reveal">함께 드리는 예배</h2>
+        <div class="wtabs reveal">
+          <button class="wtab active" data-tab="sun">주일예배</button>
+          <button class="wtab" data-tab="mid">주중예배</button>
+          <button class="wtab" data-tab="edu">교육부서</button>
+        </div>
+        <div class="wpanel active" id="tab-sun">
+          <div class="svc-list">
+            <div class="svc-row"><span class="svc-name">주일 1부예배</span><span class="svc-day">주일</span><span class="svc-time">오전 9:00</span></div>
+            <div class="svc-row hi"><span class="svc-name">주일 2부예배</span><span class="svc-day">주일</span><span class="svc-time">오전 10:50</span></div>
+            <div class="svc-row"><span class="svc-name">주일 오후예배</span><span class="svc-day">주일</span><span class="svc-time">오후 1:20</span></div>
+          </div>
+        </div>
+        <div class="wpanel" id="tab-mid">
+          <div class="svc-list">
+            <div class="svc-row"><span class="svc-name">수요예배</span><span class="svc-day">수요일</span><span class="svc-time">오후 7:30</span></div>
+            <div class="svc-row"><span class="svc-name">금요기도회</span><span class="svc-day">금요일</span><span class="svc-time">오후 8:00</span></div>
+            <div class="svc-row"><span class="svc-name">새벽기도회</span><span class="svc-day">월 — 금</span><span class="svc-time">오전 5:30</span></div>
+          </div>
+        </div>
+        <div class="wpanel" id="tab-edu">
+          <div class="svc-list">
+            <div class="svc-row"><span class="svc-name">유아유치부</span><span class="svc-day">주일</span><span class="svc-time">오전 11:00</span></div>
+            <div class="svc-row"><span class="svc-name">어린이부</span><span class="svc-day">주일</span><span class="svc-time">오전 11:00</span></div>
+            <div class="svc-row"><span class="svc-name">청소년부</span><span class="svc-day">주일</span><span class="svc-time">오전 9:30</span></div>
+            <div class="svc-row"><span class="svc-name">청년텐트모임</span><span class="svc-day">주일</span><span class="svc-time">오전 10:00</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 최신 설교 -->
+      <div class="sermon-block">
+        <div class="sermon-head">
+          <div>
+            <p class="label reveal">최신 설교</p>
+            <h2 class="block-title reveal">이번 주 말씀</h2>
+          </div>
+          <a href="https://www.youtube.com/@JungDownChurch_AnYang/videos" target="_blank" rel="noopener noreferrer" class="more-link reveal">더 보기 →</a>
+        </div>
+        <a href="https://www.youtube.com/@JungDownChurch_AnYang/videos" target="_blank" rel="noopener noreferrer" class="sermon-thumb reveal">
+          <div class="thumb-inner">
+            <div class="play-btn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+            <span class="thumb-label">유튜브에서 보기</span>
+          </div>
+        </a>
+        <div class="sermon-meta reveal">
+          <span class="sermon-date">2026. 06. 21 · 주일 2부예배</span>
+          <h3 class="sermon-title">사랑하였음으로 충성하였네라</h3>
+          <p class="sermon-pastor">이종운 목사</p>
+        </div>
+        <div class="sermon-prev">
+          <a href="https://www.youtube.com/@JungDownChurch_AnYang/videos" target="_blank" rel="noopener noreferrer" class="prev-row reveal">
+            <span class="prev-date">06. 14</span>
+            <span class="prev-title">믿음으로 나아가라</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+          <a href="https://www.youtube.com/@JungDownChurch_AnYang/videos" target="_blank" rel="noopener noreferrer" class="prev-row reveal">
+            <span class="prev-date">06. 07</span>
+            <span class="prev-title">성령으로 충만하라</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+          <a href="https://www.youtube.com/@JungDownChurch_AnYang/videos" target="_blank" rel="noopener noreferrer" class="prev-row reveal">
+            <span class="prev-date">05. 31</span>
+            <span class="prev-title">주의 이름을 부르는 자</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
           </a>
         </div>
-        <div class="feature-img reveal">
-          <img src="img/community.jpg" alt="지역 사역 모습" />
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 핵심가치 -->
+  <section class="vision">
+    <div class="wrap">
+      <p class="label reveal">핵심가치</p>
+      <div class="vision-grid">
+        <div class="vision-card reveal">
+          <span class="v-num">01</span>
+          <h3 class="v-title">사람을 세웁니다</h3>
+          <p class="v-body">모든 세대가 말씀 위에 세워져 하나님의 사람으로 자라가도록 돕습니다.</p>
+        </div>
+        <div class="vision-card reveal">
+          <span class="v-num">02</span>
+          <h3 class="v-title">지역을 섬깁니다</h3>
+          <p class="v-body">교육·복지·문화사역을 통해 교회가 속한 지역과 함께 성장합니다.</p>
+        </div>
+        <div class="vision-card reveal">
+          <span class="v-num">03</span>
+          <h3 class="v-title">세계를 선교합니다</h3>
+          <p class="v-body">복음이 필요한 곳이라면 어디든 — 지역과 열방을 향한 선교에 헌신합니다.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ============ 교회소식 ============ -->
-  <section class="section section--surface-2">
+  <!-- 지역섬김사역 -->
+  <section class="ministry" id="ministry">
     <div class="wrap">
-      <div class="sec-head reveal">
-        <p class="label">교회소식</p>
-        <h2>최근 소식</h2>
+      <div class="section-head reveal">
+        <div>
+          <p class="label">지역섬김사역</p>
+          <h2 class="section-title">건물 전체가 지역을 위한 공간입니다</h2>
+        </div>
+        <p class="section-quote">"지역주민들은 변장한 천사입니다" — 이종운 목사</p>
       </div>
-      <ul class="row-list">
-        <li class="row-item reveal">
-          <span class="row-key">공지</span>
-          <div><div class="row-title">2026년 하반기 교회 일정 안내</div><div class="row-desc">2026. 06. 15</div></div>
-        </li>
-        <li class="row-item reveal">
-          <span class="row-key">행사</span>
-          <div><div class="row-title">여름 수련회 참가 신청</div><div class="row-desc">7월 셋째 주 · 신청 마감 6월 30일</div></div>
-        </li>
-        <li class="row-item reveal">
-          <span class="row-key">선교</span>
-          <div><div class="row-title">단기선교팀 파송 예배 안내</div><div class="row-desc">베트남 단기선교팀을 파송합니다</div></div>
-        </li>
-        <li class="row-item reveal">
-          <span class="row-key">교육</span>
-          <div><div class="row-title">새가족반 개강 안내</div><div class="row-desc">매월 첫째 주일 오후 1시 시작</div></div>
-        </li>
-      </ul>
+      <div class="ministry-grid">
+        <div class="m-card reveal"><span class="m-floor">1F</span><h3 class="m-name">장애인협동조합 카페</h3><p class="m-desc">장애 청년들에게 일자리를 제공하는 협동조합 카페를 무상으로 임대합니다.</p></div>
+        <div class="m-card reveal"><span class="m-floor">2F</span><h3 class="m-name">나래예능고등학교</h3><p class="m-desc">학교 적응에 어려움을 겪는 학생들을 위한 위탁 교육 기관이 함께합니다.</p></div>
+        <div class="m-card reveal"><span class="m-floor">2F</span><h3 class="m-name">다함께돌봄센터</h3><p class="m-desc">24명의 어린이가 방과후 돌봄을 받으며 악기교실·영어회화를 운영합니다.</p></div>
+        <div class="m-card reveal"><span class="m-floor">3F</span><h3 class="m-name">석수주간보호센터</h3><p class="m-desc">어르신들의 재활과 사회활동을 지원하는 낮 시간 보호 시설을 운영합니다.</p></div>
+        <div class="m-card reveal"><span class="m-floor">4F</span><h3 class="m-name">벧엘노인요양원</h3><p class="m-desc">15명의 어르신이 생활하는 요양원으로 전문적인 돌봄을 제공합니다.</p></div>
+        <div class="m-card reveal"><span class="m-floor">문화</span><h3 class="m-name">문화센터 &amp; 쌀독</h3><p class="m-desc">35개 강좌의 문화센터를 운영하고 지역주민을 위한 무료 쌀독을 제공합니다.</p></div>
+      </div>
     </div>
   </section>
 
-  <!-- ============ 새가족·찾아오기 ============ -->
-  <section class="section">
+  <!-- 교회소식 -->
+  <section class="news">
     <div class="wrap">
-      <div class="feature-split">
-        <div class="feature-text">
-          <p class="label reveal">처음 오시는 분께</p>
-          <h2 class="reveal">정다운교회에<br>오신 것을 환영합니다</h2>
-          <p class="reveal">어느 예배든 편하게 오세요. 따로 준비하실 것은 없습니다. 주일 2부예배(오전 10:50)에 새가족을 가장 따뜻하게 맞이합니다.</p>
-          <ul class="row-list reveal" style="margin: 24px 0 32px;">
-            <li class="row-item">
-              <span class="row-key">주소</span>
-              <div><div class="row-title">안양시 만안구 경수대로 1236</div></div>
-            </li>
-            <li class="row-item">
-              <span class="row-key">전화</span>
-              <div><div class="row-title"><a href="tel:031-472-7377">031-472-7377</a></div></div>
-            </li>
-            <li class="row-item">
-              <span class="row-key">지하철</span>
-              <div><div class="row-title">1호선 석수역 2번 출구 도보 10분</div></div>
-            </li>
-          </ul>
-          <div class="cta-row reveal">
-            <a href="visit.html" class="btn btn--solid">새가족 안내</a>
-            <a href="https://map.kakao.com/link/search/경기도+안양시+만안구+경수대로+1236" target="_blank" rel="noopener" class="btn btn--ghost">카카오맵</a>
+      <p class="label reveal">교회소식</p>
+      <div class="news-grid">
+        <article class="news-card reveal">
+          <div class="news-img"><img src="img/church-building.jpg" alt="" /></div>
+          <div class="news-body">
+            <span class="news-tag">공지</span>
+            <h3 class="news-title">2026년 하반기 교회 일정 안내</h3>
+            <p class="news-date">2026. 06. 15</p>
           </div>
-        </div>
-        <div class="feature-img reveal">
-          <img src="img/church-building.jpg" alt="정다운교회 건물 전경" />
-        </div>
+        </article>
+        <article class="news-card reveal">
+          <div class="news-img"><img src="img/church-daycare.jpg" alt="" /></div>
+          <div class="news-body">
+            <span class="news-tag">행사</span>
+            <h3 class="news-title">여름 수련회 참가 신청</h3>
+            <p class="news-date">2026. 06. 10</p>
+          </div>
+        </article>
+        <article class="news-card reveal">
+          <div class="news-img"><img src="img/church-care.jpg" alt="" /></div>
+          <div class="news-body">
+            <span class="news-tag">선교</span>
+            <h3 class="news-title">단기선교팀 파송 예배 안내</h3>
+            <p class="news-date">2026. 06. 01</p>
+          </div>
+        </article>
       </div>
     </div>
   </section>
 
-  <!-- ============ FINAL CTA ============ -->
-  <section class="final-cta">
-    <div class="wrap">
-      <h2 class="reveal">이번 주, 함께 예배드려요</h2>
-      <p class="reveal">주일 2부예배 오전 10:50에 새가족을 가장 따뜻하게 맞이합니다.</p>
-      <div class="cta-row reveal" style="justify-content: center;">
-        <a href="worship.html" class="btn btn--solid">예배 시간 보기</a>
-        <a href="visit.html" class="btn btn--ghost">오시는 길</a>
+  <!-- 새가족 + 찾아오기 -->
+  <section class="bottom" id="new">
+    <div class="wrap bottom-grid">
+
+      <div class="new-block">
+        <p class="label reveal">처음 오시나요?</p>
+        <h2 class="block-title reveal">정다운교회에<br>오신 것을 환영합니다</h2>
+        <p class="block-body reveal">어느 예배든 편하게 오세요. 따로 준비하실 것은 없습니다.</p>
+        <div class="steps reveal">
+          <div class="step"><span class="step-n">1</span><div><strong>예배에 참석하세요</strong><p>주일 2부예배(오전 10:50) 추천</p></div></div>
+          <div class="step"><span class="step-n">2</span><div><strong>새가족 인사를 나눠요</strong><p>예배 후 안내 데스크에서 만나보세요</p></div></div>
+          <div class="step"><span class="step-n">3</span><div><strong>공동체에 함께해요</strong><p>관심에 맞는 소그룹을 안내해 드립니다</p></div></div>
+        </div>
+        <a href="tel:031-472-7377" class="btn-fill reveal">031-472-7377 전화하기</a>
       </div>
+
+      <div class="contact-block" id="contact">
+        <p class="label reveal">찾아오시는 길</p>
+        <h2 class="block-title reveal">정다운교회</h2>
+        <div class="contact-rows reveal">
+          <div class="crow"><span class="ckey">주소</span><span>경기도 안양시 만안구<br>경수대로 1236 (13913)</span></div>
+          <div class="crow"><span class="ckey">전화</span><a href="tel:031-472-7377">031-472-7377</a></div>
+          <div class="crow"><span class="ckey">교통</span><span>1호선 석수역 2번 출구 · 도보 약 10분</span></div>
+        </div>
+        <a href="https://map.kakao.com/link/search/경기도+안양시+만안구+경수대로+1236" target="_blank" rel="noopener noreferrer" class="map-link reveal">카카오맵으로 보기 →</a>
+        <div class="map-wrap reveal">
+          <iframe src="https://maps.google.com/maps?q=경기도+안양시+만안구+경수대로+1236&output=embed&hl=ko&z=16" style="border:0;" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="정다운교회 위치"></iframe>
+        </div>
+      </div>
+
     </div>
   </section>
 
-  <!-- ============ FOOTER (KEEP SYNC ACROSS ALL 6 PAGES) ============ -->
+  <!-- FOOTER -->
   <footer class="footer">
-    <div class="wrap">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <h3>정다운교회</h3>
-          <p>대한예수교장로회(통합)</p>
-          <p>담임목사 이종운</p>
-        </div>
-        <div class="footer-col">
-          <h4>오시는 길</h4>
-          <p>경기도 안양시 만안구<br>경수대로 1236 (13913)</p>
-          <p><a href="tel:031-472-7377">031-472-7377</a></p>
-          <p>1호선 석수역 2번 출구<br>도보 약 10분</p>
-        </div>
-        <div class="footer-col">
-          <h4>바로가기</h4>
-          <a href="worship.html">예배안내</a>
-          <a href="sermons.html">설교·소식</a>
-          <a href="ministry.html">지역사역</a>
-          <a href="https://www.youtube.com/@JungDownChurch_AnYang/videos" target="_blank" rel="noopener">YouTube 채널 ↗</a>
-        </div>
+    <div class="wrap footer-inner">
+      <div>
+        <p class="footer-logo">정다운교회</p>
+        <p class="footer-meta">대한예수교장로회(통합) · 담임목사 이종운</p>
+        <p class="footer-meta">경기도 안양시 만안구 경수대로 1236 · 031-472-7377</p>
       </div>
-      <div class="footer-bottom">
-        <span>© 2026 정다운교회</span>
-        <div class="footer-links">
-          <a href="https://map.kakao.com/link/search/경기도+안양시+만안구+경수대로+1236" target="_blank" rel="noopener">카카오맵</a>
-          <a href="https://www.youtube.com/@JungDownChurch_AnYang/videos" target="_blank" rel="noopener">YouTube</a>
-        </div>
+      <div class="footer-right">
+        <a href="https://www.youtube.com/@JungDownChurch_AnYang/videos" target="_blank" rel="noopener noreferrer" class="footer-yt">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="17" height="17"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          YouTube
+        </a>
+        <p class="footer-copy">© 2025 정다운교회</p>
       </div>
     </div>
   </footer>
