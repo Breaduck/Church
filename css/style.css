@@ -608,56 +608,55 @@ body { font-size: 17px; }
 }
 
 .ministry-head {
-  max-width: 780px;
-  margin: 0 auto 72px;
-  text-align: center;
+  margin: 0 0 64px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 22px;
+  align-items: flex-start;
+  gap: 20px;
+  max-width: 720px;
 }
 .ministry-head .label { margin-bottom: 0; }
-.ministry-head .block-title { text-align: center; }
 .ministry-head .block-body {
-  text-align: center;
   color: var(--body);
-  max-width: 660px;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
 }
 
-/* 작은 인용문 (인트로 아래) */
+/* 작은 인용문 (인트로 아래, 왼쪽 정렬) */
 .ministry-quote {
-  margin: 12px 0 0;
-  padding: 16px 20px;
-  font-size: 0.95rem;
-  line-height: 1.55;
-  color: var(--muted);
-  background: var(--surf);
-  border-radius: 8px;
-  display: inline-flex;
+  margin: 8px 0 0;
+  padding: 14px 20px;
+  background: var(--white);
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+  display: flex;
   align-items: center;
   gap: 10px;
-  text-align: left;
-  border: none;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.ministry-quote blockquote {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 500;
 }
 .ministry-quote em {
   font-style: normal;
   color: var(--accent);
-  font-weight: 600;
+  font-weight: 700;
+}
+.ministry-quote figcaption {
+  color: var(--muted);
+  font-size: 0.85rem;
+  white-space: nowrap;
 }
 .mq-mark {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   color: var(--accent);
   font-weight: 700;
   line-height: 1;
-  align-self: flex-start;
-  margin-top: 2px;
-}
-.mq-cite {
-  color: var(--muted);
-  font-size: 0.85rem;
-  margin-left: 6px;
-  white-space: nowrap;
+  font-family: 'Georgia', serif;
 }
 
 /* Ministry layout — 좌: 건물 다이어그램 / 우: 층별 상세 */
@@ -738,6 +737,14 @@ body { font-size: 17px; }
   line-height: 1.35;
   transition: color 0.22s;
 }
+/* 지하 층 - 상단에 얇은 구분선 */
+.bd-floor--basement {
+  background: var(--surf);
+  border-top: 2px dashed var(--line);
+}
+.bd-floor--basement .bd-num { font-size: 1.25rem; }
+.bd-floor--basement:hover .bd-num,
+.bd-floor--basement:focus-visible .bd-num { font-size: 1.25rem; }
 
 /* Floor list — 흰 카드 (svc-row 스타일) */
 .floor-list {
@@ -807,7 +814,7 @@ body { font-size: 17px; }
 .floor-desc strong {
   font-weight: 700;
   color: var(--ink);
-  background: linear-gradient(transparent 62%, var(--accent-dim) 62%);
+  background: linear-gradient(transparent 60%, rgba(194, 232, 92, 0.55) 60%);
 }
 
 /* ============================================================
@@ -1208,10 +1215,11 @@ body { font-size: 17px; }
   .floor-desc { font-size: 1.02rem; line-height: 1.8; }
   .ministry-quote {
     font-size: 0.9rem;
-    padding: 14px 16px;
+    padding: 12px 16px;
     flex-wrap: wrap;
+    gap: 8px;
   }
-  .mq-cite { margin-left: 0; margin-top: 4px; display: block; width: 100%; }
+  .ministry-quote figcaption { width: 100%; white-space: normal; }
 
   /* Pastor greeting card — phone */
   .pastor-greeting { padding: 26px 22px; gap: 20px; border-left-width: 3px; }
