@@ -139,10 +139,9 @@ body { font-size: 17px; }
 /* --- Eyebrow label ---------------------------------------- */
 .label {
   display: inline-block;
-  font-size: 0.82rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  letter-spacing: 0.06em;
   color: var(--accent);
 }
 
@@ -304,7 +303,7 @@ body { font-size: 17px; }
   align-items: stretch;
 }
 
-.worship-block { display: flex; flex-direction: column; gap: 24px; }
+.worship-block { display: flex; flex-direction: column; gap: 24px; flex: 1; }
 .wtabs {
   display: flex;
   gap: 4px;
@@ -331,21 +330,22 @@ body { font-size: 17px; }
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10);
 }
 .wpanel { display: none; }
-.wpanel.active { display: block; }
-.svc-list { display: flex; flex-direction: column; gap: 2px; }
+.wpanel.active { display: flex; flex-direction: column; flex: 1; }
+.svc-list { display: flex; flex-direction: column; flex: 1; gap: 4px; }
 .svc-row {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 18px 18px;
+  padding: 26px 20px;
   border-radius: 10px;
+  flex: 1;
   transition: background 0.15s;
 }
 .svc-row:hover { background: rgba(0, 0, 0, 0.03); }
 .svc-row.hi { background: var(--accent-dim); }
-.svc-name { flex: 1; font-size: 1.05rem; font-weight: 600; }
-.svc-day { font-size: 0.9rem; color: var(--muted); width: 68px; text-align: center; }
-.svc-time { font-size: 1.05rem; font-weight: 700; color: var(--accent); min-width: 92px; text-align: right; }
+.svc-name { flex: 1; font-size: 1.12rem; font-weight: 600; }
+.svc-day { font-size: 0.95rem; color: var(--muted); width: 72px; text-align: center; }
+.svc-time { font-size: 1.12rem; font-weight: 700; color: var(--accent); min-width: 100px; text-align: right; }
 
 .sermon-block { display: flex; flex-direction: column; gap: 24px; }
 .sermon-head {
@@ -584,14 +584,25 @@ body { font-size: 17px; }
 .step p { font-size: 1.05rem; color: var(--body); line-height: 1.6; }
 
 /* 찾아오시는 길 */
-.contact-section { padding: 120px 0; background: var(--surf); }
+.contact-section { padding: 120px 0; background: var(--white); }
 .contact-inner {
-  display: grid;
-  grid-template-columns: 1fr 1.4fr;
-  gap: 72px;
-  align-items: start;
+  max-width: 680px;
 }
 .contact-text { display: flex; flex-direction: column; gap: 24px; }
+.map-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 28px;
+  background: var(--accent);
+  color: var(--white);
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  transition: background 0.2s;
+  align-self: flex-start;
+}
+.map-btn:hover { background: #2e6040; }
 .contact-rows { display: flex; flex-direction: column; }
 .crow {
   display: flex;
