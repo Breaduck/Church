@@ -185,31 +185,72 @@ body { font-size: 17px; }
 }
 .intro-divider { background: var(--line); align-self: stretch; }
 
-.pastor-block { display: flex; flex-direction: column; gap: 32px; }
+.pastor-block { display: flex; flex-direction: column; gap: 36px; }
+
+.pastor-photo-row {
+  display: flex;
+  gap: 28px;
+  align-items: flex-start;
+}
 .pastor-photo {
   border-radius: var(--r);
   overflow: hidden;
   background: var(--surf);
-  aspect-ratio: 4 / 5;
-  width: 100%;
+  aspect-ratio: 3 / 4;
+  width: 160px;
+  flex-shrink: 0;
 }
 .pastor-photo img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 20%;
+  object-position: center 15%;
 }
-.pastor-info { display: flex; flex-direction: column; gap: 14px; }
-.pastor-name { font-size: 1.85rem; font-weight: 700; letter-spacing: -0.02em; margin-top: 4px; }
-.pastor-quote {
-  font-size: 1.1rem;
-  line-height: 1.75;
+.pastor-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 8px;
+}
+.pastor-name { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; margin-top: 6px; line-height: 1.2; }
+.pastor-denom { font-size: 0.95rem; color: var(--muted); margin-top: 4px; }
+
+.pastor-greeting {
+  border-top: 1px solid var(--line);
+  padding-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.pastor-greeting-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.pastor-greeting-welcome {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.015em;
+  line-height: 1.4;
+}
+.pastor-greeting-body {
+  font-size: 1.05rem;
+  line-height: 1.85;
   color: var(--body);
-  border-left: 3px solid var(--accent);
-  padding-left: 20px;
-  font-style: normal;
+  word-break: keep-all;
 }
-.pastor-denom { font-size: 0.95rem; color: var(--muted); }
+.pastor-greeting-sig {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+  margin-top: 8px;
+  letter-spacing: -0.01em;
+}
 
 .about-block { display: flex; flex-direction: column; gap: 24px; }
 .about-photo {
@@ -604,7 +645,8 @@ body { font-size: 17px; }
 
   .intro-grid { grid-template-columns: 1fr; gap: 56px; }
   .intro-divider { display: none; }
-  .pastor-photo { max-width: 380px; }
+  .pastor-photo-row { flex-direction: column; }
+  .pastor-photo { width: 100%; max-width: 240px; }
 
   .week-grid { grid-template-columns: 1fr; gap: 56px; }
 
