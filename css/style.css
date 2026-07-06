@@ -177,7 +177,7 @@ body { font-size: 17px; }
 
 /* Touch UX */
 .btn-fill, .btn-line, .wtab, .notice-btn, .nav-toggle,
-.qnav-item, .prev-row, .svc-row, .map-overlay {
+.info-item, .prev-row, .svc-row, .map-overlay {
   touch-action: manipulation;
 }
 
@@ -224,31 +224,41 @@ body { font-size: 17px; }
 }
 
 /* ============================================================
-   QUICK NAV
+   INFO BAR — 예배시간·오시는 길·전화
    ============================================================ */
-.qnav {
+.infobar {
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   background: var(--white);
 }
-.qnav-grid { display: flex; }
-.qnav-item {
+.infobar-grid { display: flex; }
+.info-item {
   flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 28px 16px;
-  color: var(--body);
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  transition: color 0.2s, background 0.2s;
+  justify-content: center;
+  gap: 14px;
+  padding: 26px 16px;
   border-right: 1px solid var(--line);
+  transition: background 0.2s;
 }
-.qnav-item:first-child { border-left: 1px solid var(--line); }
-.qnav-item svg { width: 28px; height: 28px; flex-shrink: 0; }
-.qnav-item:hover { color: var(--accent); background: var(--surf); }
+.info-item:first-child { border-left: 1px solid var(--line); }
+.info-item:hover { background: var(--surf); }
+.info-item svg { width: 26px; height: 26px; color: var(--accent); flex-shrink: 0; }
+.info-item > div { display: flex; flex-direction: column; gap: 3px; }
+.info-k {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.03em;
+}
+.info-v {
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
 
 /* ============================================================
    INTRO  —  Pastor + About
@@ -1231,10 +1241,20 @@ body { font-size: 17px; }
   .pastor-greeting-welcome { font-size: 1.35rem; }
   .pastor-greeting-body { font-size: 1rem; line-height: 1.85; }
 
-  /* Quick nav */
-  .qnav-grid { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .qnav-item { min-width: 76px; padding: 16px 8px; font-size: 0.82rem; gap: 8px; }
-  .qnav-item svg { width: 22px; height: 22px; }
+  /* Info bar → 세로 스택 */
+  .infobar-grid { flex-direction: column; }
+  .info-item {
+    justify-content: flex-start;
+    padding: 15px 6px;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+  .info-item:first-child { border-left: none; }
+  .info-item:last-child { border-bottom: none; }
+  .info-item svg { width: 22px; height: 22px; }
+  .info-item > div { flex-direction: row; align-items: baseline; gap: 10px; }
+  .info-k { font-size: 0.8rem; min-width: 56px; }
+  .info-v { font-size: 0.98rem; }
 
   /* Hero */
   .hero { padding-top: var(--nav-h); min-height: 100svh; }
