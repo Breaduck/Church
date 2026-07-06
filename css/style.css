@@ -227,11 +227,18 @@ body { font-size: 17px; }
    INFO BAR — 예배시간·오시는 길·전화
    ============================================================ */
 .infobar {
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  background: var(--white);
+  position: relative;
+  z-index: 5;
 }
-.infobar-grid { display: flex; }
+.infobar-grid {
+  display: flex;
+  margin-top: -46px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
 .info-item {
   flex: 1;
   display: flex;
@@ -242,7 +249,7 @@ body { font-size: 17px; }
   border-right: 1px solid var(--line);
   transition: background 0.2s;
 }
-.info-item:first-child { border-left: 1px solid var(--line); }
+.info-item:last-child { border-right: none; }
 .info-item:hover { background: var(--surf); }
 .info-item svg { width: 26px; height: 26px; color: var(--accent); flex-shrink: 0; }
 .info-item > div { display: flex; flex-direction: column; gap: 3px; }
@@ -345,26 +352,19 @@ body { font-size: 17px; }
   padding: 40px 44px;
   background: var(--white);
   border-radius: var(--r);
-  border-left: 4px solid var(--accent);
   box-shadow: 0 4px 24px rgba(0,0,0,0.05);
 }
 .pastor-greeting-eyebrow {
   display: inline-flex;
   align-self: flex-start;
   align-items: center;
-  gap: 8px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-.pastor-greeting-eyebrow::before {
-  content: "";
-  width: 24px;
-  height: 2px;
+  padding: 7px 20px;
   background: var(--accent);
-  border-radius: 2px;
+  color: #fff;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
 }
 .pastor-greeting-welcome {
   font-size: 1.75rem;
@@ -1237,19 +1237,18 @@ body { font-size: 17px; }
   .ministry-quote figcaption { width: 100%; white-space: normal; }
 
   /* Pastor greeting card — phone */
-  .pastor-greeting { padding: 26px 22px; gap: 20px; border-left-width: 3px; }
+  .pastor-greeting { padding: 26px 22px; gap: 20px; }
   .pastor-greeting-welcome { font-size: 1.35rem; }
   .pastor-greeting-body { font-size: 1rem; line-height: 1.85; }
 
-  /* Info bar → 세로 스택 */
-  .infobar-grid { flex-direction: column; }
+  /* Info bar → 세로 스택 카드 */
+  .infobar-grid { flex-direction: column; margin-top: -20px; }
   .info-item {
     justify-content: flex-start;
-    padding: 15px 6px;
+    padding: 15px 20px;
     border-right: none;
     border-bottom: 1px solid var(--line);
   }
-  .info-item:first-child { border-left: none; }
   .info-item:last-child { border-bottom: none; }
   .info-item svg { width: 22px; height: 22px; }
   .info-item > div { flex-direction: row; align-items: baseline; gap: 10px; }
