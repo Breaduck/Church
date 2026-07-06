@@ -119,11 +119,11 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
       const d = e.date ? new Date(e.date) : null;
       const label = d && !isNaN(d.getTime())
         ? `${String(d.getMonth()+1).padStart(2,'0')}. ${String(d.getDate()).padStart(2,'0')}`
-        : '—';
+        : '';
       const dateEl  = rows[i].querySelector('.prev-date');
       const titleEl = rows[i].querySelector('.prev-title');
       if (dateEl)  dateEl.textContent  = label;
-      if (titleEl) titleEl.textContent = e.title || '—';
+      if (titleEl) titleEl.textContent = e.title || '';
     });
 
     // 로딩 클래스 제거
