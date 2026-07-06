@@ -14,6 +14,7 @@
   --nav-h:      60px;
   --r:          12px;
   --font:       'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-serif: 'Noto Serif KR', 'Georgia', serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -37,7 +38,6 @@ body { font-size: 17px; }
    ============================================================ */
 .block-body,
 .pastor-greeting-body,
-.v-body,
 .floor-desc,
 .step p {
   text-align: justify;
@@ -87,37 +87,6 @@ body { font-size: 17px; }
   object-fit: contain;
   flex-shrink: 0;
 }
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.notice-btn {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  color: var(--body);
-  border-radius: 8px;
-  transition: background 0.2s, color 0.2s;
-}
-.notice-btn:hover { background: var(--surf); color: var(--ink); }
-.notice-btn svg { width: 20px; height: 20px; }
-.notice-dot {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 8px;
-  height: 8px;
-  background: var(--accent);
-  border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.9);
-}
 .nav-end {
   display: flex;
   align-items: center;
@@ -154,10 +123,11 @@ body { font-size: 17px; }
 .hero-text { display: flex; flex-direction: column; gap: 24px; }
 .hero-text .label { margin-bottom: -8px; }
 .hero-title {
-  font-size: clamp(2.8rem, 4.6vw, 4.2rem);
-  font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: -0.03em;
+  font-family: var(--font-serif);
+  font-size: clamp(2.5rem, 4.2vw, 3.7rem);
+  font-weight: 700;
+  line-height: 1.28;
+  letter-spacing: -0.02em;
   color: var(--ink);
 }
 .hero-sub {
@@ -167,6 +137,25 @@ body { font-size: 17px; }
   line-height: 1.6;
 }
 .hero-btns { display: flex; gap: 14px; margin-top: 12px; flex-wrap: wrap; }
+.hero-facts {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+  margin-top: 16px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  font-size: 0.98rem;
+  color: var(--body);
+}
+.hero-facts li { display: flex; align-items: baseline; }
+.hero-facts strong {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.88rem;
+  margin-right: 10px;
+  letter-spacing: 0.02em;
+}
 .hero-photo {
   border-radius: var(--r);
   overflow: hidden;
@@ -176,7 +165,7 @@ body { font-size: 17px; }
 .hero-photo img { width: 100%; height: 100%; object-fit: cover; }
 
 /* Touch UX */
-.btn-fill, .btn-line, .wtab, .notice-btn, .nav-toggle,
+.btn-fill, .btn-line, .wtab, .nav-toggle,
 .qnav-item, .prev-row, .svc-row, .map-overlay {
   touch-action: manipulation;
 }
@@ -212,15 +201,20 @@ body { font-size: 17px; }
 .label {
   display: inline-flex;
   align-items: center;
-  padding: 7px 20px;
-  background: var(--accent);
-  color: #fff;
-  border-radius: 999px;
-  font-size: 1rem;
+  gap: 12px;
+  font-size: 0.92rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.1em;
+  color: var(--accent);
   margin-bottom: 20px;
   align-self: flex-start;
+}
+.label::before {
+  content: "";
+  width: 28px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
 }
 
 /* ============================================================
@@ -283,7 +277,7 @@ body { font-size: 17px; }
   gap: 20px;
   height: 100%;
 }
-.about-text .stats { margin-top: auto; }
+.about-text .timeline { margin-top: auto; }
 
 /* ============================================================
    PASTOR SECTION — 목사님 인사말 (하단)
@@ -357,11 +351,12 @@ body { font-size: 17px; }
   border-radius: 2px;
 }
 .pastor-greeting-welcome {
+  font-family: var(--font-serif);
   font-size: 1.75rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--ink);
-  letter-spacing: -0.02em;
-  line-height: 1.45;
+  letter-spacing: -0.01em;
+  line-height: 1.5;
 }
 .pastor-greeting-body-wrap {
   display: flex;
@@ -396,10 +391,11 @@ body { font-size: 17px; }
 }
 
 .block-title {
+  font-family: var(--font-serif);
   font-size: clamp(1.7rem, 2.8vw, 2.4rem);
   font-weight: 700;
-  letter-spacing: -0.025em;
-  line-height: 1.25;
+  letter-spacing: -0.015em;
+  line-height: 1.35;
   color: var(--ink);
 }
 .block-body {
@@ -409,28 +405,39 @@ body { font-size: 17px; }
   word-break: keep-all;
 }
 
-.stats {
-  display: flex;
-  justify-content: space-evenly;
-  margin-top: 16px;
-  border-top: 1px solid var(--line);
-}
-.stat {
+/* --- 연혁 타임라인 ----------------------------------------- */
+.timeline {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  align-items: center;
-  text-align: center;
-  padding: 24px 16px;
+  margin-top: 12px;
+  border-top: 1px solid var(--line);
 }
-.stat-n { font-size: 2.4rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1; color: var(--ink); }
-.stat-n sup { font-size: 0.6em; color: var(--accent); }
-.stat-l { font-size: 0.95rem; color: var(--muted); font-weight: 500; }
+.tl-item {
+  display: flex;
+  align-items: baseline;
+  gap: 24px;
+  padding: 17px 0;
+  border-bottom: 1px solid var(--line);
+}
+.tl-year {
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+  width: 64px;
+  flex-shrink: 0;
+}
+.tl-desc {
+  font-size: 1rem;
+  color: var(--body);
+  line-height: 1.7;
+  word-break: keep-all;
+}
 
 /* ============================================================
    WEEK  —  Worship schedule + Sermon
    ============================================================ */
-.week { padding: 120px 0; background: var(--surf); }
+.week { padding: 120px 0; background: var(--white); }
 .week-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -474,8 +481,9 @@ body { font-size: 17px; }
   padding: 24px 22px;
   flex: 1;
   background: var(--white);
+  border: 1px solid var(--line);
   border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
   transition: box-shadow 0.2s, transform 0.2s;
 }
 .svc-row:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.10); transform: translateY(-1px); }
@@ -563,40 +571,6 @@ body { font-size: 17px; }
 .prev-date { font-size: 0.9rem; color: var(--muted); width: 52px; flex-shrink: 0; }
 .prev-title { flex: 1; font-size: 1.02rem; font-weight: 500; }
 .prev-row svg { width: 18px; height: 18px; color: var(--muted); flex-shrink: 0; }
-
-/* ============================================================
-   VISION
-   ============================================================ */
-.vision { padding: 120px 0; background: var(--white); }
-.vision-heading {
-  font-size: clamp(1.6rem, 2.6vw, 2.2rem);
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  color: var(--ink);
-  margin-bottom: 56px;
-  line-height: 1.3;
-}
-.vision-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-}
-.vision-card {
-  padding: 44px 40px;
-  background: var(--white);
-  border: 1px solid var(--line);
-  border-top: 4px solid var(--accent);
-  border-radius: var(--r);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-  transition: box-shadow 0.2s, transform 0.2s;
-}
-.vision-card:hover { box-shadow: 0 12px 36px rgba(0,0,0,0.11); transform: translateY(-4px); }
-.v-num { font-size: 2.8rem; font-weight: 900; letter-spacing: -0.03em; color: rgba(61,122,86,0.18); line-height: 1; margin-bottom: 4px; }
-.v-title { font-size: 1.55rem; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); line-height: 1.3; }
-.v-body { font-size: 1.08rem; line-height: 1.8; color: var(--body); word-break: keep-all; }
 
 /* ============================================================
    MINISTRY SECTION — 지역사역 (index)
@@ -823,109 +797,6 @@ body { font-size: 17px; }
 }
 
 /* ============================================================
-   MINISTRY (legacy — 다른 페이지)
-   ============================================================ */
-.ministry { padding: 120px 0; background: var(--white); }
-.section-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 32px;
-  margin-bottom: 56px;
-}
-.section-title {
-  font-size: clamp(1.6rem, 2.4vw, 2.1rem);
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  margin-top: 12px;
-  line-height: 1.3;
-}
-.section-quote {
-  font-size: 1rem;
-  color: var(--muted);
-  font-style: italic;
-  max-width: 340px;
-  text-align: right;
-  flex-shrink: 0;
-  line-height: 1.6;
-}
-.ministry-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-}
-.m-card {
-  background: var(--surf);
-  border-radius: var(--r);
-  padding: 32px 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  border: 1px solid var(--line);
-  transition: box-shadow 0.2s, transform 0.2s;
-}
-.m-card:hover { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.07); transform: translateY(-2px); }
-.m-floor {
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--accent);
-  background: var(--accent-dim);
-  border-radius: 6px;
-  padding: 4px 10px;
-  align-self: flex-start;
-}
-.m-name { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.35; }
-.m-desc { font-size: 0.98rem; line-height: 1.7; color: var(--body); word-break: keep-all; }
-
-/* ============================================================
-   NEWS
-   ============================================================ */
-.news { padding: 120px 0; background: var(--white); }
-.news .label { margin-bottom: 16px; }
-.news-heading {
-  font-size: clamp(1.6rem, 2.6vw, 2.2rem);
-  font-weight: 700;
-  letter-spacing: -0.025em;
-  color: var(--ink);
-  margin-bottom: 48px;
-  line-height: 1.3;
-}
-.news-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 22px;
-}
-.news-card {
-  background: var(--white);
-  border-radius: var(--r);
-  overflow: hidden;
-  border: 1px solid var(--line);
-  transition: box-shadow 0.2s, transform 0.2s;
-}
-.news-card:hover { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08); transform: translateY(-2px); }
-.news-img { aspect-ratio: 16 / 10; overflow: hidden; background: var(--surf); }
-.news-img img { transition: transform 0.35s; }
-.news-card:hover .news-img img { transform: scale(1.05); }
-.news-body { padding: 24px 26px; display: flex; flex-direction: column; gap: 10px; }
-.news-tag {
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--accent);
-  background: var(--accent-dim);
-  padding: 4px 10px;
-  border-radius: 6px;
-  align-self: flex-start;
-}
-.news-title { font-size: 1.12rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.4; }
-.news-date { font-size: 0.9rem; color: var(--muted); margin-top: 6px; }
-
-/* ============================================================
    BOTTOM  —  New Visitor + Contact
    ============================================================ */
 /* 처음 오시나요? */
@@ -1059,61 +930,7 @@ body { font-size: 17px; }
 .footer-copy { font-size: 0.82rem; color: var(--muted); }
 
 /* ============================================================
-   NOTICE PANEL
-   ============================================================ */
-.notice-panel {
-  position: fixed;
-  top: calc(var(--nav-h) + 8px);
-  right: 24px;
-  width: 340px;
-  background: var(--white);
-  border: 1px solid var(--line);
-  border-radius: var(--r);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-  z-index: 200;
-  display: none;
-  overflow: hidden;
-}
-.notice-panel.open { display: block; }
-.notice-panel-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--line);
-}
-.notice-panel-head h3 { font-size: 1rem; font-weight: 700; }
-.notice-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  color: var(--muted);
-  border-radius: 6px;
-  transition: background 0.2s;
-}
-.notice-close:hover { background: var(--surf); color: var(--ink); }
-.notice-list { list-style: none; }
-.notice-item {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--line);
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  cursor: default;
-  transition: background 0.15s;
-}
-.notice-item:last-child { border-bottom: none; }
-.notice-item:hover { background: var(--surf); }
-.notice-item-date { font-size: 0.82rem; color: var(--muted); }
-.notice-item-title { font-size: 0.98rem; font-weight: 500; color: var(--ink); line-height: 1.5; }
-
-/* ============================================================
-   SCROLL REVEALS
+   HERO REVEAL (히어로만, 스크롤 애니메이션 없음)
    ============================================================ */
 .reveal-hero {
   opacity: 0;
@@ -1122,21 +939,14 @@ body { font-size: 17px; }
 }
 .reveal-hero.visible { opacity: 1; transform: none; }
 
-.reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.65s ease, transform 0.65s ease;
-}
-.reveal.visible { opacity: 1; transform: none; }
-
 /* ============================================================
    RESPONSIVE — TABLET (max 960px)
    ============================================================ */
 @media (max-width: 960px) {
   .wrap { padding: 0 28px; }
 
-  .about-section, .pastor-section, .vision, .week,
-  .new-section, .news, .contact-section,
+  .about-section, .pastor-section, .week,
+  .new-section, .contact-section,
   .ministry-section { padding: 96px 0; }
 
   /* Hero */
@@ -1175,17 +985,9 @@ body { font-size: 17px; }
   .pastor-greeting { padding: 32px 28px; gap: 22px; }
   .pastor-inner   { grid-template-columns: 1fr; gap: 40px; }
   .pastor-photo   { max-width: 200px; }
-  .vision-grid    { grid-template-columns: 1fr; gap: 14px; }
   .new-inner      { grid-template-columns: 1fr; gap: 48px; }
   .contact-inner  { grid-template-columns: 1fr; gap: 40px; }
   .week-grid      { grid-template-columns: 1fr; gap: 48px; }
-
-  .ministry-grid  { grid-template-columns: repeat(2, 1fr); }
-  .news-grid      { grid-template-columns: 1fr; max-width: 520px; }
-
-  .vision-card    { border-radius: var(--r) !important; }
-  .section-head   { flex-direction: column; align-items: flex-start; }
-  .section-quote  { text-align: left; max-width: 100%; }
 }
 
 /* ============================================================
@@ -1196,8 +998,8 @@ body { font-size: 17px; }
   .wrap { padding: 0 20px; }
 
   /* Section padding */
-  .about-section, .pastor-section, .vision, .week,
-  .new-section, .news, .contact-section,
+  .about-section, .pastor-section, .week,
+  .new-section, .contact-section,
   .ministry-section { padding: 72px 0; }
 
   /* Ministry — phone */
@@ -1241,15 +1043,16 @@ body { font-size: 17px; }
   .hero-inner { padding-top: 24px; padding-bottom: 48px; gap: 28px; }
   .hero-text { gap: 16px; }
   .hero-text .label { margin-bottom: -4px; }
-  .hero-title { font-size: clamp(2.2rem, 9vw, 2.8rem); }
+  .hero-title { font-size: clamp(2rem, 8.5vw, 2.6rem); }
   .hero-sub { font-size: 1rem; }
   .hero-btns { gap: 10px; }
+  .hero-facts { flex-direction: column; gap: 10px; padding-top: 18px; margin-top: 10px; }
   .hero-photo { aspect-ratio: 16/9; max-height: 210px; }
 
-  /* About */
-  .stat { padding: 18px 10px; }
-  .stat-n { font-size: 1.9rem; }
-  .stat-l { font-size: 0.88rem; }
+  /* About — 타임라인 */
+  .tl-item { gap: 16px; padding: 14px 0; }
+  .tl-year { font-size: 1.05rem; width: 52px; }
+  .tl-desc { font-size: 0.95rem; }
 
   /* Pastor */
   .pastor-left { flex-direction: row; gap: 18px; align-items: flex-start; }
@@ -1259,12 +1062,6 @@ body { font-size: 17px; }
   .pastor-name { font-size: 1.4rem; }
   .pastor-denom { font-size: 0.85rem; }
   .pastor-greeting-sig { font-size: 1rem; }
-
-  /* Vision */
-  .vision-card { padding: 32px 24px; }
-  .v-num { font-size: 2rem; }
-  .v-title { font-size: 1.3rem; }
-  .v-body { font-size: 1rem; }
 
   /* Week / Worship */
   .week-grid { gap: 40px; }
@@ -1279,14 +1076,9 @@ body { font-size: 17px; }
   .more-link { padding-top: 0; }
   .sermon-title { font-size: 1.1rem; }
 
-  /* News / New */
-  .ministry-grid { grid-template-columns: 1fr; }
-  .news-grid { max-width: 100%; }
+  /* New visitor */
   .step strong { font-size: 1.05rem; }
   .step p { font-size: 0.95rem; }
-
-  /* Notice panel → full width on phone */
-  .notice-panel { left: 12px; right: 12px; width: auto; }
 
   /* Mobile nav */
   .nav-links {
