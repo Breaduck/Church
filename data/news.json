@@ -1,0 +1,22 @@
+{
+  "items": [
+    {
+      "title": "2026년 하반기 교회 일정 안내",
+      "date": "2026-06-15",
+      "tag": "공지",
+      "image": "/img/church-building.jpg"
+    },
+    {
+      "title": "여름 수련회 참가 신청",
+      "date": "2026-06-10",
+      "tag": "행사",
+      "image": "/img/church-daycare.jpg"
+    },
+    {
+      "title": "단기선교팀 파송 예배 안내",
+      "date": "2026-06-01",
+      "tag": "선교",
+      "image": "/img/church-care.jpg"
+    }
+  ]
+}

@@ -10,7 +10,11 @@
       "Bash(wrangler pages *)",
       "WebFetch(domain:8892cd19.church-ira.pages.dev)",
       "Bash(wrangler whoami *)",
-      "Bash(git init *)"
+      "Bash(git init *)",
+      "WebFetch(domain:a348a973.friendly-1m5.pages.dev)",
+      "PowerShell(git rm *)",
+      "PowerShell(node --check js/main.js; if \\($?\\) { \"main.js OK\" })",
+      "PowerShell(git revert *)"
     ]
   }
 }
