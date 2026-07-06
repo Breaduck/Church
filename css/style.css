@@ -671,10 +671,10 @@ body { font-size: 17px; }
 /* Ministry layout — 좌: 건물 다이어그램 / 우: 층별 상세 */
 .ministry-layout {
   display: grid;
-  grid-template-columns: 240px 1fr;
+  grid-template-columns: 300px 1fr;
   gap: 56px;
   align-items: start;
-  max-width: 1080px;
+  max-width: 1120px;
   margin: 0 auto;
 }
 
@@ -693,11 +693,11 @@ body { font-size: 17px; }
 .bd-header {
   background: var(--accent);
   color: #fff;
-  padding: 20px 16px;
+  padding: 22px 16px;
   text-align: center;
 }
 .bd-header-label {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 800;
   letter-spacing: 0.02em;
 }
@@ -707,8 +707,8 @@ body { font-size: 17px; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 28px 14px;
+  gap: 8px;
+  padding: 32px 16px;
   background: var(--white);
   color: var(--ink);
   border-top: 1px solid var(--line);
@@ -734,13 +734,13 @@ body { font-size: 17px; }
 .bd-floor:hover .bd-hint,
 .bd-floor:focus-visible .bd-hint { color: rgba(255,255,255,0.9); }
 .bd-num {
-  font-size: 1.55rem;
+  font-size: 1.7rem;
   font-weight: 800;
   letter-spacing: -0.01em;
   line-height: 1;
 }
 .bd-hint {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: var(--muted);
   font-weight: 500;
   line-height: 1.35;
@@ -753,9 +753,9 @@ body { font-size: 17px; }
   background: var(--surf);
   border-top: 2px dashed var(--line);
 }
-.bd-floor--basement .bd-num { font-size: 1.25rem; }
+.bd-floor--basement .bd-num { font-size: 1.35rem; }
 .bd-floor--basement:hover .bd-num,
-.bd-floor--basement:focus-visible .bd-num { font-size: 1.25rem; }
+.bd-floor--basement:focus-visible .bd-num { font-size: 1.35rem; }
 
 /* Floor list — 흰 카드 (svc-row 스타일) */
 .floor-list {
@@ -1166,13 +1166,19 @@ body { font-size: 17px; }
     max-width: 720px;
     margin: 0 auto;
   }
-  .bd-header { padding: 16px 12px; }
+  .bd-header { padding: 18px 14px; }
+  .bd-header-label { font-size: 1.15rem; }
   .bd-floor {
     flex-direction: row;
     justify-content: center;
-    padding: 18px 14px;
-    gap: 12px;
+    padding: 22px 16px;
+    gap: 16px;
   }
+  .bd-num { font-size: 1.5rem; }
+  .bd-hint { font-size: 1rem; }
+  .bd-floor--basement .bd-num,
+  .bd-floor--basement:hover .bd-num,
+  .bd-floor--basement:focus-visible .bd-num { font-size: 1.2rem; }
   .bd-floor:hover, .bd-floor:focus-visible { transform: scale(1.02); }
 
   .floor { grid-template-columns: 90px 1fr; gap: 24px; padding: 28px 26px; }
@@ -1204,17 +1210,46 @@ body { font-size: 17px; }
   :root { --nav-h: 56px; }
   .wrap { padding: 0 20px; }
 
+  /* iOS Safari에서 justify가 한글 어절 사이를 과하게 벌리는 문제 해결 */
+  .block-body,
+  .pastor-greeting-body,
+  .v-body,
+  .floor-desc,
+  .step p {
+    text-align: left;
+    word-spacing: normal;
+  }
+
   /* Section padding */
   .about-section, .pastor-section, .vision, .week,
   .new-section, .news, .contact-section,
   .ministry-section { padding: 72px 0; }
 
-  /* Ministry — phone */
+  /* Ministry — phone: 건물을 세로로 시원하게 */
   .building-diagram { max-width: 100%; }
-  .bd-header-label { font-size: 1rem; }
-  .bd-floor { padding: 14px 8px; gap: 8px; }
-  .bd-num { font-size: 1.15rem; }
-  .bd-hint { font-size: 0.8rem; }
+  .bd-header { padding: 16px 12px; }
+  .bd-header-label { font-size: 1.05rem; }
+  .bd-floor {
+    padding: 20px 16px;
+    gap: 18px;
+    justify-content: space-between;
+  }
+  .bd-num {
+    font-size: 1.4rem;
+    min-width: 78px;
+    text-align: left;
+    flex-shrink: 0;
+  }
+  .bd-hint {
+    font-size: 1rem;
+    color: var(--body);
+    font-weight: 600;
+    text-align: right;
+    flex: 1;
+  }
+  .bd-floor--basement .bd-num,
+  .bd-floor--basement:hover .bd-num,
+  .bd-floor--basement:focus-visible .bd-num { font-size: 1.15rem; }
 
   .floor {
     grid-template-columns: 1fr;
@@ -1256,12 +1291,17 @@ body { font-size: 17px; }
 
   /* Hero */
   .hero { padding-top: var(--nav-h); min-height: 100svh; }
-  .hero-inner { padding-top: 24px; padding-bottom: 48px; gap: 28px; }
+  .hero-inner { padding-top: 24px; padding-bottom: 60px; gap: 28px; }
   .hero-text { gap: 16px; }
   .hero-text .label { margin-bottom: -4px; }
   .hero-title { font-size: clamp(2.2rem, 9vw, 2.8rem); }
-  .hero-sub { font-size: 1rem; }
+  .hero-sub {
+    font-size: 1.02rem;
+    line-height: 1.65;
+    word-break: keep-all;
+  }
   .hero-btns { gap: 10px; }
+  .btn-fill, .btn-line { height: 48px; padding: 0 22px; font-size: 0.98rem; }
   .hero-photo { aspect-ratio: 16/9; max-height: 210px; }
 
   /* About */
@@ -1286,11 +1326,11 @@ body { font-size: 17px; }
 
   /* Week / Worship */
   .week-grid { gap: 40px; }
-  .wtab { font-size: 0.88rem; padding: 10px 0; }
-  .svc-row { padding: 18px 16px; }
-  .svc-name { font-size: 1.1rem; }
-  .svc-time { font-size: 1.1rem; min-width: 88px; }
-  .svc-day { font-size: 0.85rem; width: 56px; }
+  .wtab { font-size: 0.9rem; padding: 11px 0; }
+  .svc-row { padding: 16px 14px; gap: 10px; }
+  .svc-name { font-size: 1.02rem; letter-spacing: -0.01em; }
+  .svc-time { font-size: 1.02rem; min-width: 82px; }
+  .svc-day { font-size: 0.82rem; width: 48px; }
 
   /* Sermon */
   .sermon-head { flex-wrap: wrap; gap: 6px; }
@@ -1300,8 +1340,14 @@ body { font-size: 17px; }
   /* News / New */
   .ministry-grid { grid-template-columns: 1fr; }
   .news-grid { max-width: 100%; }
+  .step { gap: 16px; }
+  .step-n { width: 36px; height: 36px; font-size: 0.98rem; }
   .step strong { font-size: 1.05rem; }
-  .step p { font-size: 0.95rem; }
+  .step p { font-size: 0.95rem; line-height: 1.65; }
+
+  /* Contact */
+  .crow { gap: 20px; padding: 16px 0; font-size: 1rem; }
+  .ckey { font-size: 0.88rem; width: 44px; }
 
   /* Notice panel → full width on phone */
   .notice-panel { left: 12px; right: 12px; width: auto; }
