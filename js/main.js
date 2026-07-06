@@ -33,6 +33,22 @@ window.addEventListener('load', () => {
   );
 });
 
+// Section reveals on scroll
+const obs = new IntersectionObserver(
+  entries => entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      obs.unobserve(entry.target);
+    }
+  }),
+  { threshold: 0.08, rootMargin: '0px 0px -32px 0px' }
+);
+
+document.querySelectorAll('.reveal').forEach((el, i) => {
+  el.style.transitionDelay = `${(i % 6) * 90}ms`;
+  obs.observe(el);
+});
+
 // YouTube 최신 설교 자동 로드 (localStorage 캐시 + 다중 프록시 폴백)
 (function loadYouTube() {
   const CHANNEL_ID = 'UCqLNxJF2KSSbqPnnVwB2deQ';
@@ -157,6 +173,23 @@ window.addEventListener('load', () => {
     }
   });
 })();
+
+// Notice panel
+const noticeBtn   = document.getElementById('notice-btn');
+const noticePanel = document.getElementById('notice-panel');
+const noticeClose = document.getElementById('notice-close');
+if (noticeBtn && noticePanel && noticeClose) {
+  noticeBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    noticePanel.classList.toggle('open');
+  });
+  noticeClose.addEventListener('click', () => noticePanel.classList.remove('open'));
+  document.addEventListener('click', e => {
+    if (!noticePanel.contains(e.target) && e.target !== noticeBtn) {
+      noticePanel.classList.remove('open');
+    }
+  });
+}
 
 // Worship tabs
 document.querySelectorAll('.wtab').forEach(btn => {

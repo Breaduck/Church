@@ -1,13 +1,16 @@
 # 정다운교회 홈페이지
 
 대한예수교장로회(통합) 정다운교회 (담임 이종운 목사) 공식 홈페이지.
-정적 HTML/CSS/JS 원페이지 사이트.
+정적 HTML/CSS/JS 멀티페이지 사이트, Apple-grade 디자인 시스템 기반.
 
-## 구성
+## 페이지 구성
 
-- `index.html` — 전체 페이지 (교회소개 → 지역사역 → 예배안내·설교 → 인사말 → 새가족 → 오시는 길)
-- `css/style.css` — 스타일
-- `js/main.js` — 내비게이션, 예배 탭, YouTube 최신 설교 자동 로드
+- `index.html` — 홈
+- `about.html` — 교회소개
+- `worship.html` — 예배안내
+- `sermons.html` — 설교·소식
+- `ministry.html` — 지역사역
+- `visit.html` — 찾아오기
 
 ## 로컬 미리보기
 
@@ -22,16 +25,17 @@ python -m http.server 8000
 
 ## 콘텐츠 수정
 
-전체 콘텐츠는 `index.html` 에 하드코딩되어 있다. 자주 바뀌는 항목:
+전체 콘텐츠는 HTML 에 하드코딩되어 있다. 자주 바뀌는 항목:
 
-| 항목 | 위치 |
+| 항목 | 파일 |
 |---|---|
-| 예배 시간 | `#week` 섹션 |
-| 사역 시설 설명 | `#ministry` 섹션 |
-| 연혁 | `#intro` 섹션 타임라인 |
-| 주소·전화번호 | hero 하단 정보줄 + `#contact` 섹션 + footer |
+| 이번 주 설교·이전 설교·교회 소식 | `sermons.html` |
+| 예배 시간 | `worship.html` |
+| 연혁 | `about.html` |
+| 사역 시설 설명 | `ministry.html` |
+| 주소·전화번호 | 모든 페이지의 footer + `visit.html` |
 
-이번 주 설교는 YouTube 채널 RSS 에서 자동으로 불러온다 (`js/main.js`).
+자세한 편집 가이드는 [CLAUDE.md](./CLAUDE.md) 참고. **메뉴(nav)와 푸터(footer)는 6개 페이지에 중복되어 있으므로 함께 수정해야 한다.**
 
 ## 배포
 
