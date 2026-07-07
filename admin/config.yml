@@ -5,11 +5,11 @@ backend:
   base_url: https://church.pages.dev
   auth_endpoint: /api/auth
   commit_messages:
-    create: "소식 추가: {{collection}} “{{slug}}”"
-    update: "소식 수정: {{collection}} “{{slug}}”"
-    delete: "소식 삭제: {{collection}} “{{slug}}”"
-    uploadMedia: "이미지 업로드: {{path}}"
-    deleteMedia: "이미지 삭제: {{path}}"
+    create: "관리자: {{collection}} 생성 “{{slug}}”"
+    update: "관리자: {{collection}} 수정 “{{slug}}”"
+    delete: "관리자: {{collection}} 삭제 “{{slug}}”"
+    uploadMedia: "관리자: 이미지 업로드 {{path}}"
+    deleteMedia: "관리자: 이미지 삭제 {{path}}"
 
 locale: "ko"
 
@@ -20,14 +20,14 @@ collections:
   - name: "news"
     label: "교회소식"
     label_singular: "소식"
-    description: "홈페이지 '교회소식' 섹션과 상단 종 모양 알림창에 표시됩니다."
+    description: "홈페이지 하단 '교회소식' 섹션에 카드로 표시됩니다. 사진과 간단한 글을 함께 올릴 수 있습니다."
     files:
       - file: "data/news.json"
         name: "news_list"
-        label: "교회소식 전체 목록"
+        label: "교회소식 목록"
         format: "json"
         fields:
-          - label: "소식 목록"
+          - label: "교회소식"
             name: "items"
             widget: "list"
             summary: "{{fields.date}} · [{{fields.tag}}] {{fields.title}}"
@@ -39,4 +39,23 @@ collections:
                 widget: "select"
                 options: ["공지", "행사", "선교", "교육", "소식"]
                 default: "공지"
-              - { label: "대표 이미지", name: "image", widget: "image", required: false, hint: "비워두면 기본 이미지가 표시됩니다." }
+              - { label: "대표 사진", name: "image", widget: "image", required: false, hint: "없으면 기본 이미지가 표시됩니다." }
+              - { label: "내용", name: "body", widget: "text", required: false, hint: "2~3줄 정도의 간단한 설명" }
+
+  - name: "notices"
+    label: "공지사항"
+    label_singular: "공지"
+    description: "상단 우측 '공지사항' 버튼을 눌렀을 때 뜨는 목록입니다. 짧은 알림만 여기에 등록해 주세요."
+    files:
+      - file: "data/notices.json"
+        name: "notices_list"
+        label: "공지사항 목록"
+        format: "json"
+        fields:
+          - label: "공지 목록"
+            name: "items"
+            widget: "list"
+            summary: "{{fields.date}} · {{fields.title}}"
+            fields:
+              - { label: "제목", name: "title", widget: "string" }
+              - { label: "날짜", name: "date", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false, picker_utc: false }

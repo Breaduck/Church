@@ -1,6 +1,7 @@
-// data/news.json 에서 교회소식을 읽어 홈 화면 카드 + 상단 공지 패널을 채움
-// 관리자가 /admin/ 에서 news.json을 수정하면 배포 후 자동으로 반영됨
-(async function loadNews() {
+// data/news.json → 홈 화면 '교회소식' 카드
+// data/notices.json → 상단 '공지사항' 패널
+// 관리자가 /admin/ 에서 편집한 뒤 배포되면 자동 반영됩니다.
+(async function loadContent() {
   const grid = document.querySelector('.news-grid');
   const noticeList = document.querySelector('.notice-list');
   if (!grid && !noticeList) return;
@@ -14,37 +15,47 @@
     return m ? `${m[1]}. ${m[2]}. ${m[3]}` : (iso || '');
   };
 
+  const bust = () => `?t=${Date.now()}`;
   const FALLBACK_IMG = '/img/church-misc.jpg';
 
-  try {
-    const res = await fetch(`/data/news.json?t=${Date.now()}`, { cache: 'no-store' });
-    if (!res.ok) return;
-    const data = await res.json();
-    const items = (data.items || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-    if (!items.length) return;
+  async function fetchJson(path) {
+    try {
+      const res = await fetch(path + bust(), { cache: 'no-store' });
+      if (!res.ok) return null;
+      return await res.json();
+    } catch (_) { return null; }
+  }
 
-    if (grid) {
+  // 교회소식 카드
+  if (grid) {
+    const data = await fetchJson('/data/news.json');
+    const items = ((data && data.items) || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    if (items.length) {
       grid.innerHTML = items.slice(0, 3).map(item => `
         <article class="news-card reveal visible">
           <div class="news-img"><img src="${escapeHtml(item.image || FALLBACK_IMG)}" alt="" loading="lazy" /></div>
           <div class="news-body">
             <span class="news-tag">${escapeHtml(item.tag || '소식')}</span>
             <h3 class="news-title">${escapeHtml(item.title || '')}</h3>
+            ${item.body ? `<p class="news-summary">${escapeHtml(item.body)}</p>` : ''}
             <p class="news-date">${escapeHtml(fmtDate(item.date))}</p>
           </div>
         </article>
       `).join('');
     }
+  }
 
-    if (noticeList) {
-      noticeList.innerHTML = items.slice(0, 5).map(item => `
+  // 공지사항 패널
+  if (noticeList) {
+    const data = await fetchJson('/data/notices.json');
+    const items = ((data && data.items) || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    if (items.length) {
+      noticeList.innerHTML = items.slice(0, 8).map(item => `
         <li class="notice-item">
           <span class="notice-item-date">${escapeHtml(fmtDate(item.date))}</span>
           <p class="notice-item-title">${escapeHtml(item.title || '')}</p>
         </li>
       `).join('');
     }
-  } catch (_) {
-    // 실패 시 HTML에 하드코딩된 fallback이 그대로 표시됨
   }
 })();

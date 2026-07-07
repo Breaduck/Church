@@ -1,5 +1,8 @@
 /data/news.json
   Cache-Control: no-cache, no-store, must-revalidate
 
+/data/notices.json
+  Cache-Control: no-cache, no-store, must-revalidate
+
 /admin/*
   X-Robots-Tag: noindex, nofollow
