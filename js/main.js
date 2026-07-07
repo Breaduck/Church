@@ -19,10 +19,19 @@ links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
 // Smooth scroll with nav offset
 document.querySelectorAll('a[href^="#"]').forEach(a =>
   a.addEventListener('click', e => {
-    const t = document.querySelector(a.getAttribute('href'));
+    const hash = a.getAttribute('href');
+    if (!hash) return;
+    if (hash === '#') {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    const t = document.querySelector(hash);
     if (!t) return;
     e.preventDefault();
-    window.scrollTo({ top: t.offsetTop - 56, behavior: 'smooth' });
+    const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 60;
+    const y = t.getBoundingClientRect().top + window.scrollY - navH - 12;
+    window.scrollTo({ top: y, behavior: 'smooth' });
   })
 );
 
