@@ -24,6 +24,8 @@ body {
   background: var(--white);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  word-break: keep-all;          /* 한글 단어 중간에서 줄바꿈 방지 */
+  overflow-wrap: break-word;
 }
 img { display: block; width: 100%; height: 100%; object-fit: cover; }
 a { text-decoration: none; color: inherit; }
@@ -47,6 +49,13 @@ body { font-size: 17px; }
   word-spacing: normal;
   letter-spacing: normal;
   hyphens: none;
+}
+
+/* 제목·부제 — 줄 길이가 고르게 나뉘도록 (지원 브라우저에서) */
+.hero-title, .hero-sub, .block-title,
+.vision-heading, .news-heading,
+.pastor-greeting-welcome {
+  text-wrap: balance;
 }
 
 /* 강조 초록 */
@@ -143,6 +152,13 @@ body { font-size: 17px; }
 }
 .hero-text { display: flex; flex-direction: column; gap: 24px; }
 .hero-text .label { margin-bottom: -8px; }
+.hero-logo {
+  height: 46px;
+  width: auto;
+  object-fit: contain;
+  align-self: flex-start;
+  margin-bottom: -8px;
+}
 .hero-title {
   font-size: clamp(2.8rem, 4.6vw, 4.2rem);
   font-weight: 800;
@@ -334,6 +350,17 @@ body { font-size: 17px; }
 }
 .pastor-name { font-size: 1.8rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
 .pastor-denom { font-size: 0.95rem; color: var(--muted); }
+.pastor-edu {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 2px;
+}
+.pastor-edu li {
+  font-size: 0.95rem;
+  color: var(--muted);
+  list-style: none;
+}
 
 .pastor-greeting {
   display: flex;
@@ -407,6 +434,33 @@ body { font-size: 17px; }
   line-height: 1.85;
   color: var(--body);
   word-break: keep-all;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.history-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+  list-style: none;
+}
+.history-list li:last-child { border-bottom: none; padding-bottom: 0; }
+.history-year {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+  min-width: 52px;
+}
+.history-desc {
+  font-size: 1.02rem;
+  color: var(--body);
 }
 
 .stats {
