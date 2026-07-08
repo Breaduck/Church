@@ -34,16 +34,16 @@ a { text-decoration: none; color: inherit; }
 body { font-size: 17px; }
 
 /* ============================================================
-   GLOBAL — 양쪽정렬 + 자연스러운 한글 줄바꿈
-   자간(letter-spacing)은 건드리지 않고 word-spacing만 사용.
+   GLOBAL — 자연스러운 한글 줄바꿈
+   양쪽정렬(justify)은 한글 문장에서 어절 사이 간격을 과도하게
+   벌려 보이게 하므로 사용하지 않고, 좌측 정렬 + word-break로 처리.
    ============================================================ */
 .block-body,
 .pastor-greeting-body,
 .v-body,
 .floor-desc,
 .step p {
-  text-align: justify;
-  text-justify: inter-word;   /* 단어 간격만 조정, 자간은 유지 */
+  text-align: left;
   word-break: keep-all;
   overflow-wrap: break-word;
   word-spacing: normal;
@@ -182,7 +182,7 @@ body { font-size: 17px; }
 .hero-photo img { width: 100%; height: 100%; object-fit: cover; }
 
 /* Touch UX */
-.btn-fill, .btn-line, .wtab, .notice-btn, .nav-toggle,
+.btn-fill, .btn-line, .notice-btn, .nav-toggle,
 .info-item, .prev-row, .svc-row, .map-overlay {
   touch-action: manipulation;
 }
@@ -493,50 +493,21 @@ body { font-size: 17px; }
 }
 
 .worship-block { display: flex; flex-direction: column; gap: 24px; flex: 1; }
-.wtabs {
-  display: flex;
-  gap: 4px;
-  background: var(--line);
-  border-radius: 10px;
-  padding: 5px;
-}
-.wtab {
-  flex: 1;
-  padding: 12px 0;
-  font-family: var(--font);
-  font-size: 0.98rem;
-  font-weight: 600;
-  border: none;
-  background: transparent;
-  border-radius: 7px;
-  cursor: pointer;
-  color: var(--muted);
-  transition: all 0.2s;
-}
-.wtab.active {
-  background: var(--white);
-  color: var(--ink);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10);
-}
-.wpanel { display: none; }
-.wpanel.active { display: flex; flex-direction: column; flex: 1; }
-.svc-list { display: flex; flex-direction: column; flex: 1; gap: 10px; }
+.svc-list { display: flex; flex-direction: column; flex: 1; }
 .svc-row {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 24px 22px;
-  flex: 1;
-  background: var(--white);
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-  transition: box-shadow 0.2s, transform 0.2s;
+  padding: 14px 4px;
+  border-bottom: 1px dashed var(--line);
+  transition: background 0.2s;
 }
-.svc-row:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.10); transform: translateY(-1px); }
-.svc-row.hi { background: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
-.svc-name { flex: 1; font-size: 1.3rem; font-weight: 600; }
-.svc-day { font-size: 1.08rem; color: var(--muted); width: 80px; text-align: center; }
-.svc-time { font-size: 1.3rem; font-weight: 700; color: var(--accent); min-width: 110px; text-align: right; }
+.svc-row:last-child { border-bottom: none; }
+.svc-row:hover { background: var(--surf); }
+.svc-row.hi .svc-name, .svc-row.hi .svc-time { color: var(--accent); }
+.svc-name { flex: 1; font-size: 1.05rem; font-weight: 600; }
+.svc-day { font-size: 0.92rem; color: var(--muted); width: 72px; text-align: center; }
+.svc-time { font-size: 1.05rem; font-weight: 700; color: var(--ink); min-width: 70px; text-align: right; }
 
 .sermon-block { display: flex; flex-direction: column; gap: 24px; }
 .sermon-head {
@@ -1380,11 +1351,10 @@ body { font-size: 17px; }
 
   /* Week / Worship */
   .week-grid { gap: 40px; }
-  .wtab { font-size: 0.9rem; padding: 11px 0; }
-  .svc-row { padding: 16px 14px; gap: 10px; }
-  .svc-name { font-size: 1.02rem; letter-spacing: -0.01em; }
-  .svc-time { font-size: 1.02rem; min-width: 82px; }
-  .svc-day { font-size: 0.82rem; width: 48px; }
+  .svc-row { padding: 12px 4px; gap: 10px; }
+  .svc-name { font-size: 0.98rem; letter-spacing: -0.01em; }
+  .svc-time { font-size: 0.98rem; min-width: 62px; }
+  .svc-day { font-size: 0.8rem; width: 56px; }
 
   /* Sermon */
   .sermon-head { flex-wrap: wrap; gap: 6px; }

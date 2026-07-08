@@ -200,13 +200,3 @@ if (noticeBtn && noticePanel && noticeClose) {
   });
 }
 
-// Worship tabs
-document.querySelectorAll('.wtab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.wtab').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.wpanel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    const panel = document.getElementById(`tab-${btn.dataset.tab}`);
-    if (panel) panel.classList.add('active');
-  });
-});
