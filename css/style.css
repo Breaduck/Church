@@ -430,6 +430,8 @@ body { font-size: 17px; }
 }
 .about-intro-label { margin-bottom: 6px; }
 .about-intro-heading { font-weight: 900; }
+.devotion-label { margin-bottom: 6px; }
+.devotion-heading { font-weight: 900; }
 .block-body {
   font-size: 1.05rem;
   line-height: 1.85;
