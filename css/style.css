@@ -1118,11 +1118,12 @@ body { font-size: 17px; }
   position: relative;
   border-radius: var(--r);
   overflow: hidden;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1175 / 1339;
   border: 1px solid var(--line);
   box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  background: var(--white);
 }
-.map-wrap iframe { width: 100%; height: 100%; display: block; }
+.map-wrap img { width: 100%; height: 100%; display: block; object-fit: contain; }
 .map-overlay {
   position: absolute;
   inset: 0;
