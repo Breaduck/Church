@@ -535,7 +535,7 @@ body { font-size: 17px; }
 .devotion-item[open] summary::after { transform: rotate(-135deg); }
 .devotion-item[open] summary { border-bottom: 1px solid var(--line); color: var(--accent); }
 
-.devotion-date { font-weight: 700; }
+.devotion-title { font-weight: 700; }
 .devotion-ref {
   font-size: 0.88rem;
   font-weight: 500;
