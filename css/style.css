@@ -1238,12 +1238,41 @@ body { font-size: 17px; }
   outline: none;
 }
 .floor-poster-hint {
+  position: relative;
   display: inline-flex;
+  align-items: center;
   align-self: flex-start;
-  font-size: 0.92rem;
+  margin-top: 8px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.88rem;
   font-weight: 700;
-  color: var(--accent);
-  margin-top: 2px;
+  letter-spacing: 0.01em;
+  box-shadow: 0 4px 14px rgba(61,122,86,0.35);
+  animation: poster-hint-glow 2.2s ease-in-out infinite;
+}
+.floor-poster-hint::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(115deg, transparent, rgba(255,255,255,0.75), transparent);
+  transform: skewX(-20deg);
+  animation: poster-hint-shine 2.6s ease-in-out infinite;
+}
+@keyframes poster-hint-shine {
+  0%   { left: -60%; }
+  45%  { left: 130%; }
+  100% { left: 130%; }
+}
+@keyframes poster-hint-glow {
+  0%, 100% { box-shadow: 0 4px 14px rgba(61,122,86,0.35); }
+  50%      { box-shadow: 0 4px 22px rgba(61,122,86,0.65); }
 }
 
 .poster-modal {
