@@ -485,6 +485,83 @@ body { font-size: 17px; }
 .stat-l { font-size: 0.95rem; color: var(--muted); font-weight: 500; align-self: center; }
 
 /* ============================================================
+   DEVOTION — 행복나침반 & 다니엘 기도문
+   ============================================================ */
+.devotion-section { padding: 120px 0; background: var(--surf); }
+.devotion-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 72px;
+  align-items: start;
+}
+.devotion-block { display: flex; flex-direction: column; gap: 24px; }
+.devotion-list { display: flex; flex-direction: column; gap: 8px; }
+
+.devotion-item {
+  background: var(--white);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+.devotion-item:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.09); }
+.devotion-item[open] { box-shadow: 0 6px 20px rgba(0,0,0,0.10); }
+
+.devotion-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.devotion-item summary::-webkit-details-marker { display: none; }
+.devotion-item summary::after {
+  content: '';
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(45deg);
+  transition: transform 0.25s;
+  margin-left: auto;
+}
+.devotion-item[open] summary::after { transform: rotate(-135deg); }
+.devotion-item[open] summary { border-bottom: 1px solid var(--line); color: var(--accent); }
+
+.devotion-date { font-weight: 700; }
+.devotion-ref {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--muted);
+  margin-left: 12px;
+}
+.devotion-item[open] .devotion-ref { color: var(--accent); opacity: 0.75; }
+
+.devotion-body { padding: 18px 20px 22px; }
+.devotion-body p {
+  font-size: 0.96rem;
+  line-height: 1.85;
+  color: var(--body);
+  word-break: keep-all;
+}
+.devotion-body p + p { margin-top: 14px; }
+.devotion-verse {
+  padding: 12px 16px;
+  background: var(--accent-dim);
+  border-radius: 8px;
+  font-weight: 500;
+  color: var(--ink) !important;
+  font-size: 0.92rem !important;
+}
+
+/* ============================================================
    WEEK  —  Worship schedule + Sermon
    ============================================================ */
 .week { padding: 120px 0; background: var(--surf); }
@@ -1297,6 +1374,7 @@ body { font-size: 17px; }
   .new-inner      { grid-template-columns: 1fr; gap: 48px; }
   .contact-inner  { grid-template-columns: 1fr; gap: 40px; }
   .week-grid      { grid-template-columns: 1fr; gap: 48px; }
+  .devotion-grid  { grid-template-columns: 1fr; gap: 48px; }
 
   .ministry-grid  { grid-template-columns: repeat(2, 1fr); }
   .news-grid      { grid-template-columns: 1fr; max-width: 520px; }
@@ -1435,6 +1513,12 @@ body { font-size: 17px; }
   .svc-name { font-size: 0.95rem; letter-spacing: -0.01em; }
   .svc-time { font-size: 0.92rem; min-width: 78px; }
   .svc-day { font-size: 0.8rem; width: 56px; }
+
+  /* Devotion */
+  .devotion-grid { gap: 40px; }
+  .devotion-item summary { padding: 14px 16px; font-size: 0.98rem; gap: 8px; flex-wrap: wrap; }
+  .devotion-ref { margin-left: 0; flex-basis: 100%; }
+  .devotion-body { padding: 14px 16px 18px; }
 
   /* Sermon */
   .sermon-head { flex-wrap: wrap; gap: 6px; }
