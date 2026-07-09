@@ -1321,18 +1321,18 @@ body { font-size: 17px; }
   .info-v { font-size: 0.95rem; line-height: 1.4; }
 
   /* Hero */
-  .hero { padding-top: var(--nav-h); min-height: 112svh; }
-  .hero-inner { padding-top: 24px; padding-bottom: 60px; gap: 28px; }
-  .hero-text { gap: 16px; }
+  .hero { padding-top: var(--nav-h); min-height: 130svh; }
+  .hero-inner { padding-top: 64px; padding-bottom: 80px; gap: 56px; }
+  .hero-text { gap: 26px; }
   .hero-text .label { margin-bottom: -4px; }
-  .hero-title { font-size: clamp(2.2rem, 9vw, 2.8rem); }
+  .hero-title { font-size: clamp(3rem, 13vw, 3.6rem); }
   .hero-sub {
-    font-size: 1.02rem;
+    font-size: 1.05rem;
     line-height: 1.65;
     word-break: keep-all;
   }
-  .hero-btns { gap: 10px; }
-  .btn-fill, .btn-line { height: 48px; padding: 0 22px; font-size: 0.98rem; }
+  .hero-btns { gap: 10px; margin-top: 22px; }
+  .btn-fill, .btn-line { height: 50px; padding: 0 22px; font-size: 0.98rem; }
   .hero-photo { aspect-ratio: 16/9; max-height: 260px; }
 
   /* About */
