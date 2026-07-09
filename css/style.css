@@ -158,6 +158,7 @@ body { font-size: 17px; }
   object-fit: contain;
   align-self: flex-start;
   margin-bottom: -8px;
+  margin-left: -9px;
 }
 .hero-title {
   font-size: clamp(2.8rem, 4.6vw, 4.2rem);
@@ -1307,18 +1308,20 @@ body { font-size: 17px; }
   .infobar-grid { flex-direction: column; margin-top: -20px; }
   .info-item {
     justify-content: flex-start;
-    padding: 15px 20px;
+    align-items: flex-start;
+    padding: 18px 20px;
     border-right: none;
     border-bottom: 1px solid var(--line);
+    gap: 14px;
   }
   .info-item:last-child { border-bottom: none; }
-  .info-item svg { width: 22px; height: 22px; }
-  .info-item > div { flex-direction: row; align-items: baseline; gap: 10px; }
-  .info-k { font-size: 0.8rem; min-width: 56px; }
-  .info-v { font-size: 0.98rem; }
+  .info-item svg { width: 22px; height: 22px; margin-top: 2px; }
+  .info-item > div { flex-direction: column; align-items: flex-start; gap: 5px; }
+  .info-k { font-size: 0.76rem; }
+  .info-v { font-size: 0.95rem; line-height: 1.4; }
 
   /* Hero */
-  .hero { padding-top: var(--nav-h); min-height: 100svh; }
+  .hero { padding-top: var(--nav-h); min-height: 112svh; }
   .hero-inner { padding-top: 24px; padding-bottom: 60px; gap: 28px; }
   .hero-text { gap: 16px; }
   .hero-text .label { margin-bottom: -4px; }
@@ -1330,7 +1333,7 @@ body { font-size: 17px; }
   }
   .hero-btns { gap: 10px; }
   .btn-fill, .btn-line { height: 48px; padding: 0 22px; font-size: 0.98rem; }
-  .hero-photo { aspect-ratio: 16/9; max-height: 210px; }
+  .hero-photo { aspect-ratio: 16/9; max-height: 260px; }
 
   /* About */
   .stat { padding: 18px 10px; }
