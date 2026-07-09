@@ -313,7 +313,7 @@
             <span class="bd-num">1층</span>
             <span class="bd-hint">카페·사랑의 쌀독</span>
           </a>
-          <a href="#floor-b1" class="bd-floor bd-floor--basement">
+          <a href="#floor-b1" class="bd-floor bd-floor--basement" data-poster-trigger aria-haspopup="dialog">
             <span class="bd-num">지하 1층</span>
             <span class="bd-hint">악기 문화센터</span>
           </a>
@@ -360,11 +360,12 @@
             </div>
           </li>
 
-          <li class="floor reveal" id="floor-b1">
+          <li class="floor floor--clickable reveal" id="floor-b1" data-poster-trigger tabindex="0" role="button" aria-haspopup="dialog" aria-label="정다운문화센터 포스터 크게 보기">
             <div class="floor-tag"><span class="floor-num floor-num--wide">지하 1층</span></div>
             <div class="floor-body">
               <h3 class="floor-name">악기 문화센터</h3>
               <p class="floor-desc">'평생의 친구 악기를 배웁시다' 기타·드럼·바이올린·첼로·색소폰·피아노·플루트 등을 배울 수 있도록 교회 공간을 열어 지역주민 누구나 배움과 취미 활동에 도움을 드립니다.</p>
+              <span class="floor-poster-hint">포스터 크게 보기 ↗</span>
             </div>
           </li>
 
@@ -464,6 +465,17 @@
         <p class="notice-item-title">단기선교팀 파송 예배 안내</p>
       </li>
     </ul>
+  </div>
+
+  <!-- 정다운문화센터 포스터 팝업 -->
+  <div class="poster-modal" id="poster-modal" role="dialog" aria-modal="true" aria-label="정다운문화센터 포스터">
+    <div class="poster-modal-backdrop" data-poster-close></div>
+    <div class="poster-modal-inner">
+      <button class="poster-modal-close" id="poster-modal-close" aria-label="닫기">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <img id="poster-modal-img" alt="정다운문화센터 포스터" data-src="img/culture-center-poster.jpg" />
+    </div>
   </div>
 
   <script src="js/main.js"></script>

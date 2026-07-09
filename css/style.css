@@ -1152,6 +1152,79 @@ body { font-size: 17px; }
 .notice-item-title { font-size: 0.98rem; font-weight: 500; color: var(--ink); line-height: 1.5; }
 
 /* ============================================================
+   POSTER MODAL — 정다운문화센터 포스터 팝업
+   ============================================================ */
+.floor--clickable { cursor: pointer; }
+.floor--clickable:hover, .floor--clickable:focus-visible {
+  box-shadow: 0 14px 34px rgba(0,0,0,0.14);
+  transform: translateY(-2px);
+  outline: none;
+}
+.floor-poster-hint {
+  display: inline-flex;
+  align-self: flex-start;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: 2px;
+}
+
+.poster-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+.poster-modal.open { display: flex; }
+.poster-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 24, 22, 0.72);
+  backdrop-filter: blur(2px);
+}
+.poster-modal-inner {
+  position: relative;
+  max-width: min(480px, 100%);
+  max-height: 90vh;
+  animation: poster-pop 0.22s ease;
+}
+@keyframes poster-pop {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+#poster-modal-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 14px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+  background: var(--white);
+}
+.poster-modal-close {
+  position: absolute;
+  top: -16px;
+  right: -16px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  transition: background 0.2s, transform 0.2s;
+}
+.poster-modal-close:hover { background: var(--surf); transform: scale(1.06); }
+
+/* ============================================================
    SCROLL REVEALS
    ============================================================ */
 .reveal-hero {

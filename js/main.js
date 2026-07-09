@@ -17,7 +17,8 @@ links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
 }));
 
 // Smooth scroll with nav offset
-document.querySelectorAll('a[href^="#"]').forEach(a =>
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  if (a.hasAttribute('data-poster-trigger')) return;
   a.addEventListener('click', e => {
     const hash = a.getAttribute('href');
     if (!hash) return;
@@ -32,8 +33,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a =>
     const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 60;
     const y = t.getBoundingClientRect().top + window.scrollY - navH - 12;
     window.scrollTo({ top: y, behavior: 'smooth' });
-  })
-);
+  });
+});
 
 // Hero reveals on load
 window.addEventListener('load', () => {
@@ -197,6 +198,39 @@ if (noticeBtn && noticePanel && noticeClose) {
     if (!noticePanel.contains(e.target) && e.target !== noticeBtn) {
       noticePanel.classList.remove('open');
     }
+  });
+}
+
+// 정다운문화센터 포스터 팝업
+const posterModal = document.getElementById('poster-modal');
+const posterModalImg = document.getElementById('poster-modal-img');
+const posterModalClose = document.getElementById('poster-modal-close');
+if (posterModal && posterModalImg && posterModalClose) {
+  const openPosterModal = () => {
+    if (!posterModalImg.src) posterModalImg.src = posterModalImg.dataset.src;
+    posterModal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  };
+  const closePosterModal = () => {
+    posterModal.classList.remove('open');
+    document.body.style.overflow = '';
+  };
+  document.querySelectorAll('[data-poster-trigger]').forEach(el => {
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      openPosterModal();
+    });
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openPosterModal();
+      }
+    });
+  });
+  posterModalClose.addEventListener('click', closePosterModal);
+  posterModal.querySelectorAll('[data-poster-close]').forEach(el => el.addEventListener('click', closePosterModal));
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && posterModal.classList.contains('open')) closePosterModal();
   });
 }
 
