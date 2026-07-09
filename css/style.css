@@ -478,9 +478,9 @@ body { font-size: 17px; }
 }
 .stat:first-child { align-items: flex-start; text-align: left; padding-left: 0; }
 .stat:last-child { align-items: flex-end; text-align: right; padding-right: 0; }
-.stat-n { font-size: 2.4rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1; color: var(--ink); }
+.stat-n { font-size: 3rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1; color: var(--ink); }
 .stat-n sup { font-size: 0.6em; color: var(--accent); }
-.stat-l { font-size: 0.95rem; color: var(--muted); font-weight: 500; }
+.stat-l { font-size: 0.95rem; color: var(--muted); font-weight: 500; align-self: center; }
 
 /* ============================================================
    WEEK  —  Worship schedule + Sermon
@@ -1334,7 +1334,7 @@ body { font-size: 17px; }
 
   /* About */
   .stat { padding: 18px 10px; }
-  .stat-n { font-size: 1.9rem; }
+  .stat-n { font-size: 2.3rem; }
   .stat-l { font-size: 0.88rem; }
 
   /* Pastor */
