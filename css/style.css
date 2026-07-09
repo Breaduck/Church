@@ -758,7 +758,7 @@ body { font-size: 17px; }
   line-height: 1;
 }
 .bd-hint {
-  font-size: 0.95rem;
+  font-size: 1.1rem;
   color: var(--muted);
   font-weight: 500;
   line-height: 1.35;
@@ -1203,7 +1203,7 @@ body { font-size: 17px; }
     gap: 16px;
   }
   .bd-num { font-size: 1.5rem; }
-  .bd-hint { font-size: 1rem; }
+  .bd-hint { font-size: 1.15rem; }
   .bd-floor--basement .bd-num,
   .bd-floor--basement:hover .bd-num,
   .bd-floor--basement:focus-visible .bd-num { font-size: 1.2rem; }
@@ -1269,7 +1269,7 @@ body { font-size: 17px; }
     flex-shrink: 0;
   }
   .bd-hint {
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: var(--body);
     font-weight: 600;
     text-align: right;
