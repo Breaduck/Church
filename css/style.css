@@ -341,22 +341,22 @@ body { font-size: 17px; }
   gap: 6px;
 }
 .pastor-role {
-  font-size: 0.92rem;
+  font-size: 1.08rem;
   font-weight: 700;
   letter-spacing: 0.05em;
   color: var(--accent);
   margin-bottom: 4px;
 }
-.pastor-name { font-size: 1.8rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+.pastor-name { font-size: 2.15rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
 .pastor-denom { font-size: 0.95rem; color: var(--muted); }
 .pastor-edu {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  margin-top: 2px;
+  gap: 5px;
+  margin-top: 6px;
 }
 .pastor-edu li {
-  font-size: 0.95rem;
+  font-size: 1.1rem;
   color: var(--muted);
   list-style: none;
 }
@@ -1525,9 +1525,10 @@ body { font-size: 17px; }
   .pastor-left { flex-direction: row; gap: 18px; align-items: flex-start; }
   .pastor-photo { max-width: 100px; width: 100px; flex-shrink: 0; }
   .pastor-identity { flex: 1; }
-  .pastor-role { font-size: 0.85rem; margin-bottom: 2px; }
-  .pastor-name { font-size: 1.4rem; }
+  .pastor-role { font-size: 0.98rem; margin-bottom: 2px; }
+  .pastor-name { font-size: 1.65rem; }
   .pastor-denom { font-size: 0.85rem; }
+  .pastor-edu li { font-size: 0.98rem; }
   .pastor-greeting-sig { font-size: 1rem; }
 
   /* Vision */
