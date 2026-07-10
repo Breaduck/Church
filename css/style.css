@@ -1176,6 +1176,8 @@ body { font-size: 17px; }
 }
 .footer-yt:hover { color: #ff0000; }
 .footer-copy { font-size: 0.82rem; color: var(--muted); }
+.footer-admin { color: var(--muted); font-size: 0.78rem; opacity: 0.6; text-decoration: none; transition: opacity 0.2s; }
+.footer-admin:hover { opacity: 1; text-decoration: underline; }
 
 /* ============================================================
    NOTICE PANEL
