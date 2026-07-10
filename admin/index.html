@@ -230,12 +230,14 @@
             <input type="file" accept="image/*" data-field="imageFile" />
             <img class="thumb" src="${item.image ? escapeAttr(item.image) : ''}" style="${item.image ? 'display:block;' : ''}" />
           </div>
+          <div class="field"><label>영상 URL (유튜브 등, 선택)</label><input type="url" placeholder="https://youtube.com/watch?v=..." data-field="video" value="${escapeAttr(item.video || '')}" /></div>
           <div class="field"><label>내용 (선택)</label><textarea data-field="body">${escapeHtml(item.body || '')}</textarea></div>
         `;
         card.querySelector('[data-i]').addEventListener('click', () => { newsItems.splice(i, 1); renderNews(); });
         card.querySelector('[data-field="title"]').addEventListener('input', e => item.title = e.target.value);
         card.querySelector('[data-field="date"]').addEventListener('input', e => item.date = e.target.value);
         card.querySelector('[data-field="tag"]').addEventListener('change', e => item.tag = e.target.value);
+        card.querySelector('[data-field="video"]').addEventListener('input', e => item.video = e.target.value);
         card.querySelector('[data-field="body"]').addEventListener('input', e => item.body = e.target.value);
         const fileInput = card.querySelector('[data-field="imageFile"]');
         const thumb = card.querySelector('.thumb');
@@ -252,7 +254,7 @@
     }
 
     document.getElementById('news-add').addEventListener('click', () => {
-      newsItems.unshift({ title: '', date: new Date().toISOString().slice(0, 10), tag: '소식', image: '', body: '' });
+      newsItems.unshift({ title: '', date: new Date().toISOString().slice(0, 10), tag: '소식', image: '', video: '', body: '' });
       renderNews();
     });
 
@@ -274,7 +276,7 @@
             delete item._pendingFile;
           }
         }
-        const clean = newsItems.map(({ title, date, tag, image, body }) => ({ title, date, tag, image, body }));
+        const clean = newsItems.map(({ title, date, tag, image, video, body }) => ({ title, date, tag, image, video, body }));
         const res = await fetch('/api/admin/save', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -307,16 +309,35 @@
           <div class="card-head"><span>#${i + 1}</span><button class="btn danger" data-i="${i}">삭제</button></div>
           <div class="field"><label>제목</label><input type="text" data-field="title" value="${escapeAttr(item.title || '')}" /></div>
           <div class="field"><label>날짜</label><input type="date" data-field="date" value="${escapeAttr(item.date || '')}" /></div>
+          <div class="field">
+            <label>사진 (선택)</label>
+            <input type="file" accept="image/*" data-field="imageFile" />
+            <img class="thumb" src="${item.image ? escapeAttr(item.image) : ''}" style="${item.image ? 'display:block;' : ''}" />
+          </div>
+          <div class="field"><label>영상 URL (유튜브 등, 선택)</label><input type="url" placeholder="https://youtube.com/watch?v=..." data-field="video" value="${escapeAttr(item.video || '')}" /></div>
+          <div class="field"><label>내용 (선택)</label><textarea data-field="body">${escapeHtml(item.body || '')}</textarea></div>
         `;
         card.querySelector('[data-i]').addEventListener('click', () => { noticeItems.splice(i, 1); renderNotices(); });
         card.querySelector('[data-field="title"]').addEventListener('input', e => item.title = e.target.value);
         card.querySelector('[data-field="date"]').addEventListener('input', e => item.date = e.target.value);
+        card.querySelector('[data-field="video"]').addEventListener('input', e => item.video = e.target.value);
+        card.querySelector('[data-field="body"]').addEventListener('input', e => item.body = e.target.value);
+        const fileInput = card.querySelector('[data-field="imageFile"]');
+        const thumb = card.querySelector('.thumb');
+        fileInput.addEventListener('change', async () => {
+          const file = fileInput.files[0];
+          if (!file) return;
+          const dataUrl = await readAsDataURL(file);
+          thumb.src = dataUrl;
+          thumb.style.display = 'block';
+          item._pendingFile = file;
+        });
         list.appendChild(card);
       });
     }
 
     document.getElementById('notices-add').addEventListener('click', () => {
-      noticeItems.unshift({ title: '', date: new Date().toISOString().slice(0, 10) });
+      noticeItems.unshift({ title: '', date: new Date().toISOString().slice(0, 10), image: '', video: '', body: '' });
       renderNotices();
     });
 
@@ -324,7 +345,21 @@
       const statusEl = document.getElementById('notices-status');
       statusEl.textContent = '저장 중...'; statusEl.className = 'save-status';
       try {
-        const clean = noticeItems.map(({ title, date }) => ({ title, date }));
+        for (const item of noticeItems) {
+          if (item._pendingFile) {
+            const dataBase64 = await readAsBase64(item._pendingFile);
+            const res = await fetch('/api/admin/upload', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ filename: item._pendingFile.name, dataBase64 })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || '이미지 업로드 실패');
+            item.image = data.path;
+            delete item._pendingFile;
+          }
+        }
+        const clean = noticeItems.map(({ title, date, image, video, body }) => ({ title, date, image, video, body }));
         const res = await fetch('/api/admin/save', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
