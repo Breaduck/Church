@@ -1,4 +1,15 @@
+import { verifySession } from "../../_lib/session.js";
+
 export async function onRequestPost(context) {
+  const secret = context.env.SESSION_SECRET;
+  const authed = secret ? await verifySession(context.request, secret) : false;
+  if (!authed) {
+    return new Response(JSON.stringify({ error: "로그인이 필요합니다." }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   let body;
   try {
     body = await context.request.json();
