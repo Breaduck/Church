@@ -300,11 +300,11 @@
     document.getElementById('quick-add').addEventListener('click', () => {
       const activeTab = document.querySelector('.tab.active').dataset.tab;
       if (activeTab === 'news') {
-        newsItems.unshift({ title: '', date: todayStr(), tag: '소식', image: '', video: '', body: '' });
+        newsItems.unshift({ title: '', date: todayStr(), tag: '소식', image: '', body: '' });
         renderNews();
         expandFirstCard('news-list');
       } else {
-        noticeItems.unshift({ title: '', date: todayStr(), image: '', video: '', body: '' });
+        noticeItems.unshift({ title: '', date: todayStr(), image: '', body: '' });
         renderNotices();
         expandFirstCard('notices-list');
       }
@@ -398,7 +398,6 @@
                 <button type="button" class="thumb-del" style="${item.image ? 'display:flex;' : ''}" title="사진 삭제">×</button>
               </div>
             </div>
-            <div class="field"><label>영상 URL (유튜브 등, 선택)</label><input type="url" placeholder="https://youtube.com/watch?v=..." data-field="video" value="${escapeAttr(item.video || '')}" /></div>
             <div class="field"><label>내용 (선택)</label><textarea data-field="body">${escapeHtml(item.body || '')}</textarea></div>
             <div class="card-footer">
               <span class="save-status"></span>
@@ -411,7 +410,6 @@
         card.querySelector('[data-i]').addEventListener('click', () => { newsItems.splice(i, 1); renderNews(); });
         card.querySelector('[data-field="title"]').addEventListener('input', e => { item.title = e.target.value; summaryTitle.textContent = item.title || '제목을 입력해주세요'; });
         card.querySelector('[data-field="date"]').addEventListener('input', e => { item.date = e.target.value; summaryDate.textContent = item.date; });
-        card.querySelector('[data-field="video"]').addEventListener('input', e => item.video = e.target.value);
         card.querySelector('[data-field="body"]').addEventListener('input', e => item.body = e.target.value);
 
         const tagSelect = card.querySelector('[data-field="tag"]');
@@ -456,7 +454,7 @@
       });
 
       list.appendChild(makeAddCard('새 소식 추가', () => {
-        newsItems.unshift({ title: '', date: todayStr(), tag: '소식', image: '', video: '', body: '' });
+        newsItems.unshift({ title: '', date: todayStr(), tag: '소식', image: '', body: '' });
         renderNews();
         expandFirstCard('news-list');
       }));
@@ -466,7 +464,7 @@
       statusEl.textContent = '저장 중...'; statusEl.className = 'save-status';
       try {
         for (const item of newsItems) await uploadPendingFile(item);
-        const clean = newsItems.map(({ title, date, tag, image, video, body }) => ({ title, date, tag, image, video, body }));
+        const clean = newsItems.map(({ title, date, tag, image, body }) => ({ title, date, tag, image, body }));
         const res = await fetch('/api/admin/save', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -520,7 +518,6 @@
                 <button type="button" class="thumb-del" style="${item.image ? 'display:flex;' : ''}" title="사진 삭제">×</button>
               </div>
             </div>
-            <div class="field"><label>영상 URL (유튜브 등, 선택)</label><input type="url" placeholder="https://youtube.com/watch?v=..." data-field="video" value="${escapeAttr(item.video || '')}" /></div>
             <div class="field"><label>내용 (선택)</label><textarea data-field="body">${escapeHtml(item.body || '')}</textarea></div>
             <div class="card-footer">
               <span class="save-status"></span>
@@ -533,7 +530,6 @@
         card.querySelector('[data-i]').addEventListener('click', () => { noticeItems.splice(i, 1); renderNotices(); });
         card.querySelector('[data-field="title"]').addEventListener('input', e => { item.title = e.target.value; summaryTitle.textContent = item.title || '제목을 입력해주세요'; });
         card.querySelector('[data-field="date"]').addEventListener('input', e => { item.date = e.target.value; summaryDate.textContent = item.date; });
-        card.querySelector('[data-field="video"]').addEventListener('input', e => item.video = e.target.value);
         card.querySelector('[data-field="body"]').addEventListener('input', e => item.body = e.target.value);
 
         const fileInput = card.querySelector('[data-field="imageFile"]');
@@ -564,7 +560,7 @@
       });
 
       list.appendChild(makeAddCard('새 공지 추가', () => {
-        noticeItems.unshift({ title: '', date: todayStr(), image: '', video: '', body: '' });
+        noticeItems.unshift({ title: '', date: todayStr(), image: '', body: '' });
         renderNotices();
         expandFirstCard('notices-list');
       }));
@@ -574,7 +570,7 @@
       statusEl.textContent = '저장 중...'; statusEl.className = 'save-status';
       try {
         for (const item of noticeItems) await uploadPendingFile(item);
-        const clean = noticeItems.map(({ title, date, image, video, body }) => ({ title, date, image, video, body }));
+        const clean = noticeItems.map(({ title, date, image, body }) => ({ title, date, image, body }));
         const res = await fetch('/api/admin/save', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

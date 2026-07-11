@@ -1291,7 +1291,7 @@ body { font-size: 17px; }
 }
 .notice-close:hover { background: var(--surf); color: var(--ink); }
 .notice-list { list-style: none; }
-.notice-item {
+.notice-item, li > .notice-item {
   padding: 16px 20px;
   border-bottom: 1px solid var(--line);
   display: flex;
@@ -1304,30 +1304,60 @@ body { font-size: 17px; }
 .notice-item:hover { background: var(--surf); }
 .notice-item-date { font-size: 0.82rem; color: var(--muted); }
 .notice-item-title { font-size: 0.98rem; font-weight: 500; color: var(--ink); line-height: 1.5; }
+
+/* 펼칠 내용(사진/내용/영상)이 있는 공지 */
+details.notice-item { padding: 0; cursor: default; }
+details.notice-item summary {
+  padding: 16px 20px;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+}
+details.notice-item summary::-webkit-details-marker { display: none; }
+details.notice-item summary::after {
+  content: '';
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(45deg);
+  transition: transform 0.2s;
+}
+details.notice-item[open] summary::after { transform: rotate(-135deg); }
+details.notice-item:hover summary { background: var(--surf); }
+.notice-item-extra {
+  padding: 0 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 .notice-item-img {
   width: 100%;
-  max-height: 120px;
+  max-height: 160px;
   object-fit: cover;
   border-radius: 8px;
-  margin-top: 2px;
 }
 .notice-item-body {
-  font-size: 0.86rem;
-  color: var(--muted);
-  line-height: 1.55;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  font-size: 0.88rem;
+  color: var(--body);
+  line-height: 1.7;
+  word-break: keep-all;
 }
 .notice-item-video {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 700;
   color: var(--accent);
   text-decoration: none;
+  align-self: flex-start;
 }
 .notice-item-video:hover { text-decoration: underline; }
 
