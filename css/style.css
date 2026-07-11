@@ -540,6 +540,14 @@ body { font-size: 17px; }
 .devotion-item[open] summary::after { transform: rotate(-135deg); }
 .devotion-item[open] summary { border-bottom: 1px solid var(--line); color: var(--accent); }
 
+.devotion-item--static .devotion-item-title {
+  padding: 16px 20px;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: var(--ink);
+  border-bottom: 1px solid var(--line);
+}
+
 .devotion-title { font-weight: 700; }
 .devotion-ref {
   font-size: 0.88rem;
@@ -1682,6 +1690,7 @@ details.notice-item:hover summary { background: var(--surf); }
   /* Devotion */
   .devotion-grid { gap: 40px; }
   .devotion-item summary { padding: 14px 16px; font-size: 0.98rem; gap: 8px; flex-wrap: wrap; }
+  .devotion-item--static .devotion-item-title { padding: 14px 16px; font-size: 0.98rem; }
   .devotion-ref { margin-left: 0; flex-basis: 100%; }
   .devotion-body { padding: 14px 16px 18px; }
 
