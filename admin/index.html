@@ -53,7 +53,7 @@
       display: inline-flex; align-items: center; justify-content: center;
       height: 52px; padding: 0 28px; border-radius: 10px; border: none;
       background: var(--accent); color: #fff; font-weight: 700; font-size: 1.02rem;
-      cursor: pointer; width: 100%;
+      cursor: pointer; width: 100%; text-decoration: none;
       transition: background 0.15s, transform 0.15s;
     }
     .btn:hover { background: #2e6040; }
@@ -67,9 +67,13 @@
     #app-view { display: none; }
     .topbar {
       display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 44px; padding-bottom: 28px; border-bottom: 1.5px solid var(--line);
+      margin-bottom: 32px; padding-bottom: 28px; border-bottom: 1.5px solid var(--line);
     }
-    .tabs { display: flex; gap: 10px; margin-bottom: 32px; }
+    .topbar-actions { display: flex; gap: 10px; }
+    .topbar-actions .btn { height: 44px; font-size: 0.95rem; padding: 0 20px; }
+
+    .toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 14px; }
+    .tabs { display: flex; gap: 10px; }
     .tab {
       padding: 13px 26px; border-radius: 999px; border: 1.5px solid var(--line);
       background: #fff; cursor: pointer; font-weight: 700; font-size: 1rem; color: var(--muted);
@@ -77,9 +81,31 @@
     }
     .tab:hover { border-color: var(--accent); color: var(--accent); }
     .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    .view-toggle { display: flex; gap: 4px; background: #fff; border: 1.5px solid var(--line); border-radius: 12px; padding: 4px; }
+    .view-toggle button {
+      border: none; background: transparent; cursor: pointer;
+      padding: 9px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 700; color: var(--muted);
+      display: inline-flex; align-items: center; gap: 6px; font-family: inherit;
+    }
+    .view-toggle button.active { background: var(--accent); color: #fff; }
+
     .panel { display: none; }
     .panel.active { display: block; }
-    .list-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px; margin-bottom: 24px; }
+    .list-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px; }
+    #app-view.view-list .list-grid { grid-template-columns: 1fr; }
+
+    .add-card {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 8px; min-height: 320px;
+      border: 2.5px dashed var(--line); border-radius: var(--r);
+      background: transparent; cursor: pointer; color: var(--muted);
+      font-weight: 700; font-size: 1.05rem; width: 100%;
+      transition: all 0.15s;
+    }
+    .add-card:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    .add-card .plus { font-size: 2.6rem; line-height: 1; font-weight: 300; }
+
     .card {
       background: #fff; border-radius: var(--r); padding: 28px;
       box-shadow: 0 2px 14px rgba(0,0,0,0.06);
@@ -91,14 +117,27 @@
       background: var(--accent-dim); padding: 5px 12px; border-radius: 999px;
     }
     .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .thumb { width: 100%; max-width: 220px; border-radius: 10px; margin-top: 10px; display: none; }
-    .actions { display: flex; align-items: center; gap: 16px; margin-top: 28px; }
-    .actions .btn { width: auto; }
-    .save-status { font-size: 0.95rem; }
-    .save-status.ok { color: var(--accent); font-weight: 600; }
-    .save-status.err { color: #c0392b; font-weight: 600; }
-    .add-row { text-align: center; margin: 0 0 28px; }
-    .add-row .btn { width: auto; padding: 0 32px; }
+    .tag-custom { margin-top: 8px; }
+
+    .thumb-wrap { position: relative; display: inline-block; margin-top: 10px; }
+    .thumb { width: 100%; max-width: 220px; border-radius: 10px; display: none; }
+    .thumb-del {
+      position: absolute; top: 6px; right: 6px;
+      width: 28px; height: 28px; border-radius: 50%; border: none;
+      background: rgba(20,20,20,0.68); color: #fff; cursor: pointer;
+      display: none; align-items: center; justify-content: center; font-size: 1rem; line-height: 1;
+      opacity: 0; transition: opacity 0.15s;
+    }
+    .thumb-wrap:hover .thumb-del { opacity: 1; }
+
+    .card-footer {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line);
+    }
+    .card-footer .btn { width: auto; height: 42px; padding: 0 26px; font-size: 0.95rem; }
+    .save-status { font-size: 0.85rem; }
+    .save-status.ok { color: var(--accent); font-weight: 700; }
+    .save-status.err { color: #c0392b; font-weight: 700; }
   </style>
 </head>
 <body>
@@ -126,32 +165,31 @@
       <div class="topbar">
         <div>
           <h1>정다운교회 관리자</h1>
-          <p class="sub" style="margin:0;">공지사항 · 교회소식을 수정하고 저장하면 사이트에 자동 반영됩니다.</p>
+          <p class="sub">공지사항 · 교회소식을 수정하고 저장하면 사이트에 자동 반영됩니다.</p>
         </div>
-        <button class="btn secondary" id="logout-btn">로그아웃</button>
+        <div class="topbar-actions">
+          <a href="/" class="btn secondary">홈으로 돌아가기</a>
+          <button class="btn secondary" id="logout-btn">로그아웃</button>
+        </div>
       </div>
 
-      <div class="tabs">
-        <div class="tab active" data-tab="news">교회소식</div>
-        <div class="tab" data-tab="notices">공지사항</div>
+      <div class="toolbar">
+        <div class="tabs">
+          <div class="tab active" data-tab="news">교회소식</div>
+          <div class="tab" data-tab="notices">공지사항</div>
+        </div>
+        <div class="view-toggle">
+          <button type="button" data-view="grid" class="active">⊞ 그리드</button>
+          <button type="button" data-view="list">☰ 나열</button>
+        </div>
       </div>
 
       <div class="panel active" id="panel-news">
         <div id="news-list" class="list-grid"></div>
-        <div class="add-row"><button class="btn secondary" id="news-add">+ 새 소식 추가</button></div>
-        <div class="actions">
-          <button class="btn" id="news-save" style="width:auto;">교회소식 저장</button>
-          <span class="save-status" id="news-status"></span>
-        </div>
       </div>
 
       <div class="panel" id="panel-notices">
         <div id="notices-list" class="list-grid"></div>
-        <div class="add-row"><button class="btn secondary" id="notices-add">+ 새 공지 추가</button></div>
-        <div class="actions">
-          <button class="btn" id="notices-save" style="width:auto;">공지사항 저장</button>
-          <span class="save-status" id="notices-status"></span>
-        </div>
       </div>
     </div>
   </div>
@@ -219,7 +257,32 @@
       });
     });
 
+    // View toggle (그리드 / 나열)
+    document.querySelectorAll('.view-toggle button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.view-toggle button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        appView.classList.toggle('view-list', btn.dataset.view === 'list');
+      });
+    });
+
     const bust = () => `?t=${Date.now()}`;
+    const todayStr = () => new Date().toISOString().slice(0, 10);
+    const TAG_PRESETS = ['공지', '행사', '선교', '교육', '소식'];
+
+    async function uploadPendingFile(item) {
+      if (!item._pendingFile) return;
+      const dataBase64 = await readAsBase64(item._pendingFile);
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: item._pendingFile.name, dataBase64 })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || '이미지 업로드 실패');
+      item.image = data.path;
+      delete item._pendingFile;
+    }
 
     // ---- 교회소식 ----
     let newsItems = [];
@@ -233,7 +296,19 @@
     function renderNews() {
       const list = document.getElementById('news-list');
       list.innerHTML = '';
+
+      const addCard = document.createElement('button');
+      addCard.type = 'button';
+      addCard.className = 'add-card';
+      addCard.innerHTML = `<span class="plus">+</span><span>새 소식 추가</span>`;
+      addCard.addEventListener('click', () => {
+        newsItems.unshift({ title: '', date: todayStr(), tag: '소식', image: '', video: '', body: '' });
+        renderNews();
+      });
+      list.appendChild(addCard);
+
       newsItems.forEach((item, i) => {
+        const isCustomTag = !!item.tag && !TAG_PRESETS.includes(item.tag);
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
@@ -241,63 +316,84 @@
           <div class="field"><label>제목</label><input type="text" data-field="title" value="${escapeAttr(item.title || '')}" /></div>
           <div class="row2">
             <div class="field"><label>날짜</label><input type="date" data-field="date" value="${escapeAttr(item.date || '')}" /></div>
-            <div class="field"><label>분류</label>
+            <div class="field">
+              <label>분류</label>
               <select data-field="tag">
-                ${['공지','행사','선교','교육','소식'].map(t => `<option value="${t}" ${item.tag === t ? 'selected' : ''}>${t}</option>`).join('')}
+                ${TAG_PRESETS.map(t => `<option value="${t}" ${item.tag === t ? 'selected' : ''}>${t}</option>`).join('')}
+                <option value="__custom__" ${isCustomTag ? 'selected' : ''}>기타</option>
               </select>
+              <input type="text" class="tag-custom" data-field="tagCustom" placeholder="분류 직접 입력"
+                value="${isCustomTag ? escapeAttr(item.tag) : ''}"
+                style="${isCustomTag ? 'display:block;' : 'display:none;'}" />
             </div>
           </div>
           <div class="field">
             <label>대표 사진 (선택)</label>
             <input type="file" accept="image/*" data-field="imageFile" />
-            <img class="thumb" src="${item.image ? escapeAttr(item.image) : ''}" style="${item.image ? 'display:block;' : ''}" />
+            <div class="thumb-wrap">
+              <img class="thumb" src="${item.image ? escapeAttr(item.image) : ''}" style="${item.image ? 'display:block;' : ''}" />
+              <button type="button" class="thumb-del" style="${item.image ? 'display:flex;' : ''}" title="사진 삭제">×</button>
+            </div>
           </div>
           <div class="field"><label>영상 URL (유튜브 등, 선택)</label><input type="url" placeholder="https://youtube.com/watch?v=..." data-field="video" value="${escapeAttr(item.video || '')}" /></div>
           <div class="field"><label>내용 (선택)</label><textarea data-field="body">${escapeHtml(item.body || '')}</textarea></div>
+          <div class="card-footer">
+            <span class="save-status"></span>
+            <button class="btn" data-save>저장</button>
+          </div>
         `;
         card.querySelector('[data-i]').addEventListener('click', () => { newsItems.splice(i, 1); renderNews(); });
         card.querySelector('[data-field="title"]').addEventListener('input', e => item.title = e.target.value);
         card.querySelector('[data-field="date"]').addEventListener('input', e => item.date = e.target.value);
-        card.querySelector('[data-field="tag"]').addEventListener('change', e => item.tag = e.target.value);
         card.querySelector('[data-field="video"]').addEventListener('input', e => item.video = e.target.value);
         card.querySelector('[data-field="body"]').addEventListener('input', e => item.body = e.target.value);
+
+        const tagSelect = card.querySelector('[data-field="tag"]');
+        const tagCustom = card.querySelector('[data-field="tagCustom"]');
+        tagSelect.addEventListener('change', e => {
+          if (e.target.value === '__custom__') {
+            tagCustom.style.display = 'block';
+            tagCustom.focus();
+            item.tag = tagCustom.value || '';
+          } else {
+            tagCustom.style.display = 'none';
+            item.tag = e.target.value;
+          }
+        });
+        tagCustom.addEventListener('input', e => { item.tag = e.target.value; });
+
         const fileInput = card.querySelector('[data-field="imageFile"]');
         const thumb = card.querySelector('.thumb');
+        const thumbDel = card.querySelector('.thumb-del');
         fileInput.addEventListener('change', async () => {
           const file = fileInput.files[0];
           if (!file) return;
           const dataUrl = await readAsDataURL(file);
           thumb.src = dataUrl;
           thumb.style.display = 'block';
+          thumbDel.style.display = 'flex';
           item._pendingFile = file;
         });
+        thumbDel.addEventListener('click', () => {
+          item.image = '';
+          delete item._pendingFile;
+          fileInput.value = '';
+          thumb.src = '';
+          thumb.style.display = 'none';
+          thumbDel.style.display = 'none';
+        });
+
+        const statusEl = card.querySelector('.save-status');
+        card.querySelector('[data-save]').addEventListener('click', () => saveNews(statusEl));
+
         list.appendChild(card);
       });
     }
 
-    document.getElementById('news-add').addEventListener('click', () => {
-      newsItems.unshift({ title: '', date: new Date().toISOString().slice(0, 10), tag: '소식', image: '', video: '', body: '' });
-      renderNews();
-    });
-
-    document.getElementById('news-save').addEventListener('click', async () => {
-      const statusEl = document.getElementById('news-status');
+    async function saveNews(statusEl) {
       statusEl.textContent = '저장 중...'; statusEl.className = 'save-status';
       try {
-        for (const item of newsItems) {
-          if (item._pendingFile) {
-            const dataBase64 = await readAsBase64(item._pendingFile);
-            const res = await fetch('/api/admin/upload', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ filename: item._pendingFile.name, dataBase64 })
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || '이미지 업로드 실패');
-            item.image = data.path;
-            delete item._pendingFile;
-          }
-        }
+        for (const item of newsItems) await uploadPendingFile(item);
         const clean = newsItems.map(({ title, date, tag, image, video, body }) => ({ title, date, tag, image, video, body }));
         const res = await fetch('/api/admin/save', {
           method: 'POST',
@@ -306,11 +402,12 @@
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || '저장 실패');
-        statusEl.textContent = '저장되었습니다. 잠시 후 사이트에 반영됩니다.'; statusEl.className = 'save-status ok';
+        statusEl.textContent = '저장됨'; statusEl.className = 'save-status ok';
+        renderNews();
       } catch (err) {
         statusEl.textContent = err.message; statusEl.className = 'save-status err';
       }
-    });
+    }
 
     // ---- 공지사항 ----
     let noticeItems = [];
@@ -324,6 +421,17 @@
     function renderNotices() {
       const list = document.getElementById('notices-list');
       list.innerHTML = '';
+
+      const addCard = document.createElement('button');
+      addCard.type = 'button';
+      addCard.className = 'add-card';
+      addCard.innerHTML = `<span class="plus">+</span><span>새 공지 추가</span>`;
+      addCard.addEventListener('click', () => {
+        noticeItems.unshift({ title: '', date: todayStr(), image: '', video: '', body: '' });
+        renderNotices();
+      });
+      list.appendChild(addCard);
+
       noticeItems.forEach((item, i) => {
         const card = document.createElement('div');
         card.className = 'card';
@@ -334,53 +442,56 @@
           <div class="field">
             <label>사진 (선택)</label>
             <input type="file" accept="image/*" data-field="imageFile" />
-            <img class="thumb" src="${item.image ? escapeAttr(item.image) : ''}" style="${item.image ? 'display:block;' : ''}" />
+            <div class="thumb-wrap">
+              <img class="thumb" src="${item.image ? escapeAttr(item.image) : ''}" style="${item.image ? 'display:block;' : ''}" />
+              <button type="button" class="thumb-del" style="${item.image ? 'display:flex;' : ''}" title="사진 삭제">×</button>
+            </div>
           </div>
           <div class="field"><label>영상 URL (유튜브 등, 선택)</label><input type="url" placeholder="https://youtube.com/watch?v=..." data-field="video" value="${escapeAttr(item.video || '')}" /></div>
           <div class="field"><label>내용 (선택)</label><textarea data-field="body">${escapeHtml(item.body || '')}</textarea></div>
+          <div class="card-footer">
+            <span class="save-status"></span>
+            <button class="btn" data-save>저장</button>
+          </div>
         `;
         card.querySelector('[data-i]').addEventListener('click', () => { noticeItems.splice(i, 1); renderNotices(); });
         card.querySelector('[data-field="title"]').addEventListener('input', e => item.title = e.target.value);
         card.querySelector('[data-field="date"]').addEventListener('input', e => item.date = e.target.value);
         card.querySelector('[data-field="video"]').addEventListener('input', e => item.video = e.target.value);
         card.querySelector('[data-field="body"]').addEventListener('input', e => item.body = e.target.value);
+
         const fileInput = card.querySelector('[data-field="imageFile"]');
         const thumb = card.querySelector('.thumb');
+        const thumbDel = card.querySelector('.thumb-del');
         fileInput.addEventListener('change', async () => {
           const file = fileInput.files[0];
           if (!file) return;
           const dataUrl = await readAsDataURL(file);
           thumb.src = dataUrl;
           thumb.style.display = 'block';
+          thumbDel.style.display = 'flex';
           item._pendingFile = file;
         });
+        thumbDel.addEventListener('click', () => {
+          item.image = '';
+          delete item._pendingFile;
+          fileInput.value = '';
+          thumb.src = '';
+          thumb.style.display = 'none';
+          thumbDel.style.display = 'none';
+        });
+
+        const statusEl = card.querySelector('.save-status');
+        card.querySelector('[data-save]').addEventListener('click', () => saveNotices(statusEl));
+
         list.appendChild(card);
       });
     }
 
-    document.getElementById('notices-add').addEventListener('click', () => {
-      noticeItems.unshift({ title: '', date: new Date().toISOString().slice(0, 10), image: '', video: '', body: '' });
-      renderNotices();
-    });
-
-    document.getElementById('notices-save').addEventListener('click', async () => {
-      const statusEl = document.getElementById('notices-status');
+    async function saveNotices(statusEl) {
       statusEl.textContent = '저장 중...'; statusEl.className = 'save-status';
       try {
-        for (const item of noticeItems) {
-          if (item._pendingFile) {
-            const dataBase64 = await readAsBase64(item._pendingFile);
-            const res = await fetch('/api/admin/upload', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ filename: item._pendingFile.name, dataBase64 })
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || '이미지 업로드 실패');
-            item.image = data.path;
-            delete item._pendingFile;
-          }
-        }
+        for (const item of noticeItems) await uploadPendingFile(item);
         const clean = noticeItems.map(({ title, date, image, video, body }) => ({ title, date, image, video, body }));
         const res = await fetch('/api/admin/save', {
           method: 'POST',
@@ -389,11 +500,12 @@
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || '저장 실패');
-        statusEl.textContent = '저장되었습니다. 잠시 후 사이트에 반영됩니다.'; statusEl.className = 'save-status ok';
+        statusEl.textContent = '저장됨'; statusEl.className = 'save-status ok';
+        renderNotices();
       } catch (err) {
         statusEl.textContent = err.message; statusEl.className = 'save-status err';
       }
-    });
+    }
 
     // ---- helpers ----
     function escapeHtml(s) {
