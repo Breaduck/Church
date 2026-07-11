@@ -129,6 +129,19 @@
     .card-head-actions { display: flex; align-items: center; gap: 8px; }
     .card-head-actions .btn { width: auto; height: 36px; padding: 0 18px; font-size: 0.88rem; }
     .card-head-actions .btn.danger { height: 36px; padding: 0 16px; font-size: 0.85rem; }
+    .card-head-left { display: flex; align-items: center; gap: 10px; }
+    .drag-handle {
+      cursor: grab; color: var(--muted); font-size: 1.1rem; line-height: 1;
+      padding: 4px 2px; user-select: none;
+    }
+    .drag-handle:active { cursor: grabbing; }
+    .card.dragging { opacity: 0.4; }
+    .card.drag-over { outline: 2.5px dashed var(--accent); outline-offset: 4px; }
+    .card-head-actions .btn.preview-btn { background: #fff; color: var(--ink); border: 1.5px solid var(--line); }
+    .card-head-actions .btn.preview-btn:hover { background: var(--surf); }
+    .preview-wrap { margin-top: 16px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: none; }
+    .preview-wrap.open { display: block; }
+    .preview-wrap iframe { width: 100%; border: none; display: block; background: #fff; }
 
     .card-summary { display: none; }
     #app-view.view-list .card-summary {
@@ -342,8 +355,105 @@
     async function loadNews() {
       const res = await fetch('/data/news.json' + bust(), { cache: 'no-store' });
       const data = await res.json().catch(() => ({ items: [] }));
-      newsItems = (data.items || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      newsItems = (data.items || []).slice();
       renderNews();
+    }
+
+    // ---- 드래그 정렬 ----
+    let dragSrcIndex = null;
+    function attachDragReorder(card, index, items, rerender) {
+      const handle = card.querySelector('.drag-handle');
+      handle.addEventListener('mousedown', () => { card.draggable = true; });
+      card.addEventListener('dragend', () => {
+        card.draggable = false;
+        card.classList.remove('dragging');
+        document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+      });
+      card.addEventListener('dragstart', (e) => {
+        dragSrcIndex = index;
+        card.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', String(index));
+      });
+      card.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        card.classList.add('drag-over');
+      });
+      card.addEventListener('dragleave', () => card.classList.remove('drag-over'));
+      card.addEventListener('drop', (e) => {
+        e.preventDefault();
+        card.classList.remove('drag-over');
+        if (dragSrcIndex === null || dragSrcIndex === index) return;
+        const [moved] = items.splice(dragSrcIndex, 1);
+        items.splice(index, 0, moved);
+        dragSrcIndex = null;
+        rerender();
+      });
+    }
+
+    // ---- 미리보기 ----
+    const PREVIEW_CSS_LINKS = `
+      <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+      <link rel="stylesheet" href="/css/style.css">
+    `;
+    function buildNewsPreviewSrcdoc(item) {
+      const img = item.image ? `<img src="${escapeAttr(item.image)}" alt="" />` : '';
+      const media = item.image
+        ? (item.video
+          ? `<a class="news-img news-img--video" href="${escapeAttr(item.video)}">${img}<span class="news-play"></span></a>`
+          : `<div class="news-img">${img}</div>`)
+        : '';
+      return `<!DOCTYPE html><html><head><meta charset="utf-8">${PREVIEW_CSS_LINKS}
+        <style>body{margin:0;padding:20px;background:#f3f7f5;} .news-grid{display:block;max-width:320px;}</style>
+        </head><body>
+        <div class="news-grid">
+          <article class="news-card">
+            ${media}
+            <div class="news-body">
+              <span class="news-tag">${escapeHtml(item.tag || '소식')}</span>
+              <h3 class="news-title">${escapeHtml(item.title || '제목을 입력해주세요')}</h3>
+              ${item.body ? `<p class="news-summary">${escapeHtml(item.body)}</p>` : ''}
+              <p class="news-date">${escapeHtml(item.date || '')}</p>
+            </div>
+          </article>
+        </div>
+        </body></html>`;
+    }
+    function buildNoticePreviewSrcdoc(item) {
+      const hasExtra = !!(item.image || item.body || item.video);
+      const summary = `<span class="notice-item-date">${escapeHtml(item.date || '')}</span><p class="notice-item-title">${escapeHtml(item.title || '제목을 입력해주세요')}</p>`;
+      const bodyHtml = hasExtra
+        ? `<details class="notice-item" open><summary>${summary}</summary><div class="notice-item-extra">
+            ${item.image ? `<img class="notice-item-img" src="${escapeAttr(item.image)}" alt="" />` : ''}
+            ${item.body ? `<p class="notice-item-body">${escapeHtml(item.body)}</p>` : ''}
+            ${item.video ? `<a class="notice-item-video" href="${escapeAttr(item.video)}">영상 보기</a>` : ''}
+          </div></details>`
+        : `<li class="notice-item">${summary}</li>`;
+      return `<!DOCTYPE html><html><head><meta charset="utf-8">${PREVIEW_CSS_LINKS}
+        <style>body{margin:0;padding:20px;background:#f3f7f5;} .notice-list{list-style:none;max-width:320px;background:#fff;border-radius:14px;overflow:hidden;border:1px solid #e3e8e4;margin:0;padding:0;}</style>
+        </head><body>
+        <ul class="notice-list">${bodyHtml}</ul>
+        </body></html>`;
+    }
+    function attachPreview(card, item, buildSrcdoc) {
+      const btn = card.querySelector('[data-preview]');
+      const wrap = card.querySelector('.preview-wrap');
+      const iframe = wrap.querySelector('.preview-frame');
+      btn.addEventListener('click', () => {
+        const opening = !wrap.classList.contains('open');
+        wrap.classList.toggle('open', opening);
+        btn.textContent = opening ? '미리보기 닫기' : '미리보기';
+        if (opening) {
+          iframe.srcdoc = buildSrcdoc(item);
+          iframe.style.height = '0px';
+          iframe.onload = () => {
+            try {
+              iframe.style.height = (iframe.contentWindow.document.body.scrollHeight + 20) + 'px';
+            } catch (_) { iframe.style.height = '400px'; }
+          };
+        }
+      });
     }
 
     function makeAddCard(label, onAdd) {
@@ -370,8 +480,12 @@
           </div>
           <div class="card-fields">
             <div class="card-head">
-              <span>#${i + 1}</span>
+              <div class="card-head-left">
+                <span class="drag-handle" title="드래그하여 순서 변경">⠿⠿</span>
+                <span>#${i + 1}</span>
+              </div>
               <div class="card-head-actions">
+                <button class="btn preview-btn" data-preview>미리보기</button>
                 <button class="btn" data-save>저장</button>
                 <button class="btn danger" data-i="${i}">삭제</button>
               </div>
@@ -399,6 +513,7 @@
               </div>
             </div>
             <div class="field"><label>내용 (선택)</label><textarea data-field="body">${escapeHtml(item.body || '')}</textarea></div>
+            <div class="preview-wrap"><iframe class="preview-frame"></iframe></div>
             <div class="card-footer">
               <span class="save-status"></span>
             </div>
@@ -450,6 +565,9 @@
         const statusEl = card.querySelector('.save-status');
         card.querySelector('[data-save]').addEventListener('click', () => saveNews(statusEl));
 
+        attachDragReorder(card, i, newsItems, renderNews);
+        attachPreview(card, item, buildNewsPreviewSrcdoc);
+
         list.appendChild(card);
       });
 
@@ -484,7 +602,7 @@
     async function loadNotices() {
       const res = await fetch('/data/notices.json' + bust(), { cache: 'no-store' });
       const data = await res.json().catch(() => ({ items: [] }));
-      noticeItems = (data.items || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      noticeItems = (data.items || []).slice();
       renderNotices();
     }
 
@@ -502,8 +620,12 @@
           </div>
           <div class="card-fields">
             <div class="card-head">
-              <span>#${i + 1}</span>
+              <div class="card-head-left">
+                <span class="drag-handle" title="드래그하여 순서 변경">⠿⠿</span>
+                <span>#${i + 1}</span>
+              </div>
               <div class="card-head-actions">
+                <button class="btn preview-btn" data-preview>미리보기</button>
                 <button class="btn" data-save>저장</button>
                 <button class="btn danger" data-i="${i}">삭제</button>
               </div>
@@ -519,6 +641,7 @@
               </div>
             </div>
             <div class="field"><label>내용 (선택)</label><textarea data-field="body">${escapeHtml(item.body || '')}</textarea></div>
+            <div class="preview-wrap"><iframe class="preview-frame"></iframe></div>
             <div class="card-footer">
               <span class="save-status"></span>
             </div>
@@ -555,6 +678,9 @@
 
         const statusEl = card.querySelector('.save-status');
         card.querySelector('[data-save]').addEventListener('click', () => saveNotices(statusEl));
+
+        attachDragReorder(card, i, noticeItems, renderNotices);
+        attachPreview(card, item, buildNoticePreviewSrcdoc);
 
         list.appendChild(card);
       });

@@ -28,7 +28,7 @@
   // 교회소식 카드
   if (grid) {
     const data = await fetchJson('/data/news.json');
-    const items = ((data && data.items) || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    const items = ((data && data.items) || []).slice();
     if (items.length) {
       grid.innerHTML = items.map(item => {
         let media = '';
@@ -100,7 +100,7 @@
   // 공지사항 패널
   if (noticeList) {
     const data = await fetchJson('/data/notices.json');
-    const items = ((data && data.items) || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    const items = ((data && data.items) || []).slice();
     if (items.length) {
       noticeList.innerHTML = items.slice(0, 8).map(item => {
         const summary = `
