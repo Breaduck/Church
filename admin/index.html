@@ -113,6 +113,7 @@
       transition: all 0.15s;
     }
     .add-card:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    #app-view.view-list .add-card { display: none; }
     .add-card .plus { font-size: 2.6rem; line-height: 1; font-weight: 300; }
 
     .card {
@@ -274,14 +275,22 @@
     });
 
     // Tabs
+    const quickAddBtn = document.getElementById('quick-add');
+    const QUICK_ADD_LABELS = { news: '+ 새 교회소식 추가', notices: '+ 새 공지 추가' };
+    function updateQuickAddLabel() {
+      const activeTab = document.querySelector('.tab.active').dataset.tab;
+      quickAddBtn.textContent = QUICK_ADD_LABELS[activeTab];
+    }
     document.querySelectorAll('.tab').forEach(tab => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
         tab.classList.add('active');
         document.getElementById(`panel-${tab.dataset.tab}`).classList.add('active');
+        updateQuickAddLabel();
       });
     });
+    updateQuickAddLabel();
 
     function expandFirstCard(listId) {
       const firstCard = document.querySelector(`#${listId} .card`);
@@ -465,7 +474,7 @@
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || '저장 실패');
-        statusEl.textContent = '저장됨'; statusEl.className = 'save-status ok';
+        statusEl.textContent = '저장이 완료되었습니다. 사이트 반영까지 1~2분 정도 걸릴 수 있어요.'; statusEl.className = 'save-status ok';
         renderNews();
       } catch (err) {
         statusEl.textContent = err.message; statusEl.className = 'save-status err';
@@ -573,7 +582,7 @@
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || '저장 실패');
-        statusEl.textContent = '저장됨'; statusEl.className = 'save-status ok';
+        statusEl.textContent = '저장이 완료되었습니다. 사이트 반영까지 1~2분 정도 걸릴 수 있어요.'; statusEl.className = 'save-status ok';
         renderNotices();
       } catch (err) {
         statusEl.textContent = err.message; statusEl.className = 'save-status err';
