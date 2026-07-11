@@ -31,7 +31,7 @@
     const data = await fetchJson('/data/news.json');
     const items = ((data && data.items) || []).slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
     if (items.length) {
-      grid.innerHTML = items.slice(0, 3).map(item => {
+      grid.innerHTML = items.map(item => {
         const img = `<img src="${escapeHtml(item.image || FALLBACK_IMG)}" alt="" loading="lazy" />`;
         const media = item.video
           ? `<a class="news-img news-img--video" href="${escapeHtml(item.video)}" target="_blank" rel="noopener noreferrer" aria-label="영상 보기">${img}<span class="news-play"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M8 5v14l11-7z"/></svg></span></a>`
@@ -48,6 +48,26 @@
         </article>
       `;
       }).join('');
+    }
+
+    // 슬라이더 내비게이션 (3개 초과로 넘칠 때만 표시)
+    const viewport = grid.closest('.news-viewport');
+    const nav = document.getElementById('news-nav');
+    const prevBtn = document.getElementById('news-prev');
+    const nextBtn = document.getElementById('news-next');
+    if (viewport && nav && prevBtn && nextBtn) {
+      const updateNav = () => {
+        const scrollable = viewport.scrollWidth > viewport.clientWidth + 4;
+        nav.hidden = !scrollable;
+        if (!scrollable) return;
+        prevBtn.disabled = viewport.scrollLeft <= 4;
+        nextBtn.disabled = viewport.scrollLeft >= viewport.scrollWidth - viewport.clientWidth - 4;
+      };
+      prevBtn.addEventListener('click', () => viewport.scrollBy({ left: -viewport.clientWidth, behavior: 'smooth' }));
+      nextBtn.addEventListener('click', () => viewport.scrollBy({ left: viewport.clientWidth, behavior: 'smooth' }));
+      viewport.addEventListener('scroll', updateNav, { passive: true });
+      window.addEventListener('resize', updateNav);
+      updateNav();
     }
   }
 

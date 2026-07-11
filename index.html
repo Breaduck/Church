@@ -7,6 +7,7 @@
   <meta property="og:title" content="정다운교회" />
   <meta property="og:description" content="사람을 키우고 선교하고 지역사회와 함께하는 교회. 경기도 안양시 만안구 경수대로 1236" />
   <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://church.pages.dev/img/church-hero.jpg" />
   <meta property="og:locale" content="ko_KR" />
   <meta name="theme-color" content="#3d7a56" />
   <title>정다운교회</title>
@@ -248,33 +249,47 @@
   <!-- 교회소식 -->
   <section class="news">
     <div class="wrap">
-      <p class="label reveal">교회소식</p>
-      <h2 class="news-heading reveal">최신 소식</h2>
-      <div class="news-grid">
-        <article class="news-card reveal">
-          <div class="news-img"><img src="img/news-gangnam-visit.jpg" alt="" /></div>
-          <div class="news-body">
-            <span class="news-tag">공지</span>
-            <h3 class="news-title">여전도회 강남시찰회</h3>
-            <p class="news-date">2026. 06. 15</p>
-          </div>
-        </article>
-        <article class="news-card reveal">
-          <div class="news-img"><img src="img/church-daycare.jpg" alt="" /></div>
-          <div class="news-body">
-            <span class="news-tag">행사</span>
-            <h3 class="news-title">다함께 돌봄센터 발표회</h3>
-            <p class="news-date">2026. 06. 10</p>
-          </div>
-        </article>
-        <article class="news-card reveal">
-          <div class="news-img"><img src="img/news-easter-cantata.jpg" alt="" /></div>
-          <div class="news-body">
-            <span class="news-tag">선교</span>
-            <h3 class="news-title">부활절 칸타타</h3>
-            <p class="news-date">2026. 06. 01</p>
-          </div>
-        </article>
+      <div class="news-head-row">
+        <div>
+          <p class="label reveal">교회소식</p>
+          <h2 class="news-heading reveal">최신 소식</h2>
+        </div>
+        <div class="news-nav" id="news-nav" hidden>
+          <button type="button" class="news-nav-btn" id="news-prev" aria-label="이전 소식">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <button type="button" class="news-nav-btn" id="news-next" aria-label="다음 소식">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="news-viewport">
+        <div class="news-grid">
+          <article class="news-card reveal">
+            <div class="news-img"><img src="img/news-gangnam-visit.jpg" alt="" /></div>
+            <div class="news-body">
+              <span class="news-tag">공지</span>
+              <h3 class="news-title">여전도회 강남시찰회</h3>
+              <p class="news-date">2026. 06. 15</p>
+            </div>
+          </article>
+          <article class="news-card reveal">
+            <div class="news-img"><img src="img/church-daycare.jpg" alt="" /></div>
+            <div class="news-body">
+              <span class="news-tag">행사</span>
+              <h3 class="news-title">다함께 돌봄센터 발표회</h3>
+              <p class="news-date">2026. 06. 10</p>
+            </div>
+          </article>
+          <article class="news-card reveal">
+            <div class="news-img"><img src="img/news-easter-cantata.jpg" alt="" /></div>
+            <div class="news-body">
+              <span class="news-tag">선교</span>
+              <h3 class="news-title">부활절 칸타타</h3>
+              <p class="news-date">2026. 06. 01</p>
+            </div>
+          </article>
+        </div>
       </div>
     </div>
   </section>
