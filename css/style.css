@@ -502,8 +502,8 @@ body { font-size: 17px; }
 .devotion-block { display: flex; flex-direction: column; gap: 24px; }
 .devotion-list { display: flex; flex-direction: column; gap: 8px; }
 
-#giving-missions .devotion-grid { align-items: stretch; }
-#giving-missions .devotion-list { flex: 1; justify-content: space-between; }
+#giving-missions .devotion-list { gap: 16px; }
+.giving-heading { white-space: nowrap; }
 
 .devotion-item {
   background: var(--white);
@@ -552,11 +552,11 @@ body { font-size: 17px; }
 }
 
 #giving-missions .devotion-item--static .devotion-item-title {
-  padding: 24px 28px;
-  font-size: 1.22rem;
+  padding: 32px 34px;
+  font-size: 2.6rem;
 }
-#giving-missions .devotion-body { padding: 22px 28px 28px; }
-#giving-missions .devotion-body p { font-size: 1.1rem; line-height: 1.9; }
+#giving-missions .devotion-body { padding: 26px 34px 34px; }
+#giving-missions .devotion-body p { font-size: 2.3rem; line-height: 1.6; }
 
 .devotion-title { font-weight: 700; }
 .devotion-ref {
@@ -1703,9 +1703,9 @@ details.notice-item:hover summary { background: var(--surf); }
   .devotion-item--static .devotion-item-title { padding: 14px 16px; font-size: 0.98rem; }
   .devotion-ref { margin-left: 0; flex-basis: 100%; }
   .devotion-body { padding: 14px 16px 18px; }
-  #giving-missions .devotion-item--static .devotion-item-title { padding: 18px 20px; font-size: 1.08rem; }
-  #giving-missions .devotion-body { padding: 16px 20px 20px; }
-  #giving-missions .devotion-body p { font-size: 1.02rem; line-height: 1.8; }
+  #giving-missions .devotion-item--static .devotion-item-title { padding: 22px 22px; font-size: 1.7rem; }
+  #giving-missions .devotion-body { padding: 18px 22px 24px; }
+  #giving-missions .devotion-body p { font-size: 1.5rem; line-height: 1.6; }
 
   /* Sermon */
   .sermon-head { flex-wrap: wrap; gap: 6px; }
