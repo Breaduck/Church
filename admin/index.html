@@ -175,6 +175,16 @@
     .save-status { font-size: 0.85rem; }
     .save-status.ok { color: var(--accent); font-weight: 700; }
     .save-status.err { color: #c0392b; font-weight: 700; }
+
+    .toast {
+      position: fixed; top: 28px; left: 50%; transform: translateX(-50%);
+      z-index: 999; padding: 16px 28px; border-radius: 12px;
+      font-weight: 700; font-size: 1rem; color: #fff;
+      background: var(--accent); box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+      animation: toast-in 0.2s ease;
+    }
+    .toast.err { background: #c0392b; }
+    @keyframes toast-in { from { opacity: 0; transform: translateX(-50%) translateY(-10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
   </style>
 </head>
 <body>
@@ -198,6 +208,7 @@
   </div>
 
   <div id="app-view" class="view-list">
+    <div id="toast" class="toast" hidden></div>
     <div class="wrap">
       <div class="topbar">
         <div>
@@ -304,6 +315,16 @@
       });
     });
     updateQuickAddLabel();
+
+    let toastTimer = null;
+    function showToast(msg, type) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.className = 'toast' + (type === 'err' ? ' err' : '');
+      toast.hidden = false;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { toast.hidden = true; }, 2600);
+    }
 
     function expandFirstCard(listId) {
       const firstCard = document.querySelector(`#${listId} .card`);
@@ -523,9 +544,15 @@
         const summaryDate = card.querySelector('.card-summary-meta span');
         card.querySelector('[data-toggle]').addEventListener('click', () => card.classList.toggle('expanded'));
         card.querySelector('[data-i]').addEventListener('click', async () => {
+          if (!confirm('삭제하시겠습니까?')) return;
           newsItems.splice(i, 1);
           renderNews();
-          try { await persistNews(); } catch (err) { alert('삭제 저장 중 오류: ' + err.message); }
+          try {
+            await persistNews();
+            showToast('삭제되었습니다.');
+          } catch (err) {
+            showToast('삭제 저장 중 오류: ' + err.message, 'err');
+          }
         });
         card.querySelector('[data-field="title"]').addEventListener('input', e => { item.title = e.target.value; summaryTitle.textContent = item.title || '제목을 입력해주세요'; });
         card.querySelector('[data-field="date"]').addEventListener('input', e => { item.date = e.target.value; summaryDate.textContent = item.date; });
@@ -658,9 +685,15 @@
         const summaryDate = card.querySelector('.card-summary-meta span');
         card.querySelector('[data-toggle]').addEventListener('click', () => card.classList.toggle('expanded'));
         card.querySelector('[data-i]').addEventListener('click', async () => {
+          if (!confirm('삭제하시겠습니까?')) return;
           noticeItems.splice(i, 1);
           renderNotices();
-          try { await persistNotices(); } catch (err) { alert('삭제 저장 중 오류: ' + err.message); }
+          try {
+            await persistNotices();
+            showToast('삭제되었습니다.');
+          } catch (err) {
+            showToast('삭제 저장 중 오류: ' + err.message, 'err');
+          }
         });
         card.querySelector('[data-field="title"]').addEventListener('input', e => { item.title = e.target.value; summaryTitle.textContent = item.title || '제목을 입력해주세요'; });
         card.querySelector('[data-field="date"]').addEventListener('input', e => { item.date = e.target.value; summaryDate.textContent = item.date; });
