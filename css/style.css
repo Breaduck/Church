@@ -502,7 +502,10 @@ body { font-size: 17px; }
 .devotion-block { display: flex; flex-direction: column; gap: 24px; }
 .devotion-list { display: flex; flex-direction: column; gap: 8px; }
 
-#giving-missions .devotion-list { gap: 16px; }
+#giving-missions .devotion-grid { align-items: stretch; }
+#giving-missions .devotion-block { height: 100%; }
+#giving-missions .devotion-list { gap: 16px; flex: 1; }
+#giving-missions .devotion-item:last-child { flex: 1; }
 .giving-heading { white-space: nowrap; }
 
 .devotion-item {
