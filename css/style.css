@@ -1123,7 +1123,18 @@ body { font-size: 17px; }
   border-radius: 6px;
   align-self: flex-start;
 }
-.news-title { font-size: 1.12rem; font-weight: 700; letter-spacing: -0.01em; line-height: 1.4; }
+.news-card { cursor: pointer; }
+.news-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  word-break: keep-all;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 .news-summary {
   font-size: 0.95rem;
   line-height: 1.6;
@@ -1136,6 +1147,104 @@ body { font-size: 17px; }
   margin-top: 2px;
 }
 .news-date { font-size: 0.9rem; color: var(--muted); margin-top: 6px; }
+
+/* 교회소식 상세 팝업 */
+.news-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+.news-modal.open { display: flex; }
+.news-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 24, 22, 0.72);
+  backdrop-filter: blur(2px);
+}
+.news-modal-inner {
+  position: relative;
+  width: min(560px, 100%);
+  max-height: 88vh;
+  background: var(--white);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+  animation: poster-pop 0.22s ease;
+  display: flex;
+  flex-direction: column;
+}
+.news-modal-media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: var(--surf);
+  flex-shrink: 0;
+}
+.news-modal-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.news-modal-body { padding: 26px 28px 30px; overflow-y: auto; }
+.news-modal-meta { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.news-modal-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-dim);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+.news-modal-tag:empty { display: none; }
+.news-modal-date { font-size: 0.88rem; color: var(--muted); }
+.news-modal-title {
+  font-size: 1.32rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+  word-break: keep-all;
+  margin-bottom: 14px;
+}
+.news-modal-text {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--body);
+  word-break: keep-all;
+  white-space: pre-wrap;
+}
+.news-modal-video {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+.news-modal-video:hover { opacity: 0.7; }
+.news-modal-video[hidden] { display: none; }
+.news-modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  transition: background 0.2s, transform 0.2s;
+}
+.news-modal-close:hover { background: var(--white); transform: scale(1.06); }
 
 /* ============================================================
    BOTTOM  —  New Visitor + Contact

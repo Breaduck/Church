@@ -732,6 +732,28 @@
     </div>
   </div>
 
+  <!-- 교회소식 상세 팝업 -->
+  <div class="news-modal" id="news-modal" role="dialog" aria-modal="true" aria-label="교회소식 상세">
+    <div class="news-modal-backdrop" data-news-close></div>
+    <div class="news-modal-inner">
+      <button class="news-modal-close" id="news-modal-close" aria-label="닫기">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="news-modal-media" id="news-modal-media"></div>
+      <div class="news-modal-body">
+        <div class="news-modal-meta">
+          <span class="news-modal-tag" id="news-modal-tag"></span>
+          <span class="news-modal-date" id="news-modal-date"></span>
+        </div>
+        <h3 class="news-modal-title" id="news-modal-title"></h3>
+        <p class="news-modal-text" id="news-modal-text"></p>
+        <a class="news-modal-video" id="news-modal-video" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><path d="M8 5v14l11-7z"/></svg>영상 보기
+        </a>
+      </div>
+    </div>
+  </div>
+
   <script src="js/main.js"></script>
   <script src="js/news-loader.js"></script>
 </body>

@@ -30,26 +30,68 @@
     const data = await fetchJson('/data/news.json');
     const items = ((data && data.items) || []).slice();
     if (items.length) {
-      grid.innerHTML = items.map(item => {
+      grid.innerHTML = items.map((item, i) => {
         let media = '';
         if (item.image) {
           const img = `<img src="${escapeHtml(item.image)}" alt="" loading="lazy" />`;
-          media = item.video
-            ? `<a class="news-img news-img--video" href="${escapeHtml(item.video)}" target="_blank" rel="noopener noreferrer" aria-label="영상 보기">${img}<span class="news-play"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M8 5v14l11-7z"/></svg></span></a>`
-            : `<div class="news-img">${img}</div>`;
+          const play = item.video ? `<span class="news-play"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M8 5v14l11-7z"/></svg></span>` : '';
+          media = `<div class="news-img">${img}${play}</div>`;
         }
         return `
-        <article class="news-card reveal visible">
+        <article class="news-card reveal visible" data-idx="${i}" tabindex="0" role="button" aria-haspopup="dialog">
           ${media}
           <div class="news-body">
-            <span class="news-tag">${escapeHtml(item.tag || '소식')}</span>
             <h3 class="news-title">${escapeHtml(item.title || '')}</h3>
-            ${item.body ? `<p class="news-summary">${escapeHtml(item.body)}</p>` : ''}
-            <p class="news-date">${escapeHtml(fmtDate(item.date))}</p>
           </div>
         </article>
       `;
       }).join('');
+
+      // 상세 팝업
+      const modal = document.getElementById('news-modal');
+      const modalMedia = document.getElementById('news-modal-media');
+      const modalTag = document.getElementById('news-modal-tag');
+      const modalDate = document.getElementById('news-modal-date');
+      const modalTitle = document.getElementById('news-modal-title');
+      const modalText = document.getElementById('news-modal-text');
+      const modalVideo = document.getElementById('news-modal-video');
+      const modalClose = document.getElementById('news-modal-close');
+
+      if (modal && modalMedia && modalTitle && modalText && modalClose) {
+        const openModal = item => {
+          modalMedia.innerHTML = item.image ? `<img src="${escapeHtml(item.image)}" alt="" />` : '';
+          modalMedia.hidden = !item.image;
+          modalTag.textContent = item.tag || '';
+          modalDate.textContent = fmtDate(item.date);
+          modalTitle.textContent = item.title || '';
+          modalText.textContent = item.body || '';
+          modalText.hidden = !item.body;
+          if (item.video) {
+            modalVideo.href = item.video;
+            modalVideo.hidden = false;
+          } else {
+            modalVideo.hidden = true;
+          }
+          modal.classList.add('open');
+          document.body.style.overflow = 'hidden';
+        };
+        const closeModal = () => {
+          modal.classList.remove('open');
+          document.body.style.overflow = '';
+        };
+        grid.querySelectorAll('.news-card').forEach(card => {
+          const item = items[Number(card.dataset.idx)];
+          card.addEventListener('click', () => openModal(item));
+          card.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(item); }
+          });
+        });
+        modalClose.addEventListener('click', closeModal);
+        modal.querySelectorAll('[data-news-close]').forEach(el => el.addEventListener('click', closeModal));
+        document.addEventListener('keydown', e => {
+          if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+        });
+      }
     }
 
     // 슬라이더 내비게이션 (3개 초과로 넘칠 때만 표시) + 자동 넘김
