@@ -522,7 +522,11 @@
         const summaryTitle = card.querySelector('.card-summary-title');
         const summaryDate = card.querySelector('.card-summary-meta span');
         card.querySelector('[data-toggle]').addEventListener('click', () => card.classList.toggle('expanded'));
-        card.querySelector('[data-i]').addEventListener('click', () => { newsItems.splice(i, 1); renderNews(); });
+        card.querySelector('[data-i]').addEventListener('click', async () => {
+          newsItems.splice(i, 1);
+          renderNews();
+          try { await persistNews(); } catch (err) { alert('삭제 저장 중 오류: ' + err.message); }
+        });
         card.querySelector('[data-field="title"]').addEventListener('input', e => { item.title = e.target.value; summaryTitle.textContent = item.title || '제목을 입력해주세요'; });
         card.querySelector('[data-field="date"]').addEventListener('input', e => { item.date = e.target.value; summaryDate.textContent = item.date; });
         card.querySelector('[data-field="body"]').addEventListener('input', e => item.body = e.target.value);
@@ -578,20 +582,23 @@
       }));
     }
 
+    async function persistNews() {
+      for (const item of newsItems) await uploadPendingFile(item);
+      const clean = newsItems.map(({ title, date, tag, image, body }) => ({ title, date, tag, image, body }));
+      const res = await fetch('/api/admin/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ collection: 'news', items: clean })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || '저장 실패');
+    }
+
     async function saveNews(statusEl) {
       statusEl.textContent = '저장 중...'; statusEl.className = 'save-status';
       try {
-        for (const item of newsItems) await uploadPendingFile(item);
-        const clean = newsItems.map(({ title, date, tag, image, body }) => ({ title, date, tag, image, body }));
-        const res = await fetch('/api/admin/save', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ collection: 'news', items: clean })
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || '저장 실패');
+        await persistNews();
         statusEl.textContent = '저장이 완료되었습니다. 사이트 반영까지 1~2분 정도 걸릴 수 있어요.'; statusEl.className = 'save-status ok';
-        renderNews();
       } catch (err) {
         statusEl.textContent = err.message; statusEl.className = 'save-status err';
       }
@@ -650,7 +657,11 @@
         const summaryTitle = card.querySelector('.card-summary-title');
         const summaryDate = card.querySelector('.card-summary-meta span');
         card.querySelector('[data-toggle]').addEventListener('click', () => card.classList.toggle('expanded'));
-        card.querySelector('[data-i]').addEventListener('click', () => { noticeItems.splice(i, 1); renderNotices(); });
+        card.querySelector('[data-i]').addEventListener('click', async () => {
+          noticeItems.splice(i, 1);
+          renderNotices();
+          try { await persistNotices(); } catch (err) { alert('삭제 저장 중 오류: ' + err.message); }
+        });
         card.querySelector('[data-field="title"]').addEventListener('input', e => { item.title = e.target.value; summaryTitle.textContent = item.title || '제목을 입력해주세요'; });
         card.querySelector('[data-field="date"]').addEventListener('input', e => { item.date = e.target.value; summaryDate.textContent = item.date; });
         card.querySelector('[data-field="body"]').addEventListener('input', e => item.body = e.target.value);
@@ -692,20 +703,23 @@
       }));
     }
 
+    async function persistNotices() {
+      for (const item of noticeItems) await uploadPendingFile(item);
+      const clean = noticeItems.map(({ title, date, image, body }) => ({ title, date, image, body }));
+      const res = await fetch('/api/admin/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ collection: 'notices', items: clean })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || '저장 실패');
+    }
+
     async function saveNotices(statusEl) {
       statusEl.textContent = '저장 중...'; statusEl.className = 'save-status';
       try {
-        for (const item of noticeItems) await uploadPendingFile(item);
-        const clean = noticeItems.map(({ title, date, image, body }) => ({ title, date, image, body }));
-        const res = await fetch('/api/admin/save', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ collection: 'notices', items: clean })
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || '저장 실패');
+        await persistNotices();
         statusEl.textContent = '저장이 완료되었습니다. 사이트 반영까지 1~2분 정도 걸릴 수 있어요.'; statusEl.className = 'save-status ok';
-        renderNotices();
       } catch (err) {
         statusEl.textContent = err.message; statusEl.className = 'save-status err';
       }
