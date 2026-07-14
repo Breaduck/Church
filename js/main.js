@@ -146,42 +146,65 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     if (titleEl && titleEl.textContent === '최신 설교') titleEl.textContent = '설교를 불러오는 중…';
   };
 
-  // 캐시 먼저 적용 (즉시 표시)
+  // 캐시가 있으면 (오래됐더라도) 일단 바로 표시 → 로딩 문구가 거의 안 보임
   let hasCache = false;
+  let cacheFresh = false;
   try {
     const cached = JSON.parse(localStorage.getItem(CACHE_KEY));
-    if (cached && Date.now() - cached.ts < CACHE_TTL && Array.isArray(cached.entries) && cached.entries.length) {
+    if (cached && Array.isArray(cached.entries) && cached.entries.length) {
       applyEntries(cached.entries);
       hasCache = true;
+      cacheFresh = Date.now() - cached.ts < CACHE_TTL;
     }
   } catch (_) {}
 
   if (!hasCache) setLoading();
 
-  // 프록시를 순차적으로 시도 - 성공하면 멈춤
-  const tryProxies = async () => {
-    for (const buildUrl of PROXIES) {
-      try {
-        const res = await fetch(buildUrl(RSS), { cache: 'no-store' });
-        if (!res.ok) continue;
-        const xml = await res.text();
-        if (!xml || xml.length < 200) continue;
-        const entries = parseXML(xml);
-        if (!entries.length) continue;
-        applyEntries(entries);
-        try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), entries })); } catch (_) {}
-        return true;
-      } catch (_) { /* try next */ }
-    }
-    return false;
+  const fetchWithTimeout = (url, ms) => {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), ms);
+    return fetch(url, { cache: 'no-store', signal: ctrl.signal })
+      .finally(() => clearTimeout(timer));
   };
 
-  tryProxies().then(ok => {
-    if (!ok && !hasCache) {
-      const titleEl = document.getElementById('yt-title');
-      if (titleEl) titleEl.textContent = '유튜브 채널에서 최신 설교를 확인하세요';
-    }
-  });
+  // 1순위: 자체 서버 API (Cloudflare Functions — 빠르고 CORS 문제 없음)
+  const tryApi = async () => {
+    const res = await fetchWithTimeout('/api/youtube', 6000);
+    if (!res.ok) throw new Error('api');
+    const data = await res.json();
+    if (!data.entries || !data.entries.length) throw new Error('empty');
+    return data.entries;
+  };
+
+  // 2순위: 공개 프록시들을 동시에 시도해서 가장 빨리 성공한 것 사용
+  const tryProxy = async buildUrl => {
+    const res = await fetchWithTimeout(buildUrl(RSS), 7000);
+    if (!res.ok) throw new Error('proxy');
+    const xml = await res.text();
+    if (!xml || xml.length < 200) throw new Error('short');
+    const entries = parseXML(xml);
+    if (!entries.length) throw new Error('empty');
+    return entries;
+  };
+
+  const loadFresh = async () => {
+    try { return await tryApi(); } catch (_) {}
+    try { return await Promise.any(PROXIES.map(tryProxy)); } catch (_) {}
+    return null;
+  };
+
+  // 캐시가 신선하면 네트워크 요청 생략
+  if (!cacheFresh) {
+    loadFresh().then(entries => {
+      if (entries) {
+        applyEntries(entries);
+        try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), entries })); } catch (_) {}
+      } else if (!hasCache) {
+        const titleEl = document.getElementById('yt-title');
+        if (titleEl) titleEl.textContent = '유튜브 채널에서 최신 설교를 확인하세요';
+      }
+    });
+  }
 })();
 
 // Notice panel
