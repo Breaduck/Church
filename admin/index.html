@@ -317,13 +317,13 @@
     updateQuickAddLabel();
 
     let toastTimer = null;
-    function showToast(msg, type) {
+    function showToast(msg, type, duration) {
       const toast = document.getElementById('toast');
       toast.textContent = msg;
       toast.className = 'toast' + (type === 'err' ? ' err' : '');
       toast.hidden = false;
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => { toast.hidden = true; }, 2600);
+      toastTimer = setTimeout(() => { toast.hidden = true; }, duration || 2600);
     }
 
     function expandFirstCard(listId) {
@@ -625,9 +625,11 @@
       statusEl.textContent = '저장 중...'; statusEl.className = 'save-status';
       try {
         await persistNews();
-        statusEl.textContent = '저장이 완료되었습니다. 사이트 반영까지 1~2분 정도 걸릴 수 있어요.'; statusEl.className = 'save-status ok';
+        statusEl.textContent = ''; statusEl.className = 'save-status';
+        showToast('저장이 완료되었습니다. 사이트 반영까지 1~2분 정도 걸릴 수 있어요.', null, 3800);
       } catch (err) {
-        statusEl.textContent = err.message; statusEl.className = 'save-status err';
+        statusEl.textContent = ''; statusEl.className = 'save-status';
+        showToast(err.message, 'err');
       }
     }
 
@@ -752,9 +754,11 @@
       statusEl.textContent = '저장 중...'; statusEl.className = 'save-status';
       try {
         await persistNotices();
-        statusEl.textContent = '저장이 완료되었습니다. 사이트 반영까지 1~2분 정도 걸릴 수 있어요.'; statusEl.className = 'save-status ok';
+        statusEl.textContent = ''; statusEl.className = 'save-status';
+        showToast('저장이 완료되었습니다. 사이트 반영까지 1~2분 정도 걸릴 수 있어요.', null, 3800);
       } catch (err) {
-        statusEl.textContent = err.message; statusEl.className = 'save-status err';
+        statusEl.textContent = ''; statusEl.className = 'save-status';
+        showToast(err.message, 'err');
       }
     }
 
