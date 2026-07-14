@@ -25,9 +25,64 @@
     } catch (_) { return null; }
   }
 
+  // 관리자 저장 즉시 반영: 먼저 GitHub 실시간 API(/api/content)를 시도하고,
+  // 실패하면 배포된 정적 파일(/data/*.json)로 폴백한다.
+  async function loadCollection(type) {
+    try {
+      const res = await fetch(`/api/content?type=${type}` + `&t=${Date.now()}`, { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (data && Array.isArray(data.items)) return data;
+      }
+    } catch (_) { /* 폴백 */ }
+    return fetchJson(`/data/${type === 'news' ? 'news' : 'notices'}.json`);
+  }
+
+  // 교회소식 · 공지사항 공용 상세 팝업
+  const modal = document.getElementById('news-modal');
+  const openModal = (() => {
+    if (!modal) return null;
+    const modalMedia = document.getElementById('news-modal-media');
+    const modalTag = document.getElementById('news-modal-tag');
+    const modalDate = document.getElementById('news-modal-date');
+    const modalTitle = document.getElementById('news-modal-title');
+    const modalText = document.getElementById('news-modal-text');
+    const modalVideo = document.getElementById('news-modal-video');
+    const modalClose = document.getElementById('news-modal-close');
+    if (!modalMedia || !modalTitle || !modalText || !modalClose) return null;
+
+    const close = () => {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    };
+    modalClose.addEventListener('click', close);
+    modal.querySelectorAll('[data-news-close]').forEach(el => el.addEventListener('click', close));
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) close();
+    });
+
+    return item => {
+      modalMedia.innerHTML = item.image ? `<img src="${escapeHtml(item.image)}" alt="" />` : '';
+      modalMedia.hidden = !item.image;
+      modalTag.textContent = item.tag || '';
+      modalDate.textContent = fmtDate(item.date);
+      modalTitle.textContent = item.title || '';
+      modalText.textContent = item.body || '';
+      modalText.hidden = !item.body;
+      if (item.video) {
+        modalVideo.href = item.video;
+        modalVideo.hidden = false;
+      } else {
+        modalVideo.hidden = true;
+      }
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    };
+  })();
+
   // 교회소식 카드
   if (grid) {
-    const data = await fetchJson('/data/news.json');
+    const data = await loadCollection('news');
     const items = ((data && data.items) || []).slice();
     if (items.length) {
       grid.innerHTML = items.map((item, i) => {
@@ -47,49 +102,13 @@
       `;
       }).join('');
 
-      // 상세 팝업
-      const modal = document.getElementById('news-modal');
-      const modalMedia = document.getElementById('news-modal-media');
-      const modalTag = document.getElementById('news-modal-tag');
-      const modalDate = document.getElementById('news-modal-date');
-      const modalTitle = document.getElementById('news-modal-title');
-      const modalText = document.getElementById('news-modal-text');
-      const modalVideo = document.getElementById('news-modal-video');
-      const modalClose = document.getElementById('news-modal-close');
-
-      if (modal && modalMedia && modalTitle && modalText && modalClose) {
-        const openModal = item => {
-          modalMedia.innerHTML = item.image ? `<img src="${escapeHtml(item.image)}" alt="" />` : '';
-          modalMedia.hidden = !item.image;
-          modalTag.textContent = item.tag || '';
-          modalDate.textContent = fmtDate(item.date);
-          modalTitle.textContent = item.title || '';
-          modalText.textContent = item.body || '';
-          modalText.hidden = !item.body;
-          if (item.video) {
-            modalVideo.href = item.video;
-            modalVideo.hidden = false;
-          } else {
-            modalVideo.hidden = true;
-          }
-          modal.classList.add('open');
-          document.body.style.overflow = 'hidden';
-        };
-        const closeModal = () => {
-          modal.classList.remove('open');
-          document.body.style.overflow = '';
-        };
+      if (openModal) {
         grid.querySelectorAll('.news-card').forEach(card => {
           const item = items[Number(card.dataset.idx)];
           card.addEventListener('click', () => openModal(item));
           card.addEventListener('keydown', e => {
             if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(item); }
           });
-        });
-        modalClose.addEventListener('click', closeModal);
-        modal.querySelectorAll('[data-news-close]').forEach(el => el.addEventListener('click', closeModal));
-        document.addEventListener('keydown', e => {
-          if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
         });
       }
     }
@@ -141,31 +160,31 @@
 
   // 공지사항 패널
   if (noticeList) {
-    const data = await fetchJson('/data/notices.json');
+    const data = await loadCollection('notices');
     const items = ((data && data.items) || []).slice();
     if (items.length) {
-      noticeList.innerHTML = items.slice(0, 8).map(item => {
-        const summary = `
+      const shown = items.slice(0, 8);
+      noticeList.innerHTML = shown.map((item, i) => {
+        const inner = `
           <span class="notice-item-date">${escapeHtml(fmtDate(item.date))}</span>
           <p class="notice-item-title">${escapeHtml(item.title || '')}</p>
         `;
         const hasExtra = !!(item.image || item.body || item.video);
-        if (!hasExtra) {
-          return `<li class="notice-item">${summary}</li>`;
+        if (!hasExtra || !openModal) {
+          return `<li class="notice-item">${inner}</li>`;
         }
-        return `
-          <li>
-            <details class="notice-item">
-              <summary>${summary}</summary>
-              <div class="notice-item-extra">
-                ${item.image ? `<img class="notice-item-img" src="${escapeHtml(item.image)}" alt="" loading="lazy" />` : ''}
-                ${item.body ? `<p class="notice-item-body">${escapeHtml(item.body)}</p>` : ''}
-                ${item.video ? `<a class="notice-item-video" href="${escapeHtml(item.video)}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><path d="M8 5v14l11-7z"/></svg>영상 보기</a>` : ''}
-              </div>
-            </details>
-          </li>
-        `;
+        return `<li class="notice-item notice-item--clickable" data-nidx="${i}" tabindex="0" role="button" aria-haspopup="dialog">${inner}</li>`;
       }).join('');
+
+      if (openModal) {
+        noticeList.querySelectorAll('.notice-item--clickable').forEach(li => {
+          const item = shown[Number(li.dataset.nidx)];
+          li.addEventListener('click', () => openModal(item));
+          li.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(item); }
+          });
+        });
+      }
     }
   }
 })();
