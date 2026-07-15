@@ -1600,6 +1600,22 @@ details.notice-item:hover summary { background: var(--surf); }
 }
 .floor-site-link:hover { background: var(--accent); color: #fff; }
 .floor-site-link:hover::after { background: linear-gradient(115deg, transparent, rgba(255,255,255,0.6), transparent); }
+.floor-detail-link {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 6px;
+  margin-top: -2px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(61,122,86,0.30);
+  transition: background 0.2s, transform 0.2s;
+}
+.floor-detail-link:hover { background: #2e6040; transform: translateY(-1px); }
 .floor-poster-hint {
   position: relative;
   display: inline-flex;
