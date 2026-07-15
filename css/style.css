@@ -658,6 +658,8 @@ body { font-size: 17px; }
   justify-content: space-between;
   gap: 12px;
 }
+/* '함께 드리는 예배' 제목과 높이를 맞춤 (예배안내 쪽 제목이 -22px 당겨져 있음) */
+.sermon-head .block-title { margin-top: -12px; }
 .more-link {
   font-size: 0.95rem;
   font-weight: 600;
