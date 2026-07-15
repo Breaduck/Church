@@ -1905,9 +1905,9 @@ details.notice-item:hover summary { background: var(--surf); }
   .stat-n { font-size: 2.3rem; }
   .stat-l { font-size: 0.88rem; }
   .about-intro-heading { font-size: 1.95rem; }
-  /* 모바일: '교회 연혁' 라벨 → 숫자 요약(1971/50+/2011) → 연혁 목록 순서, 흰 줄 제거·간격 확대 */
-  .history-mobile-label { display: inline-flex; order: 1; margin-top: 24px; }
-  .about-text .stats { order: 1; margin-top: 14px; border-top: none; }
+  /* 모바일: '교회 연혁' 라벨 → 숫자 요약(1971/50+/2011) → 연혁 목록 순서, 회색 줄 제거·간격 조정 */
+  .history-mobile-label { display: inline-flex; order: 1; margin-top: 48px; margin-bottom: 0; }
+  .about-text .stats { order: 1; margin-top: 2px; border-top: none; padding-top: 0; }
   .about-text .history-list { order: 2; margin-top: 28px; }
 
   /* Pastor */
