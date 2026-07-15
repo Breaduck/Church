@@ -32,6 +32,7 @@
           <a href="#ministry">지역사역</a>
           <a href="#new">새가족</a>
           <a href="#contact">찾아오시는 길</a>
+          <a href="#" class="nav-notice-link" id="notice-btn-mobile" data-notice-open>공지사항</a>
         </nav>
         <div class="nav-right">
           <button class="notice-btn" id="notice-btn" aria-label="공지사항 열기">공지사항</button>
@@ -381,7 +382,13 @@
             <div class="floor-body">
               <h3 class="floor-name"><span class="floor-name-hl">악기 문화센터</span></h3>
               <p class="floor-desc">'평생의 친구 악기를 배웁시다' 기타·드럼·바이올린·첼로·색소폰·피아노·플룻·드럼 등을 배울 수 있도록 교회 공간을 열어 지역주민 누구나 배움과 취미 활동에 도움을 드립니다.</p>
-              <span class="floor-poster-hint">포스터 크게 보기 ↗</span>
+              <div class="floor-actions">
+                <span class="floor-poster-hint">포스터 크게 보기 ↗</span>
+                <a href="https://friendlycenter.kr" target="_blank" rel="noopener noreferrer" class="floor-site-link" onclick="event.stopPropagation()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg>
+                  홈페이지 접속
+                </a>
+              </div>
             </div>
           </li>
 
@@ -592,41 +599,6 @@
     <div class="wrap devotion-grid">
 
       <div class="devotion-block">
-        <p class="label reveal devotion-label">안내</p>
-        <h2 class="block-title devotion-heading reveal">온라인 헌금안내</h2>
-        <div class="devotion-list reveal">
-          <div class="devotion-item devotion-item--static">
-            <div class="devotion-item-title">십일조 및 일반헌금</div>
-            <div class="devotion-body">
-              <p>(새마을금고) 9002-1860-1288-1</p>
-              <p>예금주: 정다운교회</p>
-            </div>
-          </div>
-          <div class="devotion-item devotion-item--static">
-            <div class="devotion-item-title">선교비</div>
-            <div class="devotion-body">
-              <p>(새마을금고) 9002-1965-0455-2</p>
-              <p>예금주: 이종운</p>
-            </div>
-          </div>
-          <div class="devotion-item devotion-item--static">
-            <div class="devotion-item-title">청소년 교육복지</div>
-            <div class="devotion-body">
-              <p>(새마을금고) 9002-2079-2926-0</p>
-              <p>예금주: 나래아동청소년사회적협동조합</p>
-            </div>
-          </div>
-          <div class="devotion-item devotion-item--static">
-            <div class="devotion-item-title">사랑의쌀 후원</div>
-            <div class="devotion-body">
-              <p>(새마을금고) 9002-2021-0187-3</p>
-              <p>예금주: 지구촌사랑나눔재단</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="devotion-block">
         <p class="label reveal devotion-label">협력 선교지</p>
         <h2 class="block-title devotion-heading giving-heading reveal">우리교회가 후원하는 선교지</h2>
         <div class="devotion-list reveal">
@@ -650,6 +622,41 @@
               <p><strong>안양시_나래다함께돌봄센터</strong> (조선미 집사)</p>
               <p><strong>경기교육청위탁_나래예능학교</strong> (함익주 집사)</p>
               <p><strong>다누리장애인주간보호센터</strong> (백승미 대표)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="devotion-block">
+        <p class="label reveal devotion-label">안내</p>
+        <h2 class="block-title devotion-heading reveal">온라인 헌금안내</h2>
+        <div class="devotion-list reveal">
+          <div class="devotion-item devotion-item--static">
+            <div class="devotion-item-title">십일조 및 일반헌금</div>
+            <div class="devotion-body">
+              <p class="acct-row"><span>(새마을금고) 9002-1860-1288-1</span><button type="button" class="copy-btn" data-copy="9002-1860-1288-1" aria-label="계좌번호 복사"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>복사</button></p>
+              <p>예금주: 정다운교회</p>
+            </div>
+          </div>
+          <div class="devotion-item devotion-item--static">
+            <div class="devotion-item-title">선교비</div>
+            <div class="devotion-body">
+              <p class="acct-row"><span>(새마을금고) 9002-1965-0455-2</span><button type="button" class="copy-btn" data-copy="9002-1965-0455-2" aria-label="계좌번호 복사"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>복사</button></p>
+              <p>예금주: 이종운</p>
+            </div>
+          </div>
+          <div class="devotion-item devotion-item--static">
+            <div class="devotion-item-title">청소년 교육복지</div>
+            <div class="devotion-body">
+              <p class="acct-row"><span>(새마을금고) 9002-2079-2926-0</span><button type="button" class="copy-btn" data-copy="9002-2079-2926-0" aria-label="계좌번호 복사"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>복사</button></p>
+              <p>예금주: 나래아동청소년사회적협동조합</p>
+            </div>
+          </div>
+          <div class="devotion-item devotion-item--static">
+            <div class="devotion-item-title">사랑의쌀 후원</div>
+            <div class="devotion-body">
+              <p class="acct-row"><span>(새마을금고) 9002-2021-0187-3</span><button type="button" class="copy-btn" data-copy="9002-2021-0187-3" aria-label="계좌번호 복사"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>복사</button></p>
+              <p>예금주: 지구촌사랑나눔재단</p>
             </div>
           </div>
         </div>

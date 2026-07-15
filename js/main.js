@@ -19,6 +19,7 @@ links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
 // Smooth scroll with nav offset
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   if (a.hasAttribute('data-poster-trigger')) return;
+  if (a.hasAttribute('data-notice-open')) return;
   a.addEventListener('click', e => {
     const hash = a.getAttribute('href');
     if (!hash) return;
@@ -209,16 +210,21 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
 
 // Notice panel
 const noticeBtn   = document.getElementById('notice-btn');
+const noticeBtnMobile = document.getElementById('notice-btn-mobile');
 const noticePanel = document.getElementById('notice-panel');
 const noticeClose = document.getElementById('notice-close');
-if (noticeBtn && noticePanel && noticeClose) {
-  noticeBtn.addEventListener('click', e => {
-    e.stopPropagation();
-    noticePanel.classList.toggle('open');
+if (noticePanel && noticeClose) {
+  const noticeTriggers = [noticeBtn, noticeBtnMobile].filter(Boolean);
+  noticeTriggers.forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      e.preventDefault();
+      noticePanel.classList.toggle('open');
+    });
   });
   noticeClose.addEventListener('click', () => noticePanel.classList.remove('open'));
   document.addEventListener('click', e => {
-    if (!noticePanel.contains(e.target) && e.target !== noticeBtn) {
+    if (!noticePanel.contains(e.target) && !noticeTriggers.includes(e.target)) {
       noticePanel.classList.remove('open');
     }
   });
@@ -256,4 +262,31 @@ if (posterModal && posterModalImg && posterModalClose) {
     if (e.key === 'Escape' && posterModal.classList.contains('open')) closePosterModal();
   });
 }
+
+// 계좌번호 복사 버튼
+document.querySelectorAll('.copy-btn').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const text = btn.dataset.copy || '';
+    const done = () => {
+      const original = btn.innerHTML;
+      btn.classList.add('copied');
+      btn.textContent = '복사됨!';
+      setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = original; }, 1500);
+    };
+    try {
+      await navigator.clipboard.writeText(text);
+      done();
+    } catch (_) {
+      // 클립보드 API가 막힌 환경 폴백
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); done(); } catch (_) {}
+      document.body.removeChild(ta);
+    }
+  });
+});
 
