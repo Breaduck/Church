@@ -270,7 +270,7 @@ document.querySelectorAll('.copy-btn').forEach(btn => {
     const done = () => {
       const original = btn.innerHTML;
       btn.classList.add('copied');
-      btn.textContent = '복사됨!';
+      btn.textContent = '복사 완료';
       setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = original; }, 1500);
     };
     try {
