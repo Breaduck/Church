@@ -1791,6 +1791,11 @@ details.notice-item:hover summary { background: var(--surf); }
     text-align: left;
     word-spacing: normal;
   }
+  /* 데스크톱 양쪽정렬 규칙(명시도 높음)이 모바일까지 넘어오지 않도록 되돌림 */
+  .about-section .block-body,
+  .pastor-section .pastor-greeting-body {
+    text-align: left;
+  }
 
   /* Section padding */
   .about-section, .pastor-section, .vision, .week,
