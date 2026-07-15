@@ -44,8 +44,14 @@ export async function onRequestGet(context) {
 
   let entries = [];
   try {
+    // 유튜브 RSS는 실제 브라우저처럼 보이는 User-Agent가 없으면 404를 반환하므로
+    // 정상적인 크롬 UA + Accept 헤더를 함께 보낸다.
     const res = await fetch(RSS_URL, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (church-site rss fetcher)' },
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'application/atom+xml,application/xml,text/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'ko,en;q=0.9',
+      },
     });
     if (res.ok) entries = parseEntries(await res.text());
   } catch (_) { /* 아래에서 빈 배열 응답 */ }
