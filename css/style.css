@@ -1888,6 +1888,9 @@ details.notice-item:hover summary { background: var(--surf); }
   .stat-n { font-size: 2.3rem; }
   .stat-l { font-size: 0.88rem; }
   .about-intro-heading { font-size: 1.95rem; }
+  /* 모바일: 숫자 요약(1971/50+/2011)을 위로, 연혁 목록을 그 아래로 */
+  .about-text .stats { order: 1; margin-top: 8px; }
+  .about-text .history-list { order: 2; margin-top: 4px; }
 
   /* Pastor */
   .pastor-left { flex-direction: row; gap: 18px; align-items: stretch; }
