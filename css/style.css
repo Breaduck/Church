@@ -316,6 +316,7 @@ body { font-size: 17px; }
   height: 100%;
 }
 .about-text .stats { margin-top: auto; }
+.history-mobile-label { display: none; }
 
 /* ============================================================
    PASTOR SECTION — 목사님 인사말 (하단)
@@ -1904,9 +1905,10 @@ details.notice-item:hover summary { background: var(--surf); }
   .stat-n { font-size: 2.3rem; }
   .stat-l { font-size: 0.88rem; }
   .about-intro-heading { font-size: 1.95rem; }
-  /* 모바일: 숫자 요약(1971/50+/2011)을 위로, 연혁 목록을 그 아래로 */
-  .about-text .stats { order: 1; margin-top: 8px; }
-  .about-text .history-list { order: 2; margin-top: 4px; }
+  /* 모바일: '교회 연혁' 라벨 → 숫자 요약(1971/50+/2011) → 연혁 목록 순서, 흰 줄 제거·간격 확대 */
+  .history-mobile-label { display: inline-flex; order: 1; margin-top: 24px; }
+  .about-text .stats { order: 1; margin-top: 14px; border-top: none; }
+  .about-text .history-list { order: 2; margin-top: 28px; }
 
   /* Pastor */
   .pastor-left { flex-direction: row; gap: 18px; align-items: stretch; }
