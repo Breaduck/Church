@@ -1,10 +1,27 @@
 {
   "items": [
     {
+      "title": "테스트",
+      "date": "2026-07-19",
+      "tag": "소식",
+      "image": "/img/news/1784439838247_ChatGPT_Image_2026년_7월_10일_오전_10_35_26.jpg",
+      "images": [
+        "/img/news/1784439838247_ChatGPT_Image_2026년_7월_10일_오전_10_35_26.jpg",
+        "/img/news/1784439839970_ChatGPT_Image_2026년_7월_10일_오전_10_31_26.jpg",
+        "/img/news/1784439841292_ChatGPT_Image_2026년_7월_10일_오전_12_48_26.jpg",
+        "/img/news/1784439842747_ChatGPT_Image_2026년_7월_10일_오전_12_04_17.jpg",
+        "/img/news/1784439844479_ChatGPT_Image_2026년_7월_9일_오후_11_57_09.jpg"
+      ],
+      "body": ""
+    },
+    {
       "title": "여전도회 강남시찰회",
       "date": "2026-06-17",
       "tag": "공지",
       "image": "/img/news-gangnam-visit.jpg",
+      "images": [
+        "/img/news-gangnam-visit.jpg"
+      ],
       "body": ""
     },
     {
@@ -12,6 +29,9 @@
       "date": "2026-06-10",
       "tag": "행사",
       "image": "/img/church-daycare.jpg",
+      "images": [
+        "/img/church-daycare.jpg"
+      ],
       "body": ""
     },
     {
@@ -19,6 +39,9 @@
       "date": "2026-06-01",
       "tag": "선교",
       "image": "/img/news-easter-cantata.jpg",
+      "images": [
+        "/img/news-easter-cantata.jpg"
+      ],
       "body": ""
     }
   ]
