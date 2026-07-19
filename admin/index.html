@@ -171,6 +171,13 @@
       opacity: 0; transition: opacity 0.15s;
     }
     .thumb-wrap:hover .thumb-del { opacity: 1; }
+    .thumbs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+    .thumbs:empty { margin-top: 0; }
+    .thumbs .thumb-wrap { margin-top: 0; }
+    .thumbs .thumb { width: 96px; height: 96px; object-fit: cover; max-width: none; display: block; }
+    .thumbs .thumb-del { display: flex; }
+    .img-hint { font-size: 0.82rem; color: var(--muted); margin-top: 8px; }
+    .img-hint:empty { display: none; }
 
     .card-footer { margin-top: 14px; }
     .save-status { font-size: 0.85rem; }
@@ -366,18 +373,119 @@
     const todayStr = () => new Date().toISOString().slice(0, 10);
     const TAG_PRESETS = ['공지', '행사', '선교', '교육', '소식'];
 
-    async function uploadPendingFile(item) {
-      if (!item._pendingFile) return;
-      const dataBase64 = await readAsBase64(item._pendingFile);
-      const res = await fetch('/api/admin/upload', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ filename: item._pendingFile.name, dataBase64 })
+    const MAX_IMAGES = 10;
+
+    // 이전 데이터(단일 image) 및 신규 데이터(images 배열) 모두 지원
+    function getImages(item) {
+      if (Array.isArray(item.images) && item.images.length) return item.images.filter(Boolean);
+      return item.image ? [item.image] : [];
+    }
+
+    function toJpgName(name) {
+      return (name || 'image').replace(/\.[^.]+$/, '') + '.jpg';
+    }
+
+    // 업로드 전 이미지 리사이즈·압축 (긴 변 1600px, JPEG) —
+    // 폰 사진 용량이 커서 업로드가 실패하며 빨간 오류가 뜨던 문제를 방지하고 사이트도 빨라짐.
+    function compressImage(file) {
+      return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          const MAXDIM = 1600;
+          let { width, height } = img;
+          if (Math.max(width, height) > MAXDIM) {
+            const s = MAXDIM / Math.max(width, height);
+            width = Math.round(width * s);
+            height = Math.round(height * s);
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          resolve({ dataUrl, base64: dataUrl.split(',')[1] });
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('이미지를 불러오지 못했습니다.')); };
+        img.src = url;
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || '이미지 업로드 실패');
-      item.image = data.path;
-      delete item._pendingFile;
+    }
+
+    // 카드별 다중 이미지 첨부 UI (최대 10장) — 교회소식·공지사항 공용
+    function attachImageUploader(card, item) {
+      const fileInput = card.querySelector('[data-field="imageFile"]');
+      const thumbsWrap = card.querySelector('[data-thumbs]');
+      const hintEl = card.querySelector('[data-img-hint]');
+      if (!Array.isArray(item.images)) item.images = item.image ? [item.image] : [];
+      item._pending = item._pending || [];
+
+      const total = () => item.images.length + item._pending.length;
+
+      function makeThumb(src, onDel) {
+        const wrap = document.createElement('div');
+        wrap.className = 'thumb-wrap';
+        const img = document.createElement('img');
+        img.className = 'thumb';
+        img.src = src;
+        const del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'thumb-del';
+        del.title = '사진 삭제';
+        del.textContent = '×';
+        del.addEventListener('click', onDel);
+        wrap.append(img, del);
+        return wrap;
+      }
+
+      function render() {
+        thumbsWrap.innerHTML = '';
+        item.images.forEach((src, idx) => {
+          thumbsWrap.appendChild(makeThumb(src, () => { item.images.splice(idx, 1); render(); }));
+        });
+        item._pending.forEach((p, idx) => {
+          thumbsWrap.appendChild(makeThumb(p.dataUrl, () => { item._pending.splice(idx, 1); render(); }));
+        });
+        const n = total();
+        hintEl.textContent = n ? `${n} / ${MAX_IMAGES}장` : '';
+        fileInput.disabled = n >= MAX_IMAGES;
+      }
+
+      fileInput.addEventListener('change', async () => {
+        const files = Array.from(fileInput.files || []);
+        fileInput.value = '';
+        for (const file of files) {
+          if (total() >= MAX_IMAGES) {
+            showToast(`이미지는 최대 ${MAX_IMAGES}장까지 첨부할 수 있어요.`, 'err');
+            break;
+          }
+          try {
+            const { dataUrl, base64 } = await compressImage(file);
+            item._pending.push({ dataUrl, base64, name: toJpgName(file.name) });
+            render();
+          } catch (err) {
+            showToast(err.message || '이미지 처리 실패', 'err');
+          }
+        }
+      });
+
+      render();
+    }
+
+    async function uploadPendingFiles(item) {
+      if (!Array.isArray(item.images)) item.images = item.image ? [item.image] : [];
+      if (!item._pending || !item._pending.length) return;
+      for (const p of item._pending) {
+        const res = await fetch('/api/admin/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: p.name, dataBase64: p.base64 })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || '이미지 업로드 실패');
+        item.images.push(data.path);
+      }
+      item._pending = [];
     }
 
     // ---- 교회소식 ----
@@ -428,8 +536,9 @@
       <link rel="stylesheet" href="/css/style.css">
     `;
     function buildNewsPreviewSrcdoc(item) {
-      const img = item.image ? `<img src="${escapeAttr(item.image)}" alt="" />` : '';
-      const media = item.image
+      const src = getImages(item)[0] || '';
+      const img = src ? `<img src="${escapeAttr(src)}" alt="" />` : '';
+      const media = src
         ? (item.video
           ? `<a class="news-img news-img--video" href="${escapeAttr(item.video)}">${img}<span class="news-play"></span></a>`
           : `<div class="news-img">${img}</div>`)
@@ -451,11 +560,12 @@
         </body></html>`;
     }
     function buildNoticePreviewSrcdoc(item) {
-      const hasExtra = !!(item.image || item.body || item.video);
+      const src = getImages(item)[0] || '';
+      const hasExtra = !!(src || item.body || item.video);
       const summary = `<span class="notice-item-date">${escapeHtml(item.date || '')}</span><p class="notice-item-title">${escapeHtml(item.title || '제목을 입력해주세요')}</p>`;
       const bodyHtml = hasExtra
         ? `<details class="notice-item" open><summary>${summary}</summary><div class="notice-item-extra">
-            ${item.image ? `<img class="notice-item-img" src="${escapeAttr(item.image)}" alt="" />` : ''}
+            ${src ? `<img class="notice-item-img" src="${escapeAttr(src)}" alt="" />` : ''}
             ${item.body ? `<p class="notice-item-body">${escapeHtml(item.body)}</p>` : ''}
             ${item.video ? `<a class="notice-item-video" href="${escapeAttr(item.video)}">영상 보기</a>` : ''}
           </div></details>`
@@ -535,12 +645,10 @@
               </div>
             </div>
             <div class="field">
-              <label>대표 사진 (선택)</label>
-              <input type="file" accept="image/*" data-field="imageFile" />
-              <div class="thumb-wrap">
-                <img class="thumb" src="${item.image ? escapeAttr(item.image) : ''}" style="${item.image ? 'display:block;' : ''}" />
-                <button type="button" class="thumb-del" style="${item.image ? 'display:flex;' : ''}" title="사진 삭제">×</button>
-              </div>
+              <label>사진 (최대 10장, 선택)</label>
+              <input type="file" accept="image/*" multiple data-field="imageFile" />
+              <div class="thumbs" data-thumbs></div>
+              <p class="img-hint" data-img-hint></p>
             </div>
             <div class="field"><label>내용 (선택)</label><textarea data-field="body">${escapeHtml(item.body || '')}</textarea></div>
             <div class="preview-wrap"><iframe class="preview-frame"></iframe></div>
@@ -581,26 +689,7 @@
         });
         tagCustom.addEventListener('input', e => { item.tag = e.target.value; });
 
-        const fileInput = card.querySelector('[data-field="imageFile"]');
-        const thumb = card.querySelector('.thumb');
-        const thumbDel = card.querySelector('.thumb-del');
-        fileInput.addEventListener('change', async () => {
-          const file = fileInput.files[0];
-          if (!file) return;
-          const dataUrl = await readAsDataURL(file);
-          thumb.src = dataUrl;
-          thumb.style.display = 'block';
-          thumbDel.style.display = 'flex';
-          item._pendingFile = file;
-        });
-        thumbDel.addEventListener('click', () => {
-          item.image = '';
-          delete item._pendingFile;
-          fileInput.value = '';
-          thumb.src = '';
-          thumb.style.display = 'none';
-          thumbDel.style.display = 'none';
-        });
+        attachImageUploader(card, item);
 
         const statusEl = card.querySelector('.save-status');
         card.querySelector('[data-save]').addEventListener('click', () => saveNews(statusEl));
@@ -619,8 +708,11 @@
     }
 
     async function persistNews() {
-      for (const item of newsItems) await uploadPendingFile(item);
-      const clean = newsItems.map(({ title, date, tag, image, body }) => ({ title, date, tag, image, body }));
+      for (const item of newsItems) await uploadPendingFiles(item);
+      const clean = newsItems.map(item => {
+        const images = getImages(item);
+        return { title: item.title || '', date: item.date || '', tag: item.tag || '', image: images[0] || '', images, body: item.body || '' };
+      });
       const res = await fetch('/api/admin/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -678,12 +770,10 @@
             <div class="field"><label>제목</label><input type="text" data-field="title" value="${escapeAttr(item.title || '')}" /></div>
             <div class="field"><label>날짜</label><input type="date" data-field="date" value="${escapeAttr(item.date || '')}" /></div>
             <div class="field">
-              <label>사진 (선택)</label>
-              <input type="file" accept="image/*" data-field="imageFile" />
-              <div class="thumb-wrap">
-                <img class="thumb" src="${item.image ? escapeAttr(item.image) : ''}" style="${item.image ? 'display:block;' : ''}" />
-                <button type="button" class="thumb-del" style="${item.image ? 'display:flex;' : ''}" title="사진 삭제">×</button>
-              </div>
+              <label>사진 (최대 10장, 선택)</label>
+              <input type="file" accept="image/*" multiple data-field="imageFile" />
+              <div class="thumbs" data-thumbs></div>
+              <p class="img-hint" data-img-hint></p>
             </div>
             <div class="field"><label>내용 (선택)</label><textarea data-field="body">${escapeHtml(item.body || '')}</textarea></div>
             <div class="preview-wrap"><iframe class="preview-frame"></iframe></div>
@@ -710,26 +800,7 @@
         card.querySelector('[data-field="date"]').addEventListener('input', e => { item.date = e.target.value; summaryDate.textContent = item.date; });
         card.querySelector('[data-field="body"]').addEventListener('input', e => item.body = e.target.value);
 
-        const fileInput = card.querySelector('[data-field="imageFile"]');
-        const thumb = card.querySelector('.thumb');
-        const thumbDel = card.querySelector('.thumb-del');
-        fileInput.addEventListener('change', async () => {
-          const file = fileInput.files[0];
-          if (!file) return;
-          const dataUrl = await readAsDataURL(file);
-          thumb.src = dataUrl;
-          thumb.style.display = 'block';
-          thumbDel.style.display = 'flex';
-          item._pendingFile = file;
-        });
-        thumbDel.addEventListener('click', () => {
-          item.image = '';
-          delete item._pendingFile;
-          fileInput.value = '';
-          thumb.src = '';
-          thumb.style.display = 'none';
-          thumbDel.style.display = 'none';
-        });
+        attachImageUploader(card, item);
 
         const statusEl = card.querySelector('.save-status');
         card.querySelector('[data-save]').addEventListener('click', () => saveNotices(statusEl));
@@ -748,8 +819,11 @@
     }
 
     async function persistNotices() {
-      for (const item of noticeItems) await uploadPendingFile(item);
-      const clean = noticeItems.map(({ title, date, image, body }) => ({ title, date, image, body }));
+      for (const item of noticeItems) await uploadPendingFiles(item);
+      const clean = noticeItems.map(item => {
+        const images = getImages(item);
+        return { title: item.title || '', date: item.date || '', image: images[0] || '', images, body: item.body || '' };
+      });
       const res = await fetch('/api/admin/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

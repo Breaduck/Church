@@ -17,6 +17,65 @@
 
   const bust = () => `?t=${Date.now()}`;
 
+  // 이전 데이터(단일 image) 및 신규 데이터(images 배열) 모두 지원
+  const getImages = item =>
+    (Array.isArray(item.images) && item.images.length
+      ? item.images
+      : (item.image ? [item.image] : [])
+    ).filter(Boolean);
+
+  // 이미지 전체화면 확대(클릭/휠로 확대, 드래그로 이동)
+  const zoom = (() => {
+    const overlay = document.getElementById('img-zoom');
+    if (!overlay) return { open() {}, isOpen: () => false };
+    const img = document.getElementById('img-zoom-img');
+    const closeBtn = document.getElementById('img-zoom-close');
+    let scale = 1, tx = 0, ty = 0, dragging = false, moved = false, sx = 0, sy = 0;
+
+    const apply = () => { img.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`; };
+    const setScale = s => {
+      scale = Math.min(5, Math.max(1, s));
+      if (scale === 1) { tx = 0; ty = 0; }
+      img.classList.toggle('zoomed', scale > 1);
+      apply();
+    };
+    const open = src => {
+      img.src = src;
+      scale = 1; tx = 0; ty = 0; img.classList.remove('zoomed'); apply();
+      overlay.classList.add('open');
+    };
+    const close = () => overlay.classList.remove('open');
+    const isOpen = () => overlay.classList.contains('open');
+
+    img.addEventListener('click', e => {
+      e.stopPropagation();
+      if (moved) { moved = false; return; }
+      setScale(scale > 1 ? 1 : 2.5);
+    });
+    img.addEventListener('wheel', e => {
+      e.preventDefault();
+      setScale(scale + (e.deltaY < 0 ? 0.3 : -0.3));
+    }, { passive: false });
+    img.addEventListener('pointerdown', e => {
+      if (scale <= 1) return;
+      dragging = true; moved = false;
+      sx = e.clientX - tx; sy = e.clientY - ty;
+      img.setPointerCapture(e.pointerId);
+    });
+    img.addEventListener('pointermove', e => {
+      if (!dragging) return;
+      tx = e.clientX - sx; ty = e.clientY - sy; moved = true; apply();
+    });
+    img.addEventListener('pointerup', () => { dragging = false; });
+    overlay.addEventListener('click', close);
+    closeBtn.addEventListener('click', e => { e.stopPropagation(); close(); });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && isOpen()) { e.stopPropagation(); close(); }
+    });
+
+    return { open, isOpen };
+  })();
+
   async function fetchJson(path) {
     try {
       const res = await fetch(path + bust(), { cache: 'no-store' });
@@ -58,12 +117,52 @@
     modalClose.addEventListener('click', close);
     modal.querySelectorAll('[data-news-close]').forEach(el => el.addEventListener('click', close));
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && modal.classList.contains('open')) close();
+      // 확대 보기가 열려 있으면 그것만 닫고 상세 팝업은 유지
+      if (e.key === 'Escape' && modal.classList.contains('open') && !zoom.isOpen()) close();
     });
 
+    // 상세 팝업 안 이미지 갤러리 (여러 장 넘겨보기 + 클릭 시 전체화면 확대)
+    function renderMedia(images) {
+      modalMedia.innerHTML = '';
+      modalMedia.hidden = !images.length;
+      if (!images.length) return;
+
+      const gallery = document.createElement('div');
+      gallery.className = 'news-gallery';
+      let idx = 0;
+      const img = document.createElement('img');
+      img.src = images[0];
+      img.alt = '';
+      img.addEventListener('click', () => zoom.open(images[idx]));
+      gallery.appendChild(img);
+
+      if (images.length > 1) {
+        const prev = document.createElement('button');
+        prev.type = 'button'; prev.className = 'gal-nav gal-prev'; prev.setAttribute('aria-label', '이전 사진'); prev.textContent = '‹';
+        const next = document.createElement('button');
+        next.type = 'button'; next.className = 'gal-nav gal-next'; next.setAttribute('aria-label', '다음 사진'); next.textContent = '›';
+        const dots = document.createElement('div');
+        dots.className = 'gal-dots';
+        const dotEls = images.map((_, i) => {
+          const d = document.createElement('span');
+          if (i === 0) d.className = 'on';
+          dots.appendChild(d);
+          return d;
+        });
+        const show = n => {
+          idx = (n + images.length) % images.length;
+          img.src = images[idx];
+          dotEls.forEach((d, i) => { d.className = i === idx ? 'on' : ''; });
+        };
+        prev.addEventListener('click', e => { e.stopPropagation(); show(idx - 1); });
+        next.addEventListener('click', e => { e.stopPropagation(); show(idx + 1); });
+        gallery.append(prev, next, dots);
+      }
+      modalMedia.appendChild(gallery);
+    }
+
     return item => {
-      modalMedia.innerHTML = item.image ? `<img src="${escapeHtml(item.image)}" alt="" />` : '';
-      modalMedia.hidden = !item.image;
+      renderMedia(getImages(item));
       modalTag.textContent = item.tag || '';
       modalDate.textContent = fmtDate(item.date);
       modalTitle.textContent = item.title || '';
@@ -87,10 +186,12 @@
     if (items.length) {
       grid.innerHTML = items.map((item, i) => {
         let media = '';
-        if (item.image) {
-          const img = `<img src="${escapeHtml(item.image)}" alt="" loading="lazy" />`;
+        const imgs = getImages(item);
+        if (imgs.length) {
+          const img = `<img src="${escapeHtml(imgs[0])}" alt="" loading="lazy" />`;
           const play = item.video ? `<span class="news-play"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M8 5v14l11-7z"/></svg></span>` : '';
-          media = `<div class="news-img">${img}${play}</div>`;
+          const count = imgs.length > 1 ? `<span class="news-img-count">${imgs.length}</span>` : '';
+          media = `<div class="news-img">${img}${play}${count}</div>`;
         }
         return `
         <article class="news-card reveal visible" data-idx="${i}" tabindex="0" role="button" aria-haspopup="dialog">
@@ -169,7 +270,7 @@
           <span class="notice-item-date">${escapeHtml(fmtDate(item.date))}</span>
           <p class="notice-item-title">${escapeHtml(item.title || '')}</p>
         `;
-        const hasExtra = !!(item.image || item.body || item.video);
+        const hasExtra = !!(getImages(item).length || item.body || item.video);
         if (!hasExtra || !openModal) {
           return `<li class="notice-item">${inner}</li>`;
         }
