@@ -170,6 +170,38 @@
     .preview-modal-body { overflow: hidden; background: var(--surf); flex: 1; min-height: 0; }
     .preview-modal-body iframe { width: 100%; height: 100%; border: none; display: block; background: var(--surf); }
 
+    /* 사진 위치 조정 팝업 */
+    .pos-modal {
+      position: fixed; inset: 0; z-index: 600;
+      display: none; align-items: center; justify-content: center; padding: 24px;
+    }
+    .pos-modal.open { display: flex; }
+    .pos-modal-backdrop { position: absolute; inset: 0; background: rgba(20, 24, 22, 0.68); backdrop-filter: blur(2px); }
+    .pos-modal-inner {
+      position: relative; width: min(560px, 100%);
+      background: #fff; border-radius: 18px; overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+    }
+    .pos-modal-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px; border-bottom: 1px solid var(--line);
+    }
+    .pos-modal-head h3 { margin: 0; font-size: 1.02rem; font-weight: 800; }
+    .pos-modal-close {
+      width: 30px; height: 30px; border-radius: 50%; border: none;
+      background: var(--surf); color: var(--ink); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-size: 1.05rem;
+      transition: background 0.15s;
+    }
+    .pos-modal-close:hover { background: var(--line); }
+    .pos-frame { position: relative; width: 100%; aspect-ratio: 16 / 10; background: var(--surf); overflow: hidden; }
+    .pos-frame img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      cursor: grab; touch-action: none; user-select: none; -webkit-user-drag: none;
+    }
+    .pos-frame img.dragging-pos { cursor: grabbing; }
+    .pos-modal-hint { margin: 0; padding: 14px 20px 20px; color: var(--muted); font-size: 0.86rem; text-align: center; }
+
     .card-summary { display: none; }
     #app-view.view-list .card-summary {
       display: flex; align-items: center; justify-content: space-between; gap: 14px;
@@ -255,10 +287,23 @@
       <div class="preview-modal-backdrop" data-preview-close></div>
       <div class="preview-modal-inner">
         <div class="preview-modal-head">
-          <div><h3>미리보기</h3><span>실제 사이트 화면 그대로예요 · 사진을 클릭하면 상세 팝업이 열리고, 그 안에서 사진을 드래그하면 보이는 위치를 조정할 수 있어요</span></div>
+          <div><h3>미리보기</h3><span>실제 홈 화면에 노출되는 형태 그대로예요 (사진 클릭 시 상세 팝업도 실제와 동일)</span></div>
           <button type="button" class="preview-modal-close" id="preview-modal-close" aria-label="닫기">×</button>
         </div>
         <div class="preview-modal-body"><iframe id="preview-modal-frame"></iframe></div>
+      </div>
+    </div>
+
+    <!-- 사진 위치 조정 팝업 (첨부한 사진 클릭 시) -->
+    <div class="pos-modal" id="pos-modal">
+      <div class="pos-modal-backdrop" data-pos-close></div>
+      <div class="pos-modal-inner">
+        <div class="pos-modal-head">
+          <h3>사진 위치 조정</h3>
+          <button type="button" class="pos-modal-close" id="pos-modal-close" aria-label="닫기">×</button>
+        </div>
+        <div class="pos-frame"><img id="pos-modal-img" alt="" /></div>
+        <p class="pos-modal-hint">드래그해서 보이는 위치를 조정하세요 · 더블클릭하면 가운데로 초기화돼요</p>
       </div>
     </div>
 
@@ -439,6 +484,56 @@
       item.imagePos[src] = pos;
     }
 
+    // 사진 위치 조정 팝업 — 첨부한 사진 썸네일을 클릭하면 뜨는 단일 팝업.
+    // 실제 사이트에서 사진이 노출되는 비율(16:10)로 보여주고, 드래그로 위치를 바로 조정한다.
+    const posModal = document.getElementById('pos-modal');
+    const posModalImg = document.getElementById('pos-modal-img');
+    let posItem = null, posSrc = null;
+    let posDragging = false, posRect = null, posStartX = 0, posStartY = 0, posStartVal = { x: 50, y: 50 };
+
+    function openPosModal(item, src) {
+      posItem = item;
+      posSrc = src;
+      posModalImg.src = src;
+      posModalImg.style.objectPosition = getImagePos(item, src);
+      posModal.classList.add('open');
+    }
+    function closePosModal() { posModal.classList.remove('open'); }
+
+    document.getElementById('pos-modal-close').addEventListener('click', closePosModal);
+    posModal.querySelectorAll('[data-pos-close]').forEach(el => el.addEventListener('click', closePosModal));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && posModal.classList.contains('open')) closePosModal(); });
+
+    posModalImg.addEventListener('pointerdown', e => {
+      if (!posItem) return;
+      posDragging = true;
+      posRect = posModalImg.getBoundingClientRect();
+      const [px, py] = getImagePos(posItem, posSrc).split(' ').map(v => parseFloat(v));
+      posStartVal = { x: px, y: py };
+      posStartX = e.clientX;
+      posStartY = e.clientY;
+      posModalImg.classList.add('dragging-pos');
+      try { posModalImg.setPointerCapture(e.pointerId); } catch (_) {}
+      e.preventDefault();
+    });
+    posModalImg.addEventListener('pointermove', e => {
+      if (!posDragging) return;
+      const dx = e.clientX - posStartX;
+      const dy = e.clientY - posStartY;
+      const xPct = Math.max(0, Math.min(100, posStartVal.x - (dx / posRect.width) * 100));
+      const yPct = Math.max(0, Math.min(100, posStartVal.y - (dy / posRect.height) * 100));
+      const val = `${Math.round(xPct)}% ${Math.round(yPct)}%`;
+      setImagePos(posItem, posSrc, val);
+      posModalImg.style.objectPosition = val;
+    });
+    const endPosDrag = () => { posDragging = false; posModalImg.classList.remove('dragging-pos'); };
+    posModalImg.addEventListener('pointerup', endPosDrag);
+    posModalImg.addEventListener('pointercancel', endPosDrag);
+    posModalImg.addEventListener('dblclick', () => {
+      setImagePos(posItem, posSrc, '50% 50%');
+      posModalImg.style.objectPosition = '50% 50%';
+    });
+
     function toJpgName(name) {
       return (name || 'image').replace(/\.[^.]+$/, '') + '.jpg';
     }
@@ -480,12 +575,17 @@
 
       const total = () => item.images.length + item._pending.length;
 
-      function makeThumb(src, onDel, processing) {
+      function makeThumb(src, onDel, processing, onClickPos) {
         const wrap = document.createElement('div');
         wrap.className = 'thumb-wrap' + (processing ? ' processing' : '');
         const img = document.createElement('img');
         img.className = 'thumb';
         img.src = src;
+        if (onClickPos) {
+          img.style.cursor = 'pointer';
+          img.title = '클릭해서 사진 위치 조정';
+          img.addEventListener('click', onClickPos);
+        }
         const del = document.createElement('button');
         del.type = 'button';
         del.className = 'thumb-del';
@@ -499,10 +599,11 @@
       function render() {
         thumbsWrap.innerHTML = '';
         item.images.forEach((src, idx) => {
-          thumbsWrap.appendChild(makeThumb(src, () => { item.images.splice(idx, 1); render(); }));
+          thumbsWrap.appendChild(makeThumb(src, () => { item.images.splice(idx, 1); render(); }, false, () => openPosModal(item, src)));
         });
         item._pending.forEach((p, idx) => {
-          thumbsWrap.appendChild(makeThumb(p.dataUrl, () => { item._pending.splice(idx, 1); render(); }, p.processing));
+          const onClickPos = p.processing ? null : () => openPosModal(item, p.dataUrl);
+          thumbsWrap.appendChild(makeThumb(p.dataUrl, () => { item._pending.splice(idx, 1); render(); }, p.processing, onClickPos));
         });
         const n = total();
         hintEl.textContent = n ? `${n} / ${MAX_IMAGES}장` : '';
@@ -603,23 +704,13 @@
       });
     }
 
-    // ---- 미리보기 (팝업, 실제 사이트 화면 그대로) ----
+    // ---- 미리보기 (팝업, 실제 홈 화면에 노출되는 형태 그대로) ----
     const PREVIEW_CSS_LINKS = `
       <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
       <link rel="stylesheet" href="/css/style.css">
     `;
-    // 대표 사진 드래그 위치 조정에 필요한 최소 스타일만 추가 (그 외엔 실제 사이트 CSS 그대로 사용)
-    const PREVIEW_EXTRA_STYLE = `
-      .posable{cursor:grab;touch-action:none;user-select:none;-webkit-user-drag:none;}
-      .posable.dragging-pos{cursor:grabbing;}
-      .pos-hint{
-        position:absolute;left:10px;bottom:10px;z-index:2;
-        background:rgba(20,24,22,0.62);color:#fff;font-size:12px;font-weight:600;
-        padding:5px 10px;border-radius:999px;pointer-events:none;white-space:nowrap;
-      }
-    `;
-    // 실제 사이트와 동일한 상세 팝업 마크업 (교회소식·공지사항 공용, 처음엔 닫힌 상태)
+    // 실제 사이트와 동일한 상세 팝업 + 사진 확대 마크업 (교회소식·공지사항 공용, 처음엔 닫힌 상태)
     const NEWS_MODAL_MARKUP = `
       <div class="news-modal" id="news-modal">
         <div class="news-modal-backdrop"></div>
@@ -638,14 +729,21 @@
           </div>
         </div>
       </div>
+      <div class="img-zoom" id="img-zoom">
+        <button class="img-zoom-close" id="img-zoom-close" aria-label="닫기">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <img class="img-zoom-img" id="img-zoom-img" src="" alt="" draggable="false" />
+      </div>
     `;
     // 저장 전(업로드 중) 이미지도 즉시 미리 보여주기 위해 로컬 미리보기(_pending)까지 포함
     function previewImages(item) {
       return getImages(item).concat((item._pending || []).map(p => p.dataUrl));
     }
 
-    // 실제 홈 화면 카드와 완전히 동일한 마크업(이미지+제목만, 태그·날짜는 카드에 안 보임)
-    function buildNewsPreviewSrcdoc(items, current) {
+    // 실제 홈 화면 카드와 완전히 동일한 마크업(이미지+제목만, 태그·날짜는 카드에 안 보임) +
+    // 3개씩 보이는 가로 스크롤(네비게이션 화살표 포함)까지 그대로 재현
+    function buildNewsPreviewSrcdoc(items) {
       const cardsHtml = items.map((it, i) => {
         const imgs = previewImages(it);
         const src = imgs[0] || '';
@@ -660,21 +758,33 @@
       }).join('');
 
       return `<!DOCTYPE html><html><head><meta charset="utf-8">${PREVIEW_CSS_LINKS}
-        <style>${PREVIEW_EXTRA_STYLE}
-          body{margin:0;background:#f3f7f5;}
-          .preview-page{padding:32px;}
-          .news-grid{display:flex;flex-wrap:wrap;gap:22px;}
-          .news-grid .news-card{flex:0 0 244px;cursor:pointer;}
-        </style>
+        <style>body{margin:0;}</style>
         </head><body>
-        <div class="preview-page"><div class="news-grid">${cardsHtml}</div></div>
+        <section class="news">
+          <div class="wrap">
+            <div class="news-head-row">
+              <div><p class="label">교회소식</p><h2 class="news-heading">최신 소식</h2></div>
+              <div class="news-nav" id="news-nav" hidden>
+                <button type="button" class="news-nav-btn" id="news-prev" aria-label="이전 소식">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <button type="button" class="news-nav-btn" id="news-next" aria-label="다음 소식">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="news-viewport"><div class="news-grid">${cardsHtml}</div></div>
+          </div>
+        </section>
         ${NEWS_MODAL_MARKUP}
         </body></html>`;
     }
 
-    // 실제 공지 패널과 동일한 마크업. 사진·내용이 있는 항목만 클릭 가능(실제 사이트와 동일).
-    function buildNoticePreviewSrcdoc(items, current) {
-      const listHtml = items.map((it, i) => {
+    // 실제 공지 패널과 동일한 마크업. 실제 사이트처럼 최대 8개까지만 노출되고,
+    // 사진·내용이 있는 항목만 클릭 가능하다.
+    function buildNoticePreviewSrcdoc(items) {
+      const shown = items.slice(0, 8);
+      const listHtml = shown.map((it, i) => {
         const imgs = previewImages(it);
         const hasExtra = !!(imgs.length || it.body || it.video);
         const inner = `<span class="notice-item-date">${escapeHtml(fmtDateKo(it.date))}</span><p class="notice-item-title">${escapeHtml(it.title || '제목을 입력해주세요')}</p>`;
@@ -683,7 +793,7 @@
       }).join('');
 
       return `<!DOCTYPE html><html><head><meta charset="utf-8">${PREVIEW_CSS_LINKS}
-        <style>${PREVIEW_EXTRA_STYLE}
+        <style>
           body{margin:0;background:#f3f7f5;}
           .preview-page{padding:32px;display:flex;justify-content:center;}
           .notice-panel{position:static;width:100%;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,0.12);}
@@ -706,54 +816,57 @@
     previewModal.querySelectorAll('[data-preview-close]').forEach(el => el.addEventListener('click', closePreviewModal));
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && previewModal.classList.contains('open')) closePreviewModal(); });
 
-    // 미리보기 팝업 안 사진(편집 중인 항목의 대표 사진)을 드래그해서 노출 위치(object-position)를 조정.
-    // 세로 사진처럼 가로로 긴 박스에 잘려 보일 때, 어느 부분이 보일지 직접 끌어서 정할 수 있다.
-    function wirePreviewDrag(doc, item) {
-      const els = Array.from(doc.querySelectorAll('img.posable'));
-      if (!els.length) return;
-      let dragging = false, activeSrc = null, rect = null, startX = 0, startY = 0, startPos = { x: 50, y: 50 };
+    // 실제 사이트와 동일한 사진 확대(클릭/휠 확대, 드래그 이동) — 위치 조정과는 별개로, 보기용.
+    function createZoomController(doc) {
+      const overlay = doc.getElementById('img-zoom');
+      if (!overlay) return { open() {} };
+      const img = doc.getElementById('img-zoom-img');
+      const closeBtn = doc.getElementById('img-zoom-close');
+      let scale = 1, tx = 0, ty = 0, dragging = false, moved = false, sx = 0, sy = 0;
 
-      const syncGroup = (src, val) => {
-        els.forEach(el => { if (el.getAttribute('src') === src) el.style.objectPosition = val; });
+      const apply = () => { img.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`; };
+      const setScale = s => {
+        scale = Math.min(5, Math.max(1, s));
+        if (scale === 1) { tx = 0; ty = 0; }
+        img.classList.toggle('zoomed', scale > 1);
+        apply();
       };
+      const open = src => {
+        img.src = src;
+        scale = 1; tx = 0; ty = 0; img.classList.remove('zoomed'); apply();
+        overlay.classList.add('open');
+      };
+      const close = () => overlay.classList.remove('open');
 
-      els.forEach(el => {
-        el.addEventListener('pointerdown', e => {
-          dragging = true;
-          activeSrc = el.getAttribute('src');
-          rect = el.getBoundingClientRect();
-          const [px, py] = getImagePos(item, activeSrc).split(' ').map(v => parseFloat(v));
-          startPos = { x: px, y: py };
-          startX = e.clientX;
-          startY = e.clientY;
-          el.classList.add('dragging-pos');
-          try { el.setPointerCapture(e.pointerId); } catch (_) {}
-          e.preventDefault();
-        });
-        el.addEventListener('pointermove', e => {
-          if (!dragging || el.getAttribute('src') !== activeSrc) return;
-          const dx = e.clientX - startX;
-          const dy = e.clientY - startY;
-          const xPct = Math.max(0, Math.min(100, startPos.x - (dx / rect.width) * 100));
-          const yPct = Math.max(0, Math.min(100, startPos.y - (dy / rect.height) * 100));
-          const val = `${Math.round(xPct)}% ${Math.round(yPct)}%`;
-          setImagePos(item, activeSrc, val);
-          syncGroup(activeSrc, val);
-        });
-        const end = () => { dragging = false; el.classList.remove('dragging-pos'); };
-        el.addEventListener('pointerup', end);
-        el.addEventListener('pointercancel', end);
-        el.addEventListener('dblclick', () => {
-          const src = el.getAttribute('src');
-          setImagePos(item, src, '50% 50%');
-          syncGroup(src, '50% 50%');
-        });
+      img.addEventListener('click', e => {
+        e.stopPropagation();
+        if (moved) { moved = false; return; }
+        setScale(scale > 1 ? 1 : 2.5);
       });
+      img.addEventListener('wheel', e => {
+        e.preventDefault();
+        setScale(scale + (e.deltaY < 0 ? 0.3 : -0.3));
+      }, { passive: false });
+      img.addEventListener('pointerdown', e => {
+        if (scale <= 1) return;
+        dragging = true; moved = false;
+        sx = e.clientX - tx; sy = e.clientY - ty;
+        img.setPointerCapture(e.pointerId);
+      });
+      img.addEventListener('pointermove', e => {
+        if (!dragging) return;
+        tx = e.clientX - sx; ty = e.clientY - sy; moved = true; apply();
+      });
+      img.addEventListener('pointerup', () => { dragging = false; });
+      overlay.addEventListener('click', close);
+      closeBtn.addEventListener('click', e => { e.stopPropagation(); close(); });
+      doc.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+
+      return { open };
     }
 
-    // 실제 사이트와 동일한 상세 팝업을 iframe 안에서 직접 열고 닫는 컨트롤러.
-    // 편집 중인 항목(current)의 사진만 드래그로 위치 조정이 가능하다.
-    function createPreviewModalController(doc, current) {
+    // 실제 사이트와 동일한 상세 팝업을 iframe 안에서 그대로 열고 닫는다 (보기 전용, 위치 조정은 여기서 하지 않음).
+    function createPreviewModalController(doc) {
       const modal = doc.getElementById('news-modal');
       const media = doc.getElementById('news-modal-media');
       const tagEl = doc.getElementById('news-modal-tag');
@@ -762,13 +875,13 @@
       const textEl = doc.getElementById('news-modal-text');
       const closeBtn = doc.getElementById('news-modal-close');
       const backdrop = modal.querySelector('.news-modal-backdrop');
+      const zoom = createZoomController(doc);
 
       function renderGallery(item) {
         media.innerHTML = '';
         const imgs = previewImages(item);
         media.hidden = !imgs.length;
         if (!imgs.length) return;
-        const isCurrent = item === current;
 
         const gallery = doc.createElement('div');
         gallery.className = 'news-gallery';
@@ -777,13 +890,7 @@
         img.alt = '';
         img.src = imgs[0];
         img.style.objectPosition = getImagePos(item, imgs[0]);
-        if (isCurrent) {
-          img.classList.add('posable');
-          const hint = doc.createElement('span');
-          hint.className = 'pos-hint';
-          hint.textContent = '드래그로 위치 조정 · 더블클릭 초기화';
-          gallery.appendChild(hint);
-        }
+        img.addEventListener('click', () => zoom.open(imgs[idx]));
         gallery.appendChild(img);
 
         if (imgs.length > 1) {
@@ -810,7 +917,6 @@
           gallery.append(prev, next, dots);
         }
         media.appendChild(gallery);
-        if (isCurrent) wirePreviewDrag(doc, item);
       }
 
       function open(item) {
@@ -831,35 +937,74 @@
       return { open, close };
     }
 
-    function wireNewsPreview(doc, items, current) {
-      const controller = createPreviewModalController(doc, current);
+    // 실제 사이트의 "3개씩 보이는 가로 스크롤 + 화살표" 캐러셀 동작을 그대로 재현
+    function wireNewsCarousel(doc) {
+      const grid = doc.querySelector('.news-grid');
+      const viewport = grid && grid.closest('.news-viewport');
+      const nav = doc.getElementById('news-nav');
+      const prevBtn = doc.getElementById('news-prev');
+      const nextBtn = doc.getElementById('news-next');
+      if (!viewport || !nav || !prevBtn || !nextBtn) return;
+      let autoTimer = null;
+      const AUTO_DELAY = 4500;
+
+      const atEnd = () => viewport.scrollLeft >= viewport.scrollWidth - viewport.clientWidth - 4;
+      const advance = () => {
+        if (atEnd()) viewport.scrollTo({ left: 0, behavior: 'smooth' });
+        else viewport.scrollBy({ left: viewport.clientWidth, behavior: 'smooth' });
+      };
+      const stopAuto = () => { if (autoTimer) { clearInterval(autoTimer); autoTimer = null; } };
+      const startAuto = () => {
+        stopAuto();
+        if (viewport.scrollWidth <= viewport.clientWidth + 4) return;
+        autoTimer = setInterval(advance, AUTO_DELAY);
+      };
+      const updateNav = () => {
+        const scrollable = viewport.scrollWidth > viewport.clientWidth + 4;
+        nav.hidden = !scrollable;
+        if (!scrollable) { stopAuto(); return; }
+        prevBtn.disabled = viewport.scrollLeft <= 4;
+        nextBtn.disabled = false;
+        startAuto();
+      };
+
+      prevBtn.addEventListener('click', () => { viewport.scrollBy({ left: -viewport.clientWidth, behavior: 'smooth' }); startAuto(); });
+      nextBtn.addEventListener('click', () => { advance(); startAuto(); });
+      viewport.addEventListener('mouseenter', stopAuto);
+      viewport.addEventListener('mouseleave', startAuto);
+      viewport.addEventListener('scroll', () => { prevBtn.disabled = viewport.scrollLeft <= 4; }, { passive: true });
+      doc.defaultView.addEventListener('resize', updateNav);
+      updateNav();
+    }
+
+    function wireNewsPreview(doc, items) {
+      const controller = createPreviewModalController(doc);
       doc.querySelectorAll('.news-card[data-idx]').forEach(card => {
         const item = items[Number(card.dataset.idx)];
         card.addEventListener('click', () => controller.open(item));
         card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); controller.open(item); } });
       });
-      controller.open(current); // 편집 중인 항목은 바로 상세 팝업을 열어 위치 조정을 바로 할 수 있게 함
+      wireNewsCarousel(doc);
     }
 
-    function wireNoticePreview(doc, items, current) {
-      const controller = createPreviewModalController(doc, current);
+    function wireNoticePreview(doc, items) {
+      const shown = items.slice(0, 8);
+      const controller = createPreviewModalController(doc);
       doc.querySelectorAll('.notice-item--clickable[data-idx]').forEach(li => {
-        const item = items[Number(li.dataset.idx)];
+        const item = shown[Number(li.dataset.idx)];
         li.addEventListener('click', () => controller.open(item));
         li.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); controller.open(item); } });
       });
-      const hasExtra = !!(previewImages(current).length || current.body);
-      if (hasExtra) controller.open(current); // 실제 사이트에서도 클릭 가능한 경우에만 자동으로 열어줌
     }
 
-    function attachPreview(card, item, getItems, buildSrcdoc, wireFn) {
+    function attachPreview(card, getItems, buildSrcdoc, wireFn) {
       const btn = card.querySelector('[data-preview]');
       btn.addEventListener('click', () => {
         const items = getItems();
         previewFrame.onload = () => {
-          try { wireFn(previewFrame.contentDocument, items, item); } catch (_) {}
+          try { wireFn(previewFrame.contentDocument, items); } catch (_) {}
         };
-        previewFrame.srcdoc = buildSrcdoc(items, item);
+        previewFrame.srcdoc = buildSrcdoc(items);
         previewModal.classList.add('open');
       });
     }
@@ -962,7 +1107,7 @@
         card.querySelector('[data-save]').addEventListener('click', () => saveNews(statusEl));
 
         attachDragReorder(card, i, newsItems, renderNews);
-        attachPreview(card, item, () => newsItems, buildNewsPreviewSrcdoc, wireNewsPreview);
+        attachPreview(card, () => newsItems, buildNewsPreviewSrcdoc, wireNewsPreview);
 
         list.appendChild(card);
       });
@@ -1072,7 +1217,7 @@
         card.querySelector('[data-save]').addEventListener('click', () => saveNotices(statusEl));
 
         attachDragReorder(card, i, noticeItems, renderNotices);
-        attachPreview(card, item, () => noticeItems, buildNoticePreviewSrcdoc, wireNoticePreview);
+        attachPreview(card, () => noticeItems, buildNoticePreviewSrcdoc, wireNoticePreview);
 
         list.appendChild(card);
       });
