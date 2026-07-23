@@ -24,6 +24,13 @@
       : (item.image ? [item.image] : [])
     ).filter(Boolean);
 
+  // 관리자에서 드래그로 지정한 노출 위치(세로 사진 등이 잘릴 때 어디를 보여줄지)
+  const getImagePos = (item, src) => (item.imagePos && item.imagePos[src]) || '';
+  const posAttr = (item, src) => {
+    const pos = getImagePos(item, src);
+    return pos ? ` style="object-position:${escapeHtml(pos)};"` : '';
+  };
+
   // 이미지 전체화면 확대(클릭/휠로 확대, 드래그로 이동)
   const zoom = (() => {
     const overlay = document.getElementById('img-zoom');
@@ -122,7 +129,7 @@
     });
 
     // 상세 팝업 안 이미지 갤러리 (여러 장 넘겨보기 + 클릭 시 전체화면 확대)
-    function renderMedia(images) {
+    function renderMedia(item, images) {
       modalMedia.innerHTML = '';
       modalMedia.hidden = !images.length;
       if (!images.length) return;
@@ -133,6 +140,7 @@
       const img = document.createElement('img');
       img.src = images[0];
       img.alt = '';
+      img.style.objectPosition = getImagePos(item, images[0]) || '50% 50%';
       img.addEventListener('click', () => zoom.open(images[idx]));
       gallery.appendChild(img);
 
@@ -152,6 +160,7 @@
         const show = n => {
           idx = (n + images.length) % images.length;
           img.src = images[idx];
+          img.style.objectPosition = getImagePos(item, images[idx]) || '50% 50%';
           dotEls.forEach((d, i) => { d.className = i === idx ? 'on' : ''; });
         };
         prev.addEventListener('click', e => { e.stopPropagation(); show(idx - 1); });
@@ -162,7 +171,7 @@
     }
 
     return item => {
-      renderMedia(getImages(item));
+      renderMedia(item, getImages(item));
       modalTag.textContent = item.tag || '';
       modalDate.textContent = fmtDate(item.date);
       modalTitle.textContent = item.title || '';
@@ -188,7 +197,7 @@
         let media = '';
         const imgs = getImages(item);
         if (imgs.length) {
-          const img = `<img src="${escapeHtml(imgs[0])}" alt="" loading="lazy" />`;
+          const img = `<img src="${escapeHtml(imgs[0])}" alt="" loading="lazy"${posAttr(item, imgs[0])} />`;
           const play = item.video ? `<span class="news-play"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M8 5v14l11-7z"/></svg></span>` : '';
           const count = imgs.length > 1 ? `<span class="news-img-count">${imgs.length}</span>` : '';
           media = `<div class="news-img">${img}${play}${count}</div>`;

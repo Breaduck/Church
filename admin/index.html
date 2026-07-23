@@ -140,9 +140,35 @@
     .card.drag-over { outline: 2.5px dashed var(--accent); outline-offset: 4px; }
     .card-head-actions .btn.preview-btn { background: #fff; color: var(--ink); border: 1.5px solid var(--line); }
     .card-head-actions .btn.preview-btn:hover { background: var(--surf); }
-    .preview-wrap { margin-top: 16px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: none; }
-    .preview-wrap.open { display: block; }
-    .preview-wrap iframe { width: 100%; border: none; display: block; background: #fff; }
+
+    /* 미리보기 팝업 */
+    .preview-modal {
+      position: fixed; inset: 0; z-index: 500;
+      display: none; align-items: center; justify-content: center; padding: 30px;
+    }
+    .preview-modal.open { display: flex; }
+    .preview-modal-backdrop { position: absolute; inset: 0; background: rgba(20, 24, 22, 0.68); backdrop-filter: blur(2px); }
+    .preview-modal-inner {
+      position: relative; width: min(760px, 100%); max-height: 90vh;
+      background: #fff; border-radius: 18px; overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+      display: flex; flex-direction: column;
+    }
+    .preview-modal-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 22px; border-bottom: 1px solid var(--line); flex-shrink: 0;
+    }
+    .preview-modal-head h3 { margin: 0; font-size: 1.05rem; font-weight: 800; }
+    .preview-modal-head span { font-size: 0.85rem; color: var(--muted); font-weight: 500; }
+    .preview-modal-close {
+      width: 32px; height: 32px; border-radius: 50%; border: none;
+      background: var(--surf); color: var(--ink); cursor: pointer;
+      display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+      transition: background 0.15s;
+    }
+    .preview-modal-close:hover { background: var(--line); }
+    .preview-modal-body { overflow-y: auto; background: var(--surf); flex: 1; }
+    .preview-modal-body iframe { width: 100%; border: none; display: block; background: var(--surf); }
 
     .card-summary { display: none; }
     #app-view.view-list .card-summary {
@@ -176,6 +202,13 @@
     .thumbs .thumb-wrap { margin-top: 0; }
     .thumbs .thumb { width: 96px; height: 96px; object-fit: cover; max-width: none; display: block; }
     .thumbs .thumb-del { display: flex; }
+    .thumb-wrap.processing .thumb { opacity: 0.5; }
+    .thumb-wrap.processing::after {
+      content: ''; position: absolute; inset: 0; margin: auto; width: 20px; height: 20px;
+      border: 2.5px solid rgba(61,122,86,0.25); border-top-color: var(--accent);
+      border-radius: 50%; animation: thumb-spin 0.7s linear infinite; pointer-events: none;
+    }
+    @keyframes thumb-spin { to { transform: rotate(360deg); } }
     .img-hint { font-size: 0.82rem; color: var(--muted); margin-top: 8px; }
     .img-hint:empty { display: none; }
 
@@ -217,6 +250,18 @@
 
   <div id="app-view" class="view-list">
     <div id="toast" class="toast" hidden></div>
+
+    <div class="preview-modal" id="preview-modal">
+      <div class="preview-modal-backdrop" data-preview-close></div>
+      <div class="preview-modal-inner">
+        <div class="preview-modal-head">
+          <div><h3>미리보기</h3><span>실제 사이트에 이렇게 표시돼요 (기존 항목과 함께 보여드려요)</span></div>
+          <button type="button" class="preview-modal-close" id="preview-modal-close" aria-label="닫기">×</button>
+        </div>
+        <div class="preview-modal-body"><iframe id="preview-modal-frame"></iframe></div>
+      </div>
+    </div>
+
     <div class="wrap">
       <div class="topbar">
         <div>
@@ -371,6 +416,10 @@
 
     const bust = () => `?t=${Date.now()}`;
     const todayStr = () => new Date().toISOString().slice(0, 10);
+    const fmtDateKo = iso => {
+      const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || '');
+      return m ? `${m[1]}. ${m[2]}. ${m[3]}` : (iso || '');
+    };
     const TAG_PRESETS = ['공지', '행사', '선교', '교육', '소식'];
 
     const MAX_IMAGES = 10;
@@ -379,6 +428,15 @@
     function getImages(item) {
       if (Array.isArray(item.images) && item.images.length) return item.images.filter(Boolean);
       return item.image ? [item.image] : [];
+    }
+
+    // 세로 사진 등 잘리는 사진의 노출 위치(object-position) — 이미지 경로별로 저장
+    function getImagePos(item, src) {
+      return (item.imagePos && item.imagePos[src]) || '50% 50%';
+    }
+    function setImagePos(item, src, pos) {
+      item.imagePos = item.imagePos || {};
+      item.imagePos[src] = pos;
     }
 
     function toJpgName(name) {
@@ -422,9 +480,9 @@
 
       const total = () => item.images.length + item._pending.length;
 
-      function makeThumb(src, onDel) {
+      function makeThumb(src, onDel, processing) {
         const wrap = document.createElement('div');
-        wrap.className = 'thumb-wrap';
+        wrap.className = 'thumb-wrap' + (processing ? ' processing' : '');
         const img = document.createElement('img');
         img.className = 'thumb';
         img.src = src;
@@ -444,14 +502,16 @@
           thumbsWrap.appendChild(makeThumb(src, () => { item.images.splice(idx, 1); render(); }));
         });
         item._pending.forEach((p, idx) => {
-          thumbsWrap.appendChild(makeThumb(p.dataUrl, () => { item._pending.splice(idx, 1); render(); }));
+          thumbsWrap.appendChild(makeThumb(p.dataUrl, () => { item._pending.splice(idx, 1); render(); }, p.processing));
         });
         const n = total();
         hintEl.textContent = n ? `${n} / ${MAX_IMAGES}장` : '';
         fileInput.disabled = n >= MAX_IMAGES;
       }
 
-      fileInput.addEventListener('change', async () => {
+      // 선택 즉시 원본 미리보기(objectURL)를 먼저 보여주고, 압축은 뒤에서 진행 —
+      // 큰 사진 압축을 기다리는 동안 화면이 빈 채로 있는 것처럼 보이던 문제 방지.
+      fileInput.addEventListener('change', () => {
         const files = Array.from(fileInput.files || []);
         fileInput.value = '';
         for (const file of files) {
@@ -459,14 +519,22 @@
             showToast(`이미지는 최대 ${MAX_IMAGES}장까지 첨부할 수 있어요.`, 'err');
             break;
           }
-          try {
-            const { dataUrl, base64 } = await compressImage(file);
-            item._pending.push({ dataUrl, base64, name: toJpgName(file.name) });
+          const entry = { dataUrl: URL.createObjectURL(file), base64: null, name: toJpgName(file.name), processing: true };
+          entry.ready = compressImage(file).then(({ dataUrl, base64 }) => {
+            URL.revokeObjectURL(entry.dataUrl);
+            entry.dataUrl = dataUrl;
+            entry.base64 = base64;
+            entry.processing = false;
             render();
-          } catch (err) {
+          }).catch(err => {
+            const idx = item._pending.indexOf(entry);
+            if (idx !== -1) item._pending.splice(idx, 1);
+            render();
             showToast(err.message || '이미지 처리 실패', 'err');
-          }
+          });
+          item._pending.push(entry);
         }
+        render();
       });
 
       render();
@@ -475,7 +543,9 @@
     async function uploadPendingFiles(item) {
       if (!Array.isArray(item.images)) item.images = item.image ? [item.image] : [];
       if (!item._pending || !item._pending.length) return;
+      await Promise.all(item._pending.map(p => p.ready || Promise.resolve()));
       for (const p of item._pending) {
+        if (!p.base64) continue;
         const res = await fetch('/api/admin/upload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -484,6 +554,10 @@
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || '이미지 업로드 실패');
         item.images.push(data.path);
+        if (item.imagePos && item.imagePos[p.dataUrl]) {
+          item.imagePos[data.path] = item.imagePos[p.dataUrl];
+          delete item.imagePos[p.dataUrl];
+        }
       }
       item._pending = [];
     }
@@ -529,70 +603,199 @@
       });
     }
 
-    // ---- 미리보기 ----
+    // ---- 미리보기 (팝업, 기존 항목과 함께 보여줌) ----
     const PREVIEW_CSS_LINKS = `
       <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
       <link rel="stylesheet" href="/css/style.css">
     `;
-    function buildNewsPreviewSrcdoc(item) {
-      const src = getImages(item)[0] || '';
-      const img = src ? `<img src="${escapeAttr(src)}" alt="" />` : '';
-      const media = src
-        ? (item.video
-          ? `<a class="news-img news-img--video" href="${escapeAttr(item.video)}">${img}<span class="news-play"></span></a>`
-          : `<div class="news-img">${img}</div>`)
+    const PREVIEW_EXTRA_STYLE = `
+      body{margin:0;padding:24px;background:#f3f7f5;}
+      .section-label{font-size:0.78rem;font-weight:800;color:#6b7a70;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 12px;}
+      .section-label:not(:first-child){margin-top:34px;}
+      .preview-highlight{outline:3px solid #3d7a56;outline-offset:2px;position:relative;}
+      .preview-badge{display:inline-flex;align-items:center;background:#3d7a56;color:#fff;font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:999px;flex-shrink:0;}
+      .news-card.preview-highlight .preview-badge{position:absolute;top:8px;left:8px;z-index:2;}
+      .detail-wrap{max-width:420px;margin:0 auto;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 8px 28px rgba(0,0,0,0.10);}
+      .detail-body{padding:22px 24px 26px;}
+      .thumb-strip{display:flex;flex-wrap:wrap;gap:6px;padding:12px 24px 0;}
+      .thumb-strip img{width:52px;height:52px;object-fit:cover;border-radius:8px;}
+      .posable{cursor:grab;touch-action:none;user-select:none;-webkit-user-drag:none;}
+      .posable.dragging-pos{cursor:grabbing;}
+      .pos-wrap{position:relative;}
+      .pos-hint{
+        position:absolute;left:8px;bottom:8px;z-index:2;
+        background:rgba(20,24,22,0.62);color:#fff;font-size:11px;font-weight:600;
+        padding:4px 9px;border-radius:999px;pointer-events:none;white-space:nowrap;
+      }
+    `;
+    // 저장 전(업로드 중) 이미지도 즉시 미리 보여주기 위해 로컬 미리보기(_pending)까지 포함
+    function previewImages(item) {
+      return getImages(item).concat((item._pending || []).map(p => p.dataUrl));
+    }
+    function buildNewsPreviewSrcdoc(items, current) {
+      const cards = items.map(it => {
+        const isCurrent = it === current;
+        const imgs = previewImages(it);
+        const src = imgs[0] || '';
+        const pos = src ? getImagePos(it, src) : '50% 50%';
+        const img = src
+          ? `<img class="${isCurrent ? 'posable' : ''}" src="${escapeAttr(src)}" alt="" style="object-position:${escapeAttr(pos)};" />`
+          : '';
+        const count = imgs.length > 1 ? `<span class="news-img-count">${imgs.length}</span>` : '';
+        const hint = isCurrent && src ? '<span class="pos-hint">드래그로 위치 조정</span>' : '';
+        const media = src ? `<div class="news-img">${img}${count}${hint}</div>` : '';
+        const badge = isCurrent ? '<span class="preview-badge">이 항목 미리보기</span>' : '';
+        return `<article class="news-card${isCurrent ? ' preview-highlight' : ''}">${badge}${media}
+          <div class="news-body">
+            <span class="news-tag">${escapeHtml(it.tag || '소식')}</span>
+            <h3 class="news-title">${escapeHtml(it.title || '제목을 입력해주세요')}</h3>
+            <p class="news-date">${escapeHtml(fmtDateKo(it.date))}</p>
+          </div>
+        </article>`;
+      }).join('');
+
+      const curImgs = previewImages(current);
+      const curPos = curImgs[0] ? getImagePos(current, curImgs[0]) : '50% 50%';
+      const mainImg = curImgs[0]
+        ? `<img class="posable" src="${escapeAttr(curImgs[0])}" alt="" style="object-position:${escapeAttr(curPos)};" />`
         : '';
+      const mainHint = curImgs[0] ? '<span class="pos-hint">드래그로 위치 조정 · 더블클릭 초기화</span>' : '';
+      const strip = curImgs.length > 1
+        ? `<div class="thumb-strip">${curImgs.slice(1).map(s => `<img src="${escapeAttr(s)}" alt="" style="object-position:${escapeAttr(getImagePos(current, s))};" />`).join('')}</div>`
+        : '';
+      const media = curImgs.length ? `<div class="news-modal-media">${mainImg}${mainHint}</div>` : '';
+
       return `<!DOCTYPE html><html><head><meta charset="utf-8">${PREVIEW_CSS_LINKS}
-        <style>body{margin:0;padding:20px;background:#f3f7f5;} .news-grid{display:block;max-width:320px;}</style>
+        <style>${PREVIEW_EXTRA_STYLE}
+          .news-grid{display:flex;flex-wrap:wrap;gap:16px;}
+          .news-grid .news-card{flex:0 0 208px;}
+        </style>
         </head><body>
-        <div class="news-grid">
-          <article class="news-card">
-            ${media}
-            <div class="news-body">
-              <span class="news-tag">${escapeHtml(item.tag || '소식')}</span>
-              <h3 class="news-title">${escapeHtml(item.title || '제목을 입력해주세요')}</h3>
-              ${item.body ? `<p class="news-summary">${escapeHtml(item.body)}</p>` : ''}
-              <p class="news-date">${escapeHtml(item.date || '')}</p>
+        <p class="section-label">최신 소식 목록에 이렇게 보여요</p>
+        <div class="news-grid">${cards}</div>
+        <p class="section-label">클릭하면 이렇게 열려요</p>
+        <div class="detail-wrap">
+          ${media}
+          ${strip}
+          <div class="detail-body">
+            <div class="news-modal-meta">
+              <span class="news-modal-tag">${escapeHtml(current.tag || '')}</span>
+              <span class="news-modal-date">${escapeHtml(fmtDateKo(current.date))}</span>
             </div>
-          </article>
+            <h3 class="news-modal-title">${escapeHtml(current.title || '제목을 입력해주세요')}</h3>
+            ${current.body ? `<p class="news-modal-text">${escapeHtml(current.body)}</p>` : ''}
+          </div>
         </div>
         </body></html>`;
     }
-    function buildNoticePreviewSrcdoc(item) {
-      const src = getImages(item)[0] || '';
-      const hasExtra = !!(src || item.body || item.video);
-      const summary = `<span class="notice-item-date">${escapeHtml(item.date || '')}</span><p class="notice-item-title">${escapeHtml(item.title || '제목을 입력해주세요')}</p>`;
-      const bodyHtml = hasExtra
-        ? `<details class="notice-item" open><summary>${summary}</summary><div class="notice-item-extra">
-            ${src ? `<img class="notice-item-img" src="${escapeAttr(src)}" alt="" />` : ''}
-            ${item.body ? `<p class="notice-item-body">${escapeHtml(item.body)}</p>` : ''}
-            ${item.video ? `<a class="notice-item-video" href="${escapeAttr(item.video)}">영상 보기</a>` : ''}
-          </div></details>`
-        : `<li class="notice-item">${summary}</li>`;
+    // 공지사항은 사진/내용이 있으면 목록 항목을 클릭했을 때 교회소식과 같은 상세 팝업(공용 news-modal)이 뜬다.
+    function buildNoticePreviewSrcdoc(items, current) {
+      const listHtml = items.map(it => {
+        const isCurrent = it === current;
+        const imgs = previewImages(it);
+        const hasExtra = !!(imgs.length || it.body || it.video);
+        const badge = isCurrent ? ' <span class="preview-badge">이 항목 미리보기</span>' : '';
+        const inner = `<span class="notice-item-date">${escapeHtml(fmtDateKo(it.date))}</span><p class="notice-item-title">${escapeHtml(it.title || '제목을 입력해주세요')}${badge}</p>`;
+        const cls = 'notice-item' + (hasExtra ? ' notice-item--clickable' : '') + (isCurrent ? ' preview-highlight' : '');
+        return `<li class="${cls}">${inner}</li>`;
+      }).join('');
+
+      const curImgs = previewImages(current);
+      const curPos = curImgs[0] ? getImagePos(current, curImgs[0]) : '50% 50%';
+      const mainImg = curImgs[0]
+        ? `<img class="posable" src="${escapeAttr(curImgs[0])}" alt="" style="object-position:${escapeAttr(curPos)};" />`
+        : '';
+      const mainHint = curImgs[0] ? '<span class="pos-hint">드래그로 위치 조정 · 더블클릭 초기화</span>' : '';
+      const strip = curImgs.length > 1
+        ? `<div class="thumb-strip">${curImgs.slice(1).map(s => `<img src="${escapeAttr(s)}" alt="" style="object-position:${escapeAttr(getImagePos(current, s))};" />`).join('')}</div>`
+        : '';
+      const media = curImgs.length ? `<div class="news-modal-media">${mainImg}${mainHint}</div>` : '';
+      const hasExtra = !!(curImgs.length || current.body);
+
+      const detailSection = hasExtra ? `
+        <p class="section-label">사진·내용이 있어 클릭하면 이렇게 열려요</p>
+        <div class="detail-wrap">
+          ${media}
+          ${strip}
+          <div class="detail-body">
+            <div class="news-modal-meta"><span class="news-modal-date">${escapeHtml(fmtDateKo(current.date))}</span></div>
+            <h3 class="news-modal-title">${escapeHtml(current.title || '제목을 입력해주세요')}</h3>
+            ${current.body ? `<p class="news-modal-text">${escapeHtml(current.body)}</p>` : ''}
+          </div>
+        </div>` : `<p class="section-label" style="margin-top:28px;">사진이나 내용을 넣으면 클릭 시 상세 팝업이 열려요. 지금은 목록에만 표시돼요.</p>`;
+
       return `<!DOCTYPE html><html><head><meta charset="utf-8">${PREVIEW_CSS_LINKS}
-        <style>body{margin:0;padding:20px;background:#f3f7f5;} .notice-list{list-style:none;max-width:320px;background:#fff;border-radius:14px;overflow:hidden;border:1px solid #e3e8e4;margin:0;padding:0;}</style>
+        <style>${PREVIEW_EXTRA_STYLE}
+          .notice-list{list-style:none;max-width:420px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;border:1px solid #e3e8e4;padding:0;}
+        </style>
         </head><body>
-        <ul class="notice-list">${bodyHtml}</ul>
+        <p class="section-label">공지사항 목록에 이렇게 보여요</p>
+        <ul class="notice-list">${listHtml}</ul>
+        ${detailSection}
         </body></html>`;
     }
-    function attachPreview(card, item, buildSrcdoc) {
+
+    const previewModal = document.getElementById('preview-modal');
+    const previewFrame = document.getElementById('preview-modal-frame');
+    const closePreviewModal = () => previewModal.classList.remove('open');
+    document.getElementById('preview-modal-close').addEventListener('click', closePreviewModal);
+    previewModal.querySelectorAll('[data-preview-close]').forEach(el => el.addEventListener('click', closePreviewModal));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && previewModal.classList.contains('open')) closePreviewModal(); });
+
+    // 미리보기 팝업 안 사진(대표 사진)을 드래그해서 노출 위치(object-position)를 조정.
+    // 세로 사진처럼 가로로 긴 박스에 잘려 보일 때, 어느 부분이 보일지 직접 끌어서 정할 수 있다.
+    function wirePreviewDrag(doc, item) {
+      const els = Array.from(doc.querySelectorAll('img.posable'));
+      if (!els.length) return;
+      let dragging = false, activeSrc = null, rect = null, startX = 0, startY = 0, startPos = { x: 50, y: 50 };
+
+      const syncGroup = (src, val) => {
+        els.forEach(el => { if (el.getAttribute('src') === src) el.style.objectPosition = val; });
+      };
+
+      els.forEach(el => {
+        el.addEventListener('pointerdown', e => {
+          dragging = true;
+          activeSrc = el.getAttribute('src');
+          rect = el.getBoundingClientRect();
+          const [px, py] = getImagePos(item, activeSrc).split(' ').map(v => parseFloat(v));
+          startPos = { x: px, y: py };
+          startX = e.clientX;
+          startY = e.clientY;
+          el.classList.add('dragging-pos');
+          try { el.setPointerCapture(e.pointerId); } catch (_) {}
+          e.preventDefault();
+        });
+        el.addEventListener('pointermove', e => {
+          if (!dragging || el.getAttribute('src') !== activeSrc) return;
+          const dx = e.clientX - startX;
+          const dy = e.clientY - startY;
+          const xPct = Math.max(0, Math.min(100, startPos.x - (dx / rect.width) * 100));
+          const yPct = Math.max(0, Math.min(100, startPos.y - (dy / rect.height) * 100));
+          const val = `${Math.round(xPct)}% ${Math.round(yPct)}%`;
+          setImagePos(item, activeSrc, val);
+          syncGroup(activeSrc, val);
+        });
+        const end = () => { dragging = false; el.classList.remove('dragging-pos'); };
+        el.addEventListener('pointerup', end);
+        el.addEventListener('pointercancel', end);
+        el.addEventListener('dblclick', () => {
+          const src = el.getAttribute('src');
+          setImagePos(item, src, '50% 50%');
+          syncGroup(src, '50% 50%');
+        });
+      });
+    }
+
+    function attachPreview(card, item, getItems, buildSrcdoc) {
       const btn = card.querySelector('[data-preview]');
-      const wrap = card.querySelector('.preview-wrap');
-      const iframe = wrap.querySelector('.preview-frame');
       btn.addEventListener('click', () => {
-        const opening = !wrap.classList.contains('open');
-        wrap.classList.toggle('open', opening);
-        btn.textContent = opening ? '미리보기 닫기' : '미리보기';
-        if (opening) {
-          iframe.srcdoc = buildSrcdoc(item);
-          iframe.style.height = '0px';
-          iframe.onload = () => {
-            try {
-              iframe.style.height = (iframe.contentWindow.document.body.scrollHeight + 20) + 'px';
-            } catch (_) { iframe.style.height = '400px'; }
-          };
-        }
+        previewFrame.onload = () => {
+          try { wirePreviewDrag(previewFrame.contentDocument, item); } catch (_) {}
+        };
+        previewFrame.srcdoc = buildSrcdoc(getItems(), item);
+        previewModal.classList.add('open');
       });
     }
 
@@ -651,7 +854,6 @@
               <p class="img-hint" data-img-hint></p>
             </div>
             <div class="field"><label>내용 (선택)</label><textarea data-field="body">${escapeHtml(item.body || '')}</textarea></div>
-            <div class="preview-wrap"><iframe class="preview-frame"></iframe></div>
             <div class="card-footer">
               <span class="save-status"></span>
             </div>
@@ -695,7 +897,7 @@
         card.querySelector('[data-save]').addEventListener('click', () => saveNews(statusEl));
 
         attachDragReorder(card, i, newsItems, renderNews);
-        attachPreview(card, item, buildNewsPreviewSrcdoc);
+        attachPreview(card, item, () => newsItems, buildNewsPreviewSrcdoc);
 
         list.appendChild(card);
       });
@@ -711,7 +913,7 @@
       for (const item of newsItems) await uploadPendingFiles(item);
       const clean = newsItems.map(item => {
         const images = getImages(item);
-        return { title: item.title || '', date: item.date || '', tag: item.tag || '', image: images[0] || '', images, body: item.body || '' };
+        return { title: item.title || '', date: item.date || '', tag: item.tag || '', image: images[0] || '', images, imagePos: item.imagePos || {}, body: item.body || '' };
       });
       const res = await fetch('/api/admin/save', {
         method: 'POST',
@@ -776,7 +978,6 @@
               <p class="img-hint" data-img-hint></p>
             </div>
             <div class="field"><label>내용 (선택)</label><textarea data-field="body">${escapeHtml(item.body || '')}</textarea></div>
-            <div class="preview-wrap"><iframe class="preview-frame"></iframe></div>
             <div class="card-footer">
               <span class="save-status"></span>
             </div>
@@ -806,7 +1007,7 @@
         card.querySelector('[data-save]').addEventListener('click', () => saveNotices(statusEl));
 
         attachDragReorder(card, i, noticeItems, renderNotices);
-        attachPreview(card, item, buildNoticePreviewSrcdoc);
+        attachPreview(card, item, () => noticeItems, buildNoticePreviewSrcdoc);
 
         list.appendChild(card);
       });
@@ -822,7 +1023,7 @@
       for (const item of noticeItems) await uploadPendingFiles(item);
       const clean = noticeItems.map(item => {
         const images = getImages(item);
-        return { title: item.title || '', date: item.date || '', image: images[0] || '', images, body: item.body || '' };
+        return { title: item.title || '', date: item.date || '', image: images[0] || '', images, imagePos: item.imagePos || {}, body: item.body || '' };
       });
       const res = await fetch('/api/admin/save', {
         method: 'POST',
