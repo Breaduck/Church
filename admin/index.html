@@ -149,7 +149,7 @@
     .preview-modal.open { display: flex; }
     .preview-modal-backdrop { position: absolute; inset: 0; background: rgba(20, 24, 22, 0.68); backdrop-filter: blur(2px); }
     .preview-modal-inner {
-      position: relative; width: min(760px, 100%); max-height: 90vh;
+      position: relative; width: min(1160px, 96vw); height: 92vh;
       background: #fff; border-radius: 18px; overflow: hidden;
       box-shadow: 0 24px 64px rgba(0,0,0,0.35);
       display: flex; flex-direction: column;
@@ -167,8 +167,8 @@
       transition: background 0.15s;
     }
     .preview-modal-close:hover { background: var(--line); }
-    .preview-modal-body { overflow-y: auto; background: var(--surf); flex: 1; }
-    .preview-modal-body iframe { width: 100%; border: none; display: block; background: var(--surf); }
+    .preview-modal-body { overflow: hidden; background: var(--surf); flex: 1; min-height: 0; }
+    .preview-modal-body iframe { width: 100%; height: 100%; border: none; display: block; background: var(--surf); }
 
     .card-summary { display: none; }
     #app-view.view-list .card-summary {
@@ -255,7 +255,7 @@
       <div class="preview-modal-backdrop" data-preview-close></div>
       <div class="preview-modal-inner">
         <div class="preview-modal-head">
-          <div><h3>미리보기</h3><span>실제 사이트에 이렇게 표시돼요 (기존 항목과 함께 보여드려요)</span></div>
+          <div><h3>미리보기</h3><span>실제 사이트 화면 그대로예요 · 사진을 클릭하면 상세 팝업이 열리고, 그 안에서 사진을 드래그하면 보이는 위치를 조정할 수 있어요</span></div>
           <button type="button" class="preview-modal-close" id="preview-modal-close" aria-label="닫기">×</button>
         </div>
         <div class="preview-modal-body"><iframe id="preview-modal-frame"></iframe></div>
@@ -603,136 +603,99 @@
       });
     }
 
-    // ---- 미리보기 (팝업, 기존 항목과 함께 보여줌) ----
+    // ---- 미리보기 (팝업, 실제 사이트 화면 그대로) ----
     const PREVIEW_CSS_LINKS = `
       <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
       <link rel="stylesheet" href="/css/style.css">
     `;
+    // 대표 사진 드래그 위치 조정에 필요한 최소 스타일만 추가 (그 외엔 실제 사이트 CSS 그대로 사용)
     const PREVIEW_EXTRA_STYLE = `
-      body{margin:0;padding:24px;background:#f3f7f5;}
-      .section-label{font-size:0.78rem;font-weight:800;color:#6b7a70;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 12px;}
-      .section-label:not(:first-child){margin-top:34px;}
-      .preview-highlight{outline:3px solid #3d7a56;outline-offset:2px;position:relative;}
-      .preview-badge{display:inline-flex;align-items:center;background:#3d7a56;color:#fff;font-size:0.68rem;font-weight:800;padding:3px 9px;border-radius:999px;flex-shrink:0;}
-      .news-card.preview-highlight .preview-badge{position:absolute;top:8px;left:8px;z-index:2;}
-      .detail-wrap{max-width:420px;margin:0 auto;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 8px 28px rgba(0,0,0,0.10);}
-      .detail-body{padding:22px 24px 26px;}
-      .thumb-strip{display:flex;flex-wrap:wrap;gap:6px;padding:12px 24px 0;}
-      .thumb-strip img{width:52px;height:52px;object-fit:cover;border-radius:8px;}
       .posable{cursor:grab;touch-action:none;user-select:none;-webkit-user-drag:none;}
       .posable.dragging-pos{cursor:grabbing;}
-      .pos-wrap{position:relative;}
       .pos-hint{
-        position:absolute;left:8px;bottom:8px;z-index:2;
-        background:rgba(20,24,22,0.62);color:#fff;font-size:11px;font-weight:600;
-        padding:4px 9px;border-radius:999px;pointer-events:none;white-space:nowrap;
+        position:absolute;left:10px;bottom:10px;z-index:2;
+        background:rgba(20,24,22,0.62);color:#fff;font-size:12px;font-weight:600;
+        padding:5px 10px;border-radius:999px;pointer-events:none;white-space:nowrap;
       }
+    `;
+    // 실제 사이트와 동일한 상세 팝업 마크업 (교회소식·공지사항 공용, 처음엔 닫힌 상태)
+    const NEWS_MODAL_MARKUP = `
+      <div class="news-modal" id="news-modal">
+        <div class="news-modal-backdrop"></div>
+        <div class="news-modal-inner">
+          <button class="news-modal-close" id="news-modal-close" aria-label="닫기">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="18" height="18"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <div class="news-modal-media" id="news-modal-media"></div>
+          <div class="news-modal-body">
+            <div class="news-modal-meta">
+              <span class="news-modal-tag" id="news-modal-tag"></span>
+              <span class="news-modal-date" id="news-modal-date"></span>
+            </div>
+            <h3 class="news-modal-title" id="news-modal-title"></h3>
+            <p class="news-modal-text" id="news-modal-text"></p>
+          </div>
+        </div>
+      </div>
     `;
     // 저장 전(업로드 중) 이미지도 즉시 미리 보여주기 위해 로컬 미리보기(_pending)까지 포함
     function previewImages(item) {
       return getImages(item).concat((item._pending || []).map(p => p.dataUrl));
     }
+
+    // 실제 홈 화면 카드와 완전히 동일한 마크업(이미지+제목만, 태그·날짜는 카드에 안 보임)
     function buildNewsPreviewSrcdoc(items, current) {
-      const cards = items.map(it => {
-        const isCurrent = it === current;
+      const cardsHtml = items.map((it, i) => {
         const imgs = previewImages(it);
         const src = imgs[0] || '';
-        const pos = src ? getImagePos(it, src) : '50% 50%';
-        const img = src
-          ? `<img class="${isCurrent ? 'posable' : ''}" src="${escapeAttr(src)}" alt="" style="object-position:${escapeAttr(pos)};" />`
-          : '';
+        const img = src ? `<img src="${escapeAttr(src)}" alt="" style="object-position:${escapeAttr(getImagePos(it, src))};" />` : '';
+        const play = it.video ? `<span class="news-play"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M8 5v14l11-7z"/></svg></span>` : '';
         const count = imgs.length > 1 ? `<span class="news-img-count">${imgs.length}</span>` : '';
-        const hint = isCurrent && src ? '<span class="pos-hint">드래그로 위치 조정</span>' : '';
-        const media = src ? `<div class="news-img">${img}${count}${hint}</div>` : '';
-        const badge = isCurrent ? '<span class="preview-badge">이 항목 미리보기</span>' : '';
-        return `<article class="news-card${isCurrent ? ' preview-highlight' : ''}">${badge}${media}
-          <div class="news-body">
-            <span class="news-tag">${escapeHtml(it.tag || '소식')}</span>
-            <h3 class="news-title">${escapeHtml(it.title || '제목을 입력해주세요')}</h3>
-            <p class="news-date">${escapeHtml(fmtDateKo(it.date))}</p>
-          </div>
+        const media = src ? `<div class="news-img">${img}${play}${count}</div>` : '';
+        return `<article class="news-card" data-idx="${i}" tabindex="0" role="button" aria-haspopup="dialog">
+          ${media}
+          <div class="news-body"><h3 class="news-title">${escapeHtml(it.title || '제목을 입력해주세요')}</h3></div>
         </article>`;
       }).join('');
 
-      const curImgs = previewImages(current);
-      const curPos = curImgs[0] ? getImagePos(current, curImgs[0]) : '50% 50%';
-      const mainImg = curImgs[0]
-        ? `<img class="posable" src="${escapeAttr(curImgs[0])}" alt="" style="object-position:${escapeAttr(curPos)};" />`
-        : '';
-      const mainHint = curImgs[0] ? '<span class="pos-hint">드래그로 위치 조정 · 더블클릭 초기화</span>' : '';
-      const strip = curImgs.length > 1
-        ? `<div class="thumb-strip">${curImgs.slice(1).map(s => `<img src="${escapeAttr(s)}" alt="" style="object-position:${escapeAttr(getImagePos(current, s))};" />`).join('')}</div>`
-        : '';
-      const media = curImgs.length ? `<div class="news-modal-media">${mainImg}${mainHint}</div>` : '';
-
       return `<!DOCTYPE html><html><head><meta charset="utf-8">${PREVIEW_CSS_LINKS}
         <style>${PREVIEW_EXTRA_STYLE}
-          .news-grid{display:flex;flex-wrap:wrap;gap:16px;}
-          .news-grid .news-card{flex:0 0 208px;}
+          body{margin:0;background:#f3f7f5;}
+          .preview-page{padding:32px;}
+          .news-grid{display:flex;flex-wrap:wrap;gap:22px;}
+          .news-grid .news-card{flex:0 0 244px;cursor:pointer;}
         </style>
         </head><body>
-        <p class="section-label">최신 소식 목록에 이렇게 보여요</p>
-        <div class="news-grid">${cards}</div>
-        <p class="section-label">클릭하면 이렇게 열려요</p>
-        <div class="detail-wrap">
-          ${media}
-          ${strip}
-          <div class="detail-body">
-            <div class="news-modal-meta">
-              <span class="news-modal-tag">${escapeHtml(current.tag || '')}</span>
-              <span class="news-modal-date">${escapeHtml(fmtDateKo(current.date))}</span>
-            </div>
-            <h3 class="news-modal-title">${escapeHtml(current.title || '제목을 입력해주세요')}</h3>
-            ${current.body ? `<p class="news-modal-text">${escapeHtml(current.body)}</p>` : ''}
-          </div>
-        </div>
+        <div class="preview-page"><div class="news-grid">${cardsHtml}</div></div>
+        ${NEWS_MODAL_MARKUP}
         </body></html>`;
     }
-    // 공지사항은 사진/내용이 있으면 목록 항목을 클릭했을 때 교회소식과 같은 상세 팝업(공용 news-modal)이 뜬다.
+
+    // 실제 공지 패널과 동일한 마크업. 사진·내용이 있는 항목만 클릭 가능(실제 사이트와 동일).
     function buildNoticePreviewSrcdoc(items, current) {
-      const listHtml = items.map(it => {
-        const isCurrent = it === current;
+      const listHtml = items.map((it, i) => {
         const imgs = previewImages(it);
         const hasExtra = !!(imgs.length || it.body || it.video);
-        const badge = isCurrent ? ' <span class="preview-badge">이 항목 미리보기</span>' : '';
-        const inner = `<span class="notice-item-date">${escapeHtml(fmtDateKo(it.date))}</span><p class="notice-item-title">${escapeHtml(it.title || '제목을 입력해주세요')}${badge}</p>`;
-        const cls = 'notice-item' + (hasExtra ? ' notice-item--clickable' : '') + (isCurrent ? ' preview-highlight' : '');
-        return `<li class="${cls}">${inner}</li>`;
+        const inner = `<span class="notice-item-date">${escapeHtml(fmtDateKo(it.date))}</span><p class="notice-item-title">${escapeHtml(it.title || '제목을 입력해주세요')}</p>`;
+        if (!hasExtra) return `<li class="notice-item">${inner}</li>`;
+        return `<li class="notice-item notice-item--clickable" data-idx="${i}" tabindex="0" role="button" aria-haspopup="dialog">${inner}</li>`;
       }).join('');
-
-      const curImgs = previewImages(current);
-      const curPos = curImgs[0] ? getImagePos(current, curImgs[0]) : '50% 50%';
-      const mainImg = curImgs[0]
-        ? `<img class="posable" src="${escapeAttr(curImgs[0])}" alt="" style="object-position:${escapeAttr(curPos)};" />`
-        : '';
-      const mainHint = curImgs[0] ? '<span class="pos-hint">드래그로 위치 조정 · 더블클릭 초기화</span>' : '';
-      const strip = curImgs.length > 1
-        ? `<div class="thumb-strip">${curImgs.slice(1).map(s => `<img src="${escapeAttr(s)}" alt="" style="object-position:${escapeAttr(getImagePos(current, s))};" />`).join('')}</div>`
-        : '';
-      const media = curImgs.length ? `<div class="news-modal-media">${mainImg}${mainHint}</div>` : '';
-      const hasExtra = !!(curImgs.length || current.body);
-
-      const detailSection = hasExtra ? `
-        <p class="section-label">사진·내용이 있어 클릭하면 이렇게 열려요</p>
-        <div class="detail-wrap">
-          ${media}
-          ${strip}
-          <div class="detail-body">
-            <div class="news-modal-meta"><span class="news-modal-date">${escapeHtml(fmtDateKo(current.date))}</span></div>
-            <h3 class="news-modal-title">${escapeHtml(current.title || '제목을 입력해주세요')}</h3>
-            ${current.body ? `<p class="news-modal-text">${escapeHtml(current.body)}</p>` : ''}
-          </div>
-        </div>` : `<p class="section-label" style="margin-top:28px;">사진이나 내용을 넣으면 클릭 시 상세 팝업이 열려요. 지금은 목록에만 표시돼요.</p>`;
 
       return `<!DOCTYPE html><html><head><meta charset="utf-8">${PREVIEW_CSS_LINKS}
         <style>${PREVIEW_EXTRA_STYLE}
-          .notice-list{list-style:none;max-width:420px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;border:1px solid #e3e8e4;padding:0;}
+          body{margin:0;background:#f3f7f5;}
+          .preview-page{padding:32px;display:flex;justify-content:center;}
+          .notice-panel{position:static;width:100%;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,0.12);}
         </style>
         </head><body>
-        <p class="section-label">공지사항 목록에 이렇게 보여요</p>
-        <ul class="notice-list">${listHtml}</ul>
-        ${detailSection}
+        <div class="preview-page">
+          <div class="notice-panel open">
+            <div class="notice-panel-head"><h3>공지사항</h3></div>
+            <ul class="notice-list">${listHtml}</ul>
+          </div>
+        </div>
+        ${NEWS_MODAL_MARKUP}
         </body></html>`;
     }
 
@@ -743,7 +706,7 @@
     previewModal.querySelectorAll('[data-preview-close]').forEach(el => el.addEventListener('click', closePreviewModal));
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && previewModal.classList.contains('open')) closePreviewModal(); });
 
-    // 미리보기 팝업 안 사진(대표 사진)을 드래그해서 노출 위치(object-position)를 조정.
+    // 미리보기 팝업 안 사진(편집 중인 항목의 대표 사진)을 드래그해서 노출 위치(object-position)를 조정.
     // 세로 사진처럼 가로로 긴 박스에 잘려 보일 때, 어느 부분이 보일지 직접 끌어서 정할 수 있다.
     function wirePreviewDrag(doc, item) {
       const els = Array.from(doc.querySelectorAll('img.posable'));
@@ -788,13 +751,115 @@
       });
     }
 
-    function attachPreview(card, item, getItems, buildSrcdoc) {
+    // 실제 사이트와 동일한 상세 팝업을 iframe 안에서 직접 열고 닫는 컨트롤러.
+    // 편집 중인 항목(current)의 사진만 드래그로 위치 조정이 가능하다.
+    function createPreviewModalController(doc, current) {
+      const modal = doc.getElementById('news-modal');
+      const media = doc.getElementById('news-modal-media');
+      const tagEl = doc.getElementById('news-modal-tag');
+      const dateEl = doc.getElementById('news-modal-date');
+      const titleEl = doc.getElementById('news-modal-title');
+      const textEl = doc.getElementById('news-modal-text');
+      const closeBtn = doc.getElementById('news-modal-close');
+      const backdrop = modal.querySelector('.news-modal-backdrop');
+
+      function renderGallery(item) {
+        media.innerHTML = '';
+        const imgs = previewImages(item);
+        media.hidden = !imgs.length;
+        if (!imgs.length) return;
+        const isCurrent = item === current;
+
+        const gallery = doc.createElement('div');
+        gallery.className = 'news-gallery';
+        let idx = 0;
+        const img = doc.createElement('img');
+        img.alt = '';
+        img.src = imgs[0];
+        img.style.objectPosition = getImagePos(item, imgs[0]);
+        if (isCurrent) {
+          img.classList.add('posable');
+          const hint = doc.createElement('span');
+          hint.className = 'pos-hint';
+          hint.textContent = '드래그로 위치 조정 · 더블클릭 초기화';
+          gallery.appendChild(hint);
+        }
+        gallery.appendChild(img);
+
+        if (imgs.length > 1) {
+          const prev = doc.createElement('button');
+          prev.type = 'button'; prev.className = 'gal-nav gal-prev'; prev.setAttribute('aria-label', '이전 사진'); prev.textContent = '‹';
+          const next = doc.createElement('button');
+          next.type = 'button'; next.className = 'gal-nav gal-next'; next.setAttribute('aria-label', '다음 사진'); next.textContent = '›';
+          const dots = doc.createElement('div');
+          dots.className = 'gal-dots';
+          const dotEls = imgs.map((_, i) => {
+            const d = doc.createElement('span');
+            if (i === 0) d.className = 'on';
+            dots.appendChild(d);
+            return d;
+          });
+          const show = n => {
+            idx = (n + imgs.length) % imgs.length;
+            img.src = imgs[idx];
+            img.style.objectPosition = getImagePos(item, imgs[idx]);
+            dotEls.forEach((d, i) => { d.className = i === idx ? 'on' : ''; });
+          };
+          prev.addEventListener('click', e => { e.stopPropagation(); show(idx - 1); });
+          next.addEventListener('click', e => { e.stopPropagation(); show(idx + 1); });
+          gallery.append(prev, next, dots);
+        }
+        media.appendChild(gallery);
+        if (isCurrent) wirePreviewDrag(doc, item);
+      }
+
+      function open(item) {
+        renderGallery(item);
+        tagEl.textContent = item.tag || '';
+        dateEl.textContent = fmtDateKo(item.date);
+        titleEl.textContent = item.title || '';
+        textEl.textContent = item.body || '';
+        textEl.hidden = !item.body;
+        modal.classList.add('open');
+      }
+      function close() { modal.classList.remove('open'); }
+
+      closeBtn.addEventListener('click', close);
+      backdrop.addEventListener('click', close);
+      doc.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+
+      return { open, close };
+    }
+
+    function wireNewsPreview(doc, items, current) {
+      const controller = createPreviewModalController(doc, current);
+      doc.querySelectorAll('.news-card[data-idx]').forEach(card => {
+        const item = items[Number(card.dataset.idx)];
+        card.addEventListener('click', () => controller.open(item));
+        card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); controller.open(item); } });
+      });
+      controller.open(current); // 편집 중인 항목은 바로 상세 팝업을 열어 위치 조정을 바로 할 수 있게 함
+    }
+
+    function wireNoticePreview(doc, items, current) {
+      const controller = createPreviewModalController(doc, current);
+      doc.querySelectorAll('.notice-item--clickable[data-idx]').forEach(li => {
+        const item = items[Number(li.dataset.idx)];
+        li.addEventListener('click', () => controller.open(item));
+        li.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); controller.open(item); } });
+      });
+      const hasExtra = !!(previewImages(current).length || current.body);
+      if (hasExtra) controller.open(current); // 실제 사이트에서도 클릭 가능한 경우에만 자동으로 열어줌
+    }
+
+    function attachPreview(card, item, getItems, buildSrcdoc, wireFn) {
       const btn = card.querySelector('[data-preview]');
       btn.addEventListener('click', () => {
+        const items = getItems();
         previewFrame.onload = () => {
-          try { wirePreviewDrag(previewFrame.contentDocument, item); } catch (_) {}
+          try { wireFn(previewFrame.contentDocument, items, item); } catch (_) {}
         };
-        previewFrame.srcdoc = buildSrcdoc(getItems(), item);
+        previewFrame.srcdoc = buildSrcdoc(items, item);
         previewModal.classList.add('open');
       });
     }
@@ -897,7 +962,7 @@
         card.querySelector('[data-save]').addEventListener('click', () => saveNews(statusEl));
 
         attachDragReorder(card, i, newsItems, renderNews);
-        attachPreview(card, item, () => newsItems, buildNewsPreviewSrcdoc);
+        attachPreview(card, item, () => newsItems, buildNewsPreviewSrcdoc, wireNewsPreview);
 
         list.appendChild(card);
       });
@@ -1007,7 +1072,7 @@
         card.querySelector('[data-save]').addEventListener('click', () => saveNotices(statusEl));
 
         attachDragReorder(card, i, noticeItems, renderNotices);
-        attachPreview(card, item, () => noticeItems, buildNoticePreviewSrcdoc);
+        attachPreview(card, item, () => noticeItems, buildNoticePreviewSrcdoc, wireNoticePreview);
 
         list.appendChild(card);
       });
