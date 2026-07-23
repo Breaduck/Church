@@ -366,6 +366,12 @@
       appView.style.display = 'none';
     }
 
+    // 저장 안 한 사진이 있는 채로 새로고침/닫기 하면 그 항목 전체가 사라지므로 경고
+    window.addEventListener('beforeunload', e => {
+      const hasPending = [...newsItems, ...noticeItems].some(item => item._pending && item._pending.length);
+      if (hasPending) { e.preventDefault(); e.returnValue = ''; }
+    });
+
     (async () => {
       if (await checkSession()) showApp(); else showLogin();
     })();
@@ -620,7 +626,7 @@
             showToast(`이미지는 최대 ${MAX_IMAGES}장까지 첨부할 수 있어요.`, 'err');
             break;
           }
-          const entry = { dataUrl: URL.createObjectURL(file), base64: null, name: toJpgName(file.name), processing: true };
+          const entry = { id: `p${Date.now()}_${Math.random().toString(36).slice(2)}`, dataUrl: URL.createObjectURL(file), base64: null, name: toJpgName(file.name), processing: true };
           entry.ready = compressImage(file).then(({ dataUrl, base64 }) => {
             URL.revokeObjectURL(entry.dataUrl);
             entry.dataUrl = dataUrl;
@@ -641,26 +647,44 @@
       render();
     }
 
-    async function uploadPendingFiles(item) {
-      if (!Array.isArray(item.images)) item.images = item.image ? [item.image] : [];
-      if (!item._pending || !item._pending.length) return;
-      await Promise.all(item._pending.map(p => p.ready || Promise.resolve()));
-      for (const p of item._pending) {
-        if (!p.base64) continue;
-        const res = await fetch('/api/admin/upload', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ filename: p.name, dataBase64: p.base64 })
+    // 아직 업로드 안 된(_pending) 사진은 실제 경로 대신 "__pending:id" 자리표시자로 payload에 넣고,
+    // 실제 파일 데이터는 files 배열에 따로 모은다. 서버가 사진+JSON을 한 커밋으로 한 번에 반영하고,
+    // 실제 경로로 치환해 돌려준다 — 사진마다 따로 커밋하다가 중간에 실패해 사진만 고아로 남고
+    // 정작 글은 저장 안 되던 문제를 막기 위함.
+    function buildSaveItem(item, allFiles) {
+      const images = [];
+      const imagePos = {};
+      (item.images || []).filter(Boolean).forEach(src => {
+        images.push(src);
+        if (item.imagePos && item.imagePos[src]) imagePos[src] = item.imagePos[src];
+      });
+      (item._pending || []).forEach(p => {
+        if (!p.base64) return;
+        const placeholder = `__pending:${p.id}`;
+        images.push(placeholder);
+        allFiles.push({ id: p.id, filename: p.name, dataBase64: p.base64 });
+        if (item.imagePos && item.imagePos[p.dataUrl]) imagePos[placeholder] = item.imagePos[p.dataUrl];
+      });
+      return { images, imagePos };
+    }
+
+    // 저장 성공 후: pending으로 남아있던 사진을 서버가 알려준 실제 경로로 로컬 상태에도 반영
+    function applySavedPaths(items, pathMap) {
+      if (!pathMap) return;
+      items.forEach(item => {
+        if (!item._pending || !item._pending.length) return;
+        if (!Array.isArray(item.images)) item.images = item.image ? [item.image] : [];
+        item._pending.forEach(p => {
+          const finalPath = pathMap[p.id];
+          if (!finalPath) return;
+          item.images.push(finalPath);
+          if (item.imagePos && item.imagePos[p.dataUrl] != null) {
+            item.imagePos[finalPath] = item.imagePos[p.dataUrl];
+            delete item.imagePos[p.dataUrl];
+          }
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || '이미지 업로드 실패');
-        item.images.push(data.path);
-        if (item.imagePos && item.imagePos[p.dataUrl]) {
-          item.imagePos[data.path] = item.imagePos[p.dataUrl];
-          delete item.imagePos[p.dataUrl];
-        }
-      }
-      item._pending = [];
+        item._pending = [];
+      });
     }
 
     // ---- 교회소식 ----
@@ -1120,18 +1144,22 @@
     }
 
     async function persistNews() {
-      for (const item of newsItems) await uploadPendingFiles(item);
+      for (const item of newsItems) {
+        if (item._pending && item._pending.length) await Promise.all(item._pending.map(p => p.ready || Promise.resolve()));
+      }
+      const allFiles = [];
       const clean = newsItems.map(item => {
-        const images = getImages(item);
-        return { title: item.title || '', date: item.date || '', tag: item.tag || '', image: images[0] || '', images, imagePos: item.imagePos || {}, body: item.body || '' };
+        const { images, imagePos } = buildSaveItem(item, allFiles);
+        return { title: item.title || '', date: item.date || '', tag: item.tag || '', image: images[0] || '', images, imagePos, body: item.body || '' };
       });
       const res = await fetch('/api/admin/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ collection: 'news', items: clean })
+        body: JSON.stringify({ collection: 'news', items: clean, files: allFiles })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || '저장 실패');
+      applySavedPaths(newsItems, data.pathMap);
     }
 
     async function saveNews(statusEl) {
@@ -1230,18 +1258,22 @@
     }
 
     async function persistNotices() {
-      for (const item of noticeItems) await uploadPendingFiles(item);
+      for (const item of noticeItems) {
+        if (item._pending && item._pending.length) await Promise.all(item._pending.map(p => p.ready || Promise.resolve()));
+      }
+      const allFiles = [];
       const clean = noticeItems.map(item => {
-        const images = getImages(item);
-        return { title: item.title || '', date: item.date || '', image: images[0] || '', images, imagePos: item.imagePos || {}, body: item.body || '' };
+        const { images, imagePos } = buildSaveItem(item, allFiles);
+        return { title: item.title || '', date: item.date || '', image: images[0] || '', images, imagePos, body: item.body || '' };
       });
       const res = await fetch('/api/admin/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ collection: 'notices', items: clean })
+        body: JSON.stringify({ collection: 'notices', items: clean, files: allFiles })
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || '저장 실패');
+      applySavedPaths(noticeItems, data.pathMap);
     }
 
     async function saveNotices(statusEl) {
