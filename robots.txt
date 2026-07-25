@@ -2,3 +2,5 @@ User-agent: *
 Disallow: /admin/
 Disallow: /api/
 Allow: /
+
+Sitemap: https://friendlychurch.kr/sitemap.xml
