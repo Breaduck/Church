@@ -138,6 +138,7 @@ body { font-size: 17px; }
   transition: color 0.2s;
 }
 .nav-links a:hover { color: var(--ink); }
+.nav-links a[aria-current="page"] { color: var(--ink); font-weight: 700; }
 .nav-toggle { display: none; }
 
 /* ============================================================
