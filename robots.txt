@@ -1,6 +1,55 @@
+# 일반 검색엔진: 사이트 전체 허용 (관리자/API 제외)
 User-agent: *
 Disallow: /admin/
 Disallow: /api/
+Disallow: /.well-known/
 Allow: /
+
+# ── AI 학습/스크래핑 크롤러 차단 ──
+# (Cloudflare AI Labyrinth와 함께 콘텐츠 무단 학습을 막습니다)
+User-agent: GPTBot
+Disallow: /
+
+User-agent: OAI-SearchBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+User-agent: FacebookBot
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: Meta-ExternalAgent
+Disallow: /
+
+User-agent: cohere-ai
+Disallow: /
 
 Sitemap: https://friendlychurch.kr/sitemap.xml

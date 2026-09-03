@@ -1,0 +1,8 @@
+# 정다운교회 / 정다운문화센터 보안 연락처 (RFC 9116)
+# 보안 취약점을 발견하시면 아래 연락처로 제보해 주세요.
+
+Contact: mailto:hiyoonjw@gmail.com
+Expires: 2027-09-03T00:00:00.000Z
+Preferred-Languages: ko, en
+Canonical: https://friendlychurch.kr/.well-known/security.txt
+Canonical: https://friendlycenter.kr/.well-known/security.txt
