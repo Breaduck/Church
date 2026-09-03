@@ -73,7 +73,7 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     url => `https://cors.eu.org/${url}`,
   ];
 
-  const CACHE_KEY = 'yt_cache_v2';
+  const CACHE_KEY = 'yt_cache_v3'; // v3: 쇼츠 제외 목록으로 갱신(기존 캐시 무효화)
   const CACHE_TTL = 3600000; // 1시간
 
   const fmt = iso => {
