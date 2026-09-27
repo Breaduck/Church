@@ -118,7 +118,17 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     if (ytLink && first.videoId) ytLink.href = `https://www.youtube.com/watch?v=${first.videoId}`;
 
     const ytTitle = document.getElementById('yt-title');
-    if (ytTitle && first.title) ytTitle.textContent = first.title;
+    if (ytTitle && first.title) {
+      // 모바일에서는 '(설교 제목)' 앞에서 줄바꿈 (.yt-br은 모바일에서만 보임)
+      const cut = first.title.indexOf('(');
+      if (cut > 0) {
+        const br = document.createElement('br');
+        br.className = 'yt-br';
+        ytTitle.replaceChildren(first.title.slice(0, cut), br, first.title.slice(cut));
+      } else {
+        ytTitle.textContent = first.title;
+      }
+    }
 
     const ytDate = document.getElementById('yt-date');
     if (ytDate && first.date) ytDate.textContent = fmt(first.date);
