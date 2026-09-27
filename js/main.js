@@ -104,6 +104,15 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     })).filter(e => e.videoId);
   };
 
+  // 유튜브 제목 "9월 27일 9월 넷째주일예배 설교( 더 이상 연약함에 머물지 말라)"를
+  // { name: '더 이상 연약함에 머물지 말라', service: '9월 넷째주일예배' }로 나눈다.
+  // 날짜는 따로 표시하므로 앞의 'M월 D일'은 뺀다. 형식이 다르면 원래 제목 그대로 사용.
+  const splitTitle = raw => {
+    const t = (raw || '').replace(/^\s*\d{1,2}월\s*\d{1,2}일\s*/, '').trim();
+    const m = t.match(/^(.*?)\s*설교\s*\(\s*(.+?)\s*\)\s*$/);
+    return m ? { name: m[2], service: m[1].trim() } : { name: t || raw || '', service: '' };
+  };
+
   const applyEntries = entries => {
     if (!entries.length) return;
     const [first, ...rest] = entries;
@@ -118,10 +127,13 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
     if (ytLink && first.videoId) ytLink.href = `https://www.youtube.com/watch?v=${first.videoId}`;
 
     const ytTitle = document.getElementById('yt-title');
-    if (ytTitle && first.title) ytTitle.textContent = first.title;
+    const firstTitle = splitTitle(first.title);
+    if (ytTitle && first.title) ytTitle.textContent = firstTitle.name;
 
     const ytDate = document.getElementById('yt-date');
-    if (ytDate && first.date) ytDate.textContent = fmt(first.date);
+    if (ytDate && first.date) {
+      ytDate.textContent = [fmt(first.date), firstTitle.service].filter(Boolean).join(' · ');
+    }
 
     const rows = document.querySelectorAll('#yt-prev-list .prev-row');
     rest.slice(0, 3).forEach((e, i) => {
@@ -134,7 +146,7 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
       const dateEl  = rows[i].querySelector('.prev-date');
       const titleEl = rows[i].querySelector('.prev-title');
       if (dateEl)  dateEl.textContent  = label;
-      if (titleEl) titleEl.textContent = e.title || '';
+      if (titleEl) titleEl.textContent = splitTitle(e.title).name;
     });
 
     // 로딩 클래스 제거
